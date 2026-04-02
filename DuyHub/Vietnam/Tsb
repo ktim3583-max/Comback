@@ -1,40 +1,203 @@
--- 🔥 AUTO FIX GUI TRÙNG
+-- 🔥 FIX GUI TRÙNG
 pcall(function()
     game.CoreGui:FindFirstChild("Rayfield"):Destroy()
 end)
 
--- 🔥 LOAD UI
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "DuyXD hub | tsb - v2.0",
-   Icon = 91227091538955,
-   LoadingTitle = "Loading...",
-   LoadingSubtitle = "by DuyXD",
+   Name = "DuyXD hub | tsb - v 2.2 FINAL",
+   Icon = "rbxassetid://91227091538955",
+   LoadingTitle = "im comback",
+   LoadingSubtitle = "by Duy",
    ShowText = "DuyXD",
    Theme = "Default",
    ToggleUIKeybind = "K",
 
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false,
+
    ConfigurationSaving = {
       Enabled = true,
-      FileName = "DuyXD Hub"
+      FileName = "Big Hub"
    }
 })
 
 -- ================= 🎮 MOVESET =================
-local Tab = Window:CreateTab("Moveset", 4483362458)
-Tab:CreateSection("🔥 Moveset")
+local Tab = Window:CreateTab("moveset", 4483362458)
+Tab:CreateSection("moveset")
 
 local moves = {
 {"Jun","https://gist.githubusercontent.com/GoldenHeads2/f66279000c58a020e894a6db44914838/raw/62e53e1acacec0b38b43cd0f594292c32e09c39b/gistfile1.txt"},
 {"Gojo V2","https://rawscripts.net/raw/The-Strongest-Battlegrounds-TSB-Gojo-V2-Moveset-21649"},
 {"Gojo","https://pastefy.app/ZaRwX4X3/raw"},
 {"Toji","https://raw.githubusercontent.com/Wi-sp/Limitless-legacy/refs/heads/main/GUI"},
+{"Floating girl","https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/FLOATING_GIRL.lua"},
 {"Sukuna","https://rawscripts.net/raw/Universal-Script-The-Strongest-Battleground-heian-sukuna-Moveset-30680"},
 {"Goku","https://raw.githubusercontent.com/Nova2ezz/GokuNamekSSJ/refs/heads/main/SSJ.lua"},
-{"Deku","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Vigilante-Deku-Moveset-22700"}
+{"Deku","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Vigilante-Deku-Moveset-22700"},
+{"Special","https://rawscripts.net/raw/KJ-The-Strongest-Battlegrounds-Favilla-Moveset-Keyless-26417"},
+{"Sukuna V2","https://raw.githubusercontent.com/damir512/whendoesbrickdie/main/tspno.txt"},
+{"A-Train","https://rawscripts.net/raw/The-Strongest-Battlegrounds-A-Train-22155"}
 }
 
+for _,v in pairs(moves) do
+Tab:CreateButton({
+Name=v[1],
+Callback=function()
+pcall(function()
+loadstring(game:HttpGet(v[2]))()
+end) or warn("Lỗi: "..v[1])
+end})
+end
+
+-- ================= 🧪 TECH =================
+local Tab3 = Window:CreateTab("tech", 4483362458)
+Tab3:CreateSection("tech vip")
+
+local techs = {
+{"instant twisted dash","https://raw.githubusercontent.com/Cyborg883/InstantTwistedRevamp/refs/heads/main/Protected_7455521176683315.lua"},
+{"kiba tech","https://pastefy.app/dlzS4YNz/raw"},
+{"instant lethal dash","https://raw.githubusercontent.com/Cyborg883/InstantLethal/refs/heads/main/Protected_5983112998592296.lua"},
+{"supa tech","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Supa-tech-v2-77454"},
+{"K1NG TECH","https://api.jnkie.com/api/v1/luascripts/public/db1e974cdf7fab0c8fc113c38350c94ed7d7466d617bb372e44f6acdd5fce0ea/download"},
+{"Auto Kyoto","https://raw.githubusercontent.com/sigmavexr/AUTO-KYOTO-SATURN-HUB/refs/heads/main/AUTO%20KYOTO"}
+}
+
+for _,v in pairs(techs) do
+Tab3:CreateButton({
+Name=v[1],
+Callback=function()
+task.spawn(function()
+pcall(function()
+loadstring(game:HttpGet(v[2]))()
+end)
+end)
+end})
+end
+
+-- ================= 🧰 TOOLS =================
+local Tab4 = Window:CreateTab("tools", 4483362458)
+Tab4:CreateSection("tools vip")
+
+local tools = {
+{"Trash can man","https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Trashcan%20Man"},
+{"Combat gui","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Combat-Gui-72274"},
+{"bắn súng [Brutal Ninja]","https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SIONELTNAMATLASIA.lua"},
+{"Fake dash","https://raw.githubusercontent.com/Cyborg883/FakeDash/refs/heads/main/Protected_5833389828844912.lua"}
+}
+
+for _,v in pairs(tools) do
+Tab4:CreateButton({
+Name=v[1],
+Callback=function()
+task.spawn(function()
+pcall(function()
+loadstring(game:HttpGet(v[2]))()
+end)
+end)
+end})
+end
+
+-- 🎯 AIM LOCK (TOGGLE + FIX LEAK + MƯỢT)
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+getgenv().aimlock = false
+
+Tab4:CreateToggle({
+   Name = "Aim Lock",
+   CurrentValue = false,
+   Callback = function(v)
+      getgenv().aimlock = v
+   end,
+})
+
+local function getNearestPlayer()
+    local closest, shortest = nil, math.huge
+    for _,p in pairs(Players:GetPlayers()) do
+        if p~=LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            local dist=(p.Character.HumanoidRootPart.Position-LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+            if dist<shortest then
+                shortest=dist
+                closest=p
+            end
+        end
+    end
+    return closest
+end
+
+if not getgenv().AimConnection then
+getgenv().AimConnection = RunService.RenderStepped:Connect(function()
+    if not getgenv().aimlock then return end
+
+    local char = LocalPlayer.Character
+    if not char then return end
+
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+
+    local target = getNearestPlayer()
+    if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+        local pos = target.Character.HumanoidRootPart.Position
+
+        root.CFrame = root.CFrame:Lerp(
+            CFrame.new(root.Position, Vector3.new(pos.X, root.Position.Y, pos.Z)),
+            0.2
+        )
+    end
+end)
+end
+
+-- 💀 CÀN QUÉT
+Tab4:CreateButton({
+Name="Càn quét",
+Callback=function()
+local Players=game:GetService("Players")
+local lp=Players.LocalPlayer
+
+for _,plr in pairs(Players:GetPlayers()) do
+if plr~=lp and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+lp.Character.HumanoidRootPart.CFrame=plr.Character.HumanoidRootPart.CFrame
+task.wait(0.08)
+end
+end
+end})
+
+-- ================= 📍 TELEPORT =================
+local Tab5 = Window:CreateTab("teleport", 4483362458)
+Tab5:CreateSection("teleport")
+
+local targetName=""
+
+Tab5:CreateInput({
+Name="Nhập tên player",
+Callback=function(txt)
+targetName=string.lower(txt)
+end
+})
+
+local function findPlayer(name)
+for _,plr in pairs(game:GetService("Players"):GetPlayers()) do
+if string.find(string.lower(plr.Name),name) then
+return plr
+end
+end
+end
+
+Tab5:CreateButton({
+Name="Teleport",
+Callback=function()
+local lp=game.Players.LocalPlayer
+local char=lp.Character or lp.CharacterAdded:Wait()
+local hrp=char:WaitForChild("HumanoidRootPart")
+
+local target=findPlayer(targetName)
+if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+hrp.CFrame=target.Character.HumanoidRootPart.CFrame*CFrame.new(0,0,3)
+end
+end})
 for _,v in pairs(moves) do
 Tab:CreateButton({
 Name=v[1],
