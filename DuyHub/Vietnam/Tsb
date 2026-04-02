@@ -1,21 +1,24 @@
 -- 🔥 FIX GUI TRÙNG
 pcall(function()
-    game.CoreGui:FindFirstChild("Rayfield"):Destroy()
+    local old = game.CoreGui:FindFirstChild("Rayfield")
+    if old then old:Destroy() end
 end)
 
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+-- 🔥 LOAD RAYFIELD
+local success, Rayfield = pcall(function()
+    return loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+end)
+if not success then return end
 
+-- 🔥 WINDOW
 local Window = Rayfield:CreateWindow({
-   Name = "DuyXD hub | tsb - v 1.5",
-   Icon = "rbxassetid://91227091538955",
+   Name = "DuyXD hub | tsb - v 3.0 GOD",
+   Icon = 91227091538955,
    LoadingTitle = "im comback",
    LoadingSubtitle = "by Duy",
    ShowText = "DuyXD",
    Theme = "Default",
    ToggleUIKeybind = "K",
-
-   DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false,
 
    ConfigurationSaving = {
       Enabled = true,
@@ -35,6 +38,209 @@ local moves = {
 {"Floating girl","https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/FLOATING_GIRL.lua"},
 {"Sukuna","https://rawscripts.net/raw/Universal-Script-The-Strongest-Battleground-heian-sukuna-Moveset-30680"},
 {"Goku","https://raw.githubusercontent.com/Nova2ezz/GokuNamekSSJ/refs/heads/main/SSJ.lua"},
+{"Deku","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Vigilante-Deku-Moveset-22700"},
+{"Special","https://rawscripts.net/raw/KJ-The-Strongest-Battlegrounds-Favilla-Moveset-Keyless-26417"},
+{"Sukuna V2","https://raw.githubusercontent.com/damir512/whendoesbrickdie/main/tspno.txt"},
+{"A-Train","https://rawscripts.net/raw/The-Strongest-Battlegrounds-A-Train-22155"}
+}
+
+for _,v in pairs(moves) do
+Tab:CreateButton({
+Name=v[1],
+Callback=function()
+task.spawn(function()
+pcall(function()
+loadstring(game:HttpGet(v[2]))()
+end)
+end)
+end})
+end
+
+-- ================= ⚡ ANTI LAG =================
+local Tab2 = Window:CreateTab("anti lag", 4483362458)
+Tab2:CreateSection("fps boost")
+
+Tab2:CreateButton({
+Name="v1",
+Callback=function()
+loadstring(game:HttpGet("https://pastefy.app/PHQKQtCV/raw"))()
+end})
+
+Tab2:CreateButton({
+Name="v2",
+Callback=function()
+pcall(function() setfpscap(5000) end)
+end})
+
+Tab2:CreateButton({
+Name="v3",
+Callback=function()
+local l=game:GetService("Lighting")
+for _,v in pairs(l:GetChildren()) do
+if v:IsA("PostEffect") then v.Enabled=false end end
+l.GlobalShadows=false
+settings().Rendering.QualityLevel=Enum.QualityLevel.Level01
+end})
+
+Tab2:CreateButton({
+Name="v4",
+Callback=function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/marianscriptKing/SUPER-MAX.lau/main/SUPER%20MAX%20PERFORMANCE"))()
+end})
+
+-- ================= 🧪 TECH =================
+local Tab3 = Window:CreateTab("tech", 4483362458)
+Tab3:CreateSection("tech")
+
+local techs = {
+{"instant twisted dash","https://raw.githubusercontent.com/Cyborg883/InstantTwistedRevamp/refs/heads/main/Protected_7455521176683315.lua"},
+{"kiba tech","https://pastefy.app/dlzS4YNz/raw"},
+{"instant lethal dash","https://raw.githubusercontent.com/Cyborg883/InstantLethal/refs/heads/main/Protected_5983112998592296.lua"},
+{"supa tech","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Supa-tech-v2-77454"},
+{"K1NG TECH","https://api.jnkie.com/api/v1/luascripts/public/db1e974cdf7fab0c8fc113c38350c94ed7d7466d617bb372e44f6acdd5fce0ea/download"},
+{"Auto Kyoto","https://raw.githubusercontent.com/sigmavexr/AUTO-KYOTO-SATURN-HUB/refs/heads/main/AUTO%20KYOTO"}
+}
+
+for _,v in pairs(techs) do
+Tab3:CreateButton({
+Name=v[1],
+Callback=function()
+task.spawn(function()
+pcall(function()
+loadstring(game:HttpGet(v[2]))()
+end)
+end)
+end})
+end
+
+-- ================= 🧰 TOOLS =================
+local Tab4 = Window:CreateTab("tools", 4483362458)
+Tab4:CreateSection("tools")
+
+local tools = {
+{"Trash can man","https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Trashcan%20Man"},
+{"Combat gui","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Combat-Gui-72274"},
+{"bắn súng","https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SIONELTNAMATLASIA.lua"},
+{"Fake dash","https://raw.githubusercontent.com/Cyborg883/FakeDash/refs/heads/main/Protected_5833389828844912.lua"}
+}
+
+for _,v in pairs(tools) do
+Tab4:CreateButton({
+Name=v[1],
+Callback=function()
+task.spawn(function()
+pcall(function()
+loadstring(game:HttpGet(v[2]))()
+end)
+end)
+end})
+end
+
+-- 🎯 AIM LOCK
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+getgenv().aimlock = false
+
+Tab4:CreateToggle({
+Name="Aim Lock",
+CurrentValue=false,
+Callback=function(v)
+getgenv().aimlock=v
+end
+})
+
+if getgenv().AimConnection then
+getgenv().AimConnection:Disconnect()
+end
+
+local function getNearestPlayer()
+local closest,dist=nil,math.huge
+for _,p in pairs(Players:GetPlayers()) do
+if p~=LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+local d=(p.Character.HumanoidRootPart.Position-LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+if d<dist then dist=d closest=p end
+end end
+return closest
+end
+
+getgenv().AimConnection=RunService.RenderStepped:Connect(function()
+if not getgenv().aimlock then return end
+local char=LocalPlayer.Character if not char then return end
+local root=char:FindFirstChild("HumanoidRootPart") if not root then return end
+
+local t=getNearestPlayer()
+if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
+local pos=t.Character.HumanoidRootPart.Position
+root.CFrame=root.CFrame:Lerp(CFrame.new(root.Position,Vector3.new(pos.X,root.Position.Y,pos.Z)),0.2)
+end
+end)
+
+-- 💀 CÀN QUÉT
+Tab4:CreateButton({
+Name="Càn quét",
+Callback=function()
+local lp=game.Players.LocalPlayer
+for _,plr in pairs(game.Players:GetPlayers()) do
+if plr~=lp and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+lp.Character.HumanoidRootPart.CFrame=plr.Character.HumanoidRootPart.CFrame
+task.wait(0.08)
+end end
+end})
+
+-- ================= 📍 TELEPORT =================
+local Tab5 = Window:CreateTab("teleport", 4483362458)
+Tab5:CreateSection("teleport")
+
+local targetName=""
+
+Tab5:CreateInput({
+Name="Nhập tên",
+Callback=function(t)
+targetName=string.lower(t)
+end
+})
+
+local function findPlayer(n)
+for _,p in pairs(game.Players:GetPlayers()) do
+if string.find(string.lower(p.Name),n) then return p end
+end end
+
+Tab5:CreateButton({
+Name="Teleport",
+Callback=function()
+local lp=game.Players.LocalPlayer
+local char=lp.Character or lp.CharacterAdded:Wait()
+local hrp=char:WaitForChild("HumanoidRootPart")
+
+local t=findPlayer(targetName)
+if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
+hrp.CFrame=t.Character.HumanoidRootPart.CFrame*CFrame.new(0,0,3)
+end
+end})
+
+-- ================= ⚔️ 1V1 =================
+local Tab6 = Window:CreateTab("1v1", 4483362458)
+Tab6:CreateSection("1v1")
+
+Tab6:CreateButton({
+Name="bắn súng",
+Callback=function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SIONELTNAMATLASIA.lua"))()
+end})
+
+Tab6:CreateButton({
+Name="Fly GUI",
+Callback=function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+end})
+
+Tab6:CreateButton({
+Name="Invisible",
+Callback=function()
+loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invisible-script-20557"))()
+end}){"Goku","https://raw.githubusercontent.com/Nova2ezz/GokuNamekSSJ/refs/heads/main/SSJ.lua"},
 {"Deku","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Vigilante-Deku-Moveset-22700"},
 {"Special","https://rawscripts.net/raw/KJ-The-Strongest-Battlegrounds-Favilla-Moveset-Keyless-26417"},
 {"Sukuna V2","https://raw.githubusercontent.com/damir512/whendoesbrickdie/main/tspno.txt"},
