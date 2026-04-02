@@ -6,7 +6,7 @@ end)
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "DuyXD hub | tsb - v 2.2 FINAL",
+   Name = "DuyXD hub | tsb - v 1.5",
    Icon = "rbxassetid://91227091538955",
    LoadingTitle = "im comback",
    LoadingSubtitle = "by Duy",
