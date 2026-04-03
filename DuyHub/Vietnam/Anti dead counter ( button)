@@ -1,0 +1,114 @@
+-- "Kill Death" Button Script with GUI Upgrade
+
+-- Configuration
+local teleportPosition = Vector3.new(240.31468200683594, -491.9150390625, -183.96755981445312)
+local platformSize = Vector3.new(10, 1, 10)
+local loopDuration = 5
+local teleportInterval = 0.05
+
+-- Variables
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local camera = workspace.CurrentCamera
+local savedPosition = nil
+local looping = false
+
+-- Platform
+local function createPlatform(position)
+    local platform = Instance.new("Part")
+    platform.Name = "TemporaryPlatform"
+    platform.Size = platformSize
+    platform.Position = position
+    platform.Anchored = true
+    platform.Color = Color3.new(1, 0, 0)
+    platform.Parent = workspace
+    return platform
+end
+
+-- Camera reset
+local function resetCamera()
+    camera.CameraSubject = player.Character:WaitForChild("Humanoid")
+    camera.CameraType = Enum.CameraType.Custom
+end
+
+-- Teleport loop
+local function loopTeleport()
+    if not character:FindFirstChild("HumanoidRootPart") then return end
+    local rootPart = character.HumanoidRootPart
+
+    looping = true
+    local platform = createPlatform(teleportPosition + Vector3.new(0, -3, 0))
+
+    local startTime = tick()
+    while tick() - startTime < loopDuration and looping do
+        rootPart.CFrame = CFrame.new(teleportPosition)
+        task.wait(teleportInterval)
+    end
+
+    platform:Destroy()
+
+    if savedPosition then
+        rootPart.CFrame = savedPosition
+    end
+
+    looping = false
+    resetCamera()
+end
+
+-- GUI
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+
+-- MAIN FRAME (để kéo)
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0, 180, 0, 90) -- nhỏ lại
+frame.Position = UDim2.new(0.5, -90, 0.2)
+frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true -- kéo thả
+
+-- TITLE BAR
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 25)
+title.BackgroundColor3 = Color3.fromRGB(0,0,0)
+title.TextColor3 = Color3.fromRGB(0,255,0)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 16
+title.Text = "anti dead counter"
+
+-- CREDIT BAR
+local credit = Instance.new("TextLabel", frame)
+credit.Size = UDim2.new(1, 0, 0, 15)
+credit.Position = UDim2.new(0,0,1,-15)
+credit.BackgroundTransparency = 1
+credit.TextColor3 = Color3.fromRGB(150,150,150)
+credit.Font = Enum.Font.SourceSans
+credit.TextSize = 12
+credit.Text = "by DuyXD"
+
+-- BUTTON
+local button = Instance.new("TextButton", frame)
+button.Size = UDim2.new(1, -20, 0, 35)
+button.Position = UDim2.new(0, 10, 0, 35)
+button.BackgroundColor3 = Color3.fromRGB(0,0,0)
+button.TextColor3 = Color3.fromRGB(0,255,0)
+button.Font = Enum.Font.SourceSansBold
+button.TextSize = 16
+button.Text = "ACTIVATE"
+button.BorderSizePixel = 1
+
+-- Notification
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Script Loaded";
+    Text = "Made by Hecker";
+    Duration = 5;
+})
+
+-- Click
+button.MouseButton1Click:Connect(function()
+    if looping then return end
+    if character:FindFirstChild("HumanoidRootPart") then
+        savedPosition = character.HumanoidRootPart.CFrame
+        loopTeleport()
+    end
+end)
