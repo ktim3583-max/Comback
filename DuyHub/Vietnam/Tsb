@@ -1,7 +1,7 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "DuyXD hub | tsb - v 1.5.5",
+   Name = "DuyXD hub | tsb - v 1.6",
    Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
    LoadingTitle = "Loading...",
    LoadingSubtitle = "by DuyXD",
@@ -51,6 +51,14 @@ local Button = Tab:CreateButton({
    Name = "Jun",
    Callback = function()
    loadstring(game:HttpGet("https://gist.githubusercontent.com/GoldenHeads2/f66279000c58a020e894a6db44914838/raw/62e53e1acacec0b38b43cd0f594292c32e09c39b/gistfile1.txt"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Deku Moveset",
+   Callback = function()
+   loadstring(game:HttpGet("https://pastefy.app/S5RFLisJ/raw"))();
    -- The function that takes place when the button is pressed
    end,
 })
@@ -196,7 +204,7 @@ local Button = Tab:CreateButton({
 local Button = Tab:CreateButton({
    Name = "kiba tech",
    Callback = function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/MerebennieOfficial/ExoticJn/refs/heads/main/Kibav4"))()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/MinhNhatHUB/MinhNhat/refs/heads/main/Lethal%20Kiba.lua"))()
    -- The function that takes place when the button is pressed
    end,
 })
@@ -344,6 +352,16 @@ local Button = Tab:CreateButton({
    -- The function that takes place when the button is pressed
    end,
 })
+
+local Button = Tab:CreateButton({
+   Name = "Semi Godmode",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/tracy738/Godmoden/main/GodmodeTsb.lua.txt"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Paragraph = Tab:CreateParagraph({Title = "làm thế nào để sử dụng semi Godmode? ", Content = "1. bạn bật semi Godmode 2. bạn reset 3. bây giờ bạn đã bất tử"})
 
 local Tab = Window:CreateTab("1 vs 1", 4483362458) -- Title, Image
 
