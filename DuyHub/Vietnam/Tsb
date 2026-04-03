@@ -2,7 +2,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
    Name = "DuyXD hub | tsb - v 1.5",
-   Icon = 91227091538955, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
    LoadingTitle = "Loading...",
    LoadingSubtitle = "by DuyXD",
    ShowText = "Yo bro", -- for mobile users to unhide Rayfield, change if you'd like
@@ -37,7 +37,7 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local Tab = Window:CreateTab("Moveset", 91227091538955) -- Title, Image
+local Tab = Window:CreateTab("Moveset", 4483362458) -- Title, Image
 
 local Button = Tab:CreateButton({
    Name = "Gojo v2",
@@ -62,7 +62,110 @@ local Button = Tab:CreateButton({
    end,
 })
 
-local Tab = Window:CreateTab("Tech", 91227091538955) -- Title, Image
+local Tab = Window:CreateTab("Fix lag", 4483362458) -- Title, Image
+
+local Section = Tab:CreateSection("Fix lag")
+
+local Button = Tab:CreateButton({
+   Name = "FPS Boost gui",
+   Callback = function()
+   -- FPS Boost GUI - by DuyXD
+
+local player = game.Players.LocalPlayer
+
+-- GUI
+local gui = Instance.new("ScreenGui", game.CoreGui)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 200, 0, 100)
+frame.Position = UDim2.new(0.4, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+frame.Active = true
+frame.Draggable = true
+
+-- Bo góc
+local uiCorner = Instance.new("UICorner", frame)
+uiCorner.CornerRadius = UDim.new(0, 12)
+
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 25)
+title.BackgroundTransparency = 1
+title.Text = "FPS BOOST"
+title.TextColor3 = Color3.fromRGB(0,255,0)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 18
+
+-- Button
+local button = Instance.new("TextButton", frame)
+button.Size = UDim2.new(1, -20, 0, 40)
+button.Position = UDim2.new(0, 10, 0, 40)
+button.Text = "BOOST"
+button.BackgroundColor3 = Color3.fromRGB(0,0,0)
+button.TextColor3 = Color3.fromRGB(0,255,0)
+button.Font = Enum.Font.SourceSansBold
+button.TextSize = 16
+
+local corner2 = Instance.new("UICorner", button)
+corner2.CornerRadius = UDim.new(0, 8)
+
+-- Function FPS Boost
+local function boostFPS()
+    -- Xóa shadow + lighting
+    local lighting = game:GetService("Lighting")
+    lighting.GlobalShadows = false
+    lighting.FogEnd = 9e9
+    lighting.Brightness = 0
+    lighting.ClockTime = 14
+    lighting:ClearAllChildren()
+
+    -- Sky xanh đơn giản
+    local sky = Instance.new("Sky")
+    sky.SkyboxBk = "rbxassetid://159454299"
+    sky.SkyboxDn = "rbxassetid://159454296"
+    sky.SkyboxFt = "rbxassetid://159454293"
+    sky.SkyboxLf = "rbxassetid://159454286"
+    sky.SkyboxRt = "rbxassetid://159454300"
+    sky.SkyboxUp = "rbxassetid://159454288"
+    sky.Parent = lighting
+
+    -- Giảm chất lượng vật thể
+    for _,v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Material = Enum.Material.SmoothPlastic
+            v.Reflectance = 0
+        elseif v:IsA("Decal") or v:IsA("Texture") then
+            v:Destroy()
+        elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+            v:Destroy()
+        end
+    end
+
+    -- Xóa phụ kiện + tóc (visual)
+    local char = player.Character
+    if char then
+        for _,v in pairs(char:GetChildren()) do
+            if v:IsA("Accessory") then
+                v:Destroy()
+            end
+        end
+
+        -- Đầu vuông (visual)
+        local head = char:FindFirstChild("Head")
+        if head then
+            head.Shape = Enum.PartType.Block
+        end
+    end
+end
+
+-- Click
+button.MouseButton1Click:Connect(function()
+    boostFPS()
+end)
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Tab = Window:CreateTab("Tech", 4483362458) -- Title, Image
 
 local Section = Tab:CreateSection("all")
 
@@ -90,6 +193,14 @@ local Button = Tab:CreateButton({
    end,
 })
 
+local Button = Tab:CreateButton({
+   Name = "kiba tech",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/MerebennieOfficial/ExoticJn/refs/heads/main/Kibav4"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
 local Section = Tab:CreateSection("Garou")
 
 local Button = Tab:CreateButton({
@@ -108,7 +219,7 @@ local Button = Tab:CreateButton({
    end,
 })
 
-local Tab = Window:CreateTab("Tools", 91227091538955) -- Title, Image
+local Tab = Window:CreateTab("Tools", 4483362458) -- Title, Image
 
 local Section = Tab:CreateSection("tools")
 
@@ -226,33 +337,15 @@ end)
    end,
 })
 
--- Slider
-Tab:CreateSlider({
-   Name = "Speed VFrame",
-   Range = {1, 50},
-   Increment = 1,
-   Suffix = "Speed",
-   CurrentValue = 1,
-   Callback = function(Value)
-      speed = Value
+local Button = Tab:CreateButton({
+   Name = "Infinite dash",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/truly1ndonly/made-this-script-enjoy-teehee/refs/heads/main/TSB%20Infinite%20Dash"))()
+   -- The function that takes place when the button is pressed
    end,
 })
 
--- Force movement
-game:GetService("RunService").RenderStepped:Connect(function()
-    local char = player.Character
-    if char and char:FindFirstChild("HumanoidRootPart") then
-        local hrp = char.HumanoidRootPart
-        local humanoid = char:FindFirstChild("Humanoid")
-
-        if humanoid and humanoid.MoveDirection.Magnitude > 0 then
-            hrp.Velocity = humanoid.MoveDirection * speed * 5 
-                + Vector3.new(0, hrp.Velocity.Y, 0)
-        end
-    end
-end)
-
-local Tab = Window:CreateTab("1 vs 1", 91227091538955) -- Title, Image
+local Tab = Window:CreateTab("1 vs 1", 4483362458) -- Title, Image
 
 local Section = Tab:CreateSection("PVP")
 
@@ -277,497 +370,5 @@ local Button = Tab:CreateButton({
    Callback = function()
    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invisible-script-20557"))()
    -- The function that takes place when the button is pressed
-   end,
-})
-
--- Slider
-Tab:CreateSlider({
-   Name = "Speed VFrame",
-   Range = {1, 50},
-   Increment = 1,
-   Suffix = "Speed",
-   CurrentValue = 1,
-   Callback = function(Value)
-      speed = Value
-   end,
-})
-
--- Force movement
-game:GetService("RunService").RenderStepped:Connect(function()
-    local char = player.Character
-    if char and char:FindFirstChild("HumanoidRootPart") then
-        local hrp = char.HumanoidRootPart
-        local humanoid = char:FindFirstChild("Humanoid")
-
-        if humanoid and humanoid.MoveDirection.Magnitude > 0 then
-            hrp.Velocity = humanoid.MoveDirection * speed * 5 
-                + Vector3.new(0, hrp.Velocity.Y, 0)
-        end
-    end
-end)end})
-
-Tab2:CreateButton({
-Name="v3",
-Callback=function()
-local l=game:GetService("Lighting")
-for _,v in pairs(l:GetChildren()) do
-if v:IsA("PostEffect") then v.Enabled=false end end
-l.GlobalShadows=false
-settings().Rendering.QualityLevel=Enum.QualityLevel.Level01
-end})
-
-Tab2:CreateButton({
-Name="v4",
-Callback=function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/marianscriptKing/SUPER-MAX.lau/main/SUPER%20MAX%20PERFORMANCE"))()
-end})
-
--- ================= 🧪 TECH =================
-local Tab3 = Window:CreateTab("tech", 4483362458)
-Tab3:CreateSection("tech")
-
-local techs = {
-{"instant twisted dash","https://raw.githubusercontent.com/Cyborg883/InstantTwistedRevamp/refs/heads/main/Protected_7455521176683315.lua"},
-{"kiba tech","https://pastefy.app/dlzS4YNz/raw"},
-{"instant lethal dash","https://raw.githubusercontent.com/Cyborg883/InstantLethal/refs/heads/main/Protected_5983112998592296.lua"},
-{"supa tech","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Supa-tech-v2-77454"},
-{"K1NG TECH","https://api.jnkie.com/api/v1/luascripts/public/db1e974cdf7fab0c8fc113c38350c94ed7d7466d617bb372e44f6acdd5fce0ea/download"},
-{"Auto Kyoto","https://raw.githubusercontent.com/sigmavexr/AUTO-KYOTO-SATURN-HUB/refs/heads/main/AUTO%20KYOTO"}
-}
-
-for _,v in pairs(techs) do
-Tab3:CreateButton({
-Name=v[1],
-Callback=function()
-task.spawn(function()
-pcall(function()
-loadstring(game:HttpGet(v[2]))()
-end)
-end)
-end})
-end
-
--- ================= 🧰 TOOLS =================
-local Tab4 = Window:CreateTab("tools", 4483362458)
-Tab4:CreateSection("tools")
-
-local tools = {
-{"Trash can man","https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Trashcan%20Man"},
-{"Combat gui","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Combat-Gui-72274"},
-{"bắn súng","https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SIONELTNAMATLASIA.lua"},
-{"Fake dash","https://raw.githubusercontent.com/Cyborg883/FakeDash/refs/heads/main/Protected_5833389828844912.lua"}
-}
-
-for _,v in pairs(tools) do
-Tab4:CreateButton({
-Name=v[1],
-Callback=function()
-task.spawn(function()
-pcall(function()
-loadstring(game:HttpGet(v[2]))()
-end)
-end)
-end})
-end
-
--- 🎯 AIM LOCK
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-
-getgenv().aimlock = false
-
-Tab4:CreateToggle({
-Name="Aim Lock",
-CurrentValue=false,
-Callback=function(v)
-getgenv().aimlock=v
-end
-})
-
-if getgenv().AimConnection then
-getgenv().AimConnection:Disconnect()
-end
-
-local function getNearestPlayer()
-local closest,dist=nil,math.huge
-for _,p in pairs(Players:GetPlayers()) do
-if p~=LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-local d=(p.Character.HumanoidRootPart.Position-LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-if d<dist then dist=d closest=p end
-end end
-return closest
-end
-
-getgenv().AimConnection=RunService.RenderStepped:Connect(function()
-if not getgenv().aimlock then return end
-local char=LocalPlayer.Character if not char then return end
-local root=char:FindFirstChild("HumanoidRootPart") if not root then return end
-
-local t=getNearestPlayer()
-if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
-local pos=t.Character.HumanoidRootPart.Position
-root.CFrame=root.CFrame:Lerp(CFrame.new(root.Position,Vector3.new(pos.X,root.Position.Y,pos.Z)),0.2)
-end
-end)
-
--- 💀 CÀN QUÉT
-Tab4:CreateButton({
-Name="Càn quét",
-Callback=function()
-local lp=game.Players.LocalPlayer
-for _,plr in pairs(game.Players:GetPlayers()) do
-if plr~=lp and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-lp.Character.HumanoidRootPart.CFrame=plr.Character.HumanoidRootPart.CFrame
-task.wait(0.08)
-end end
-end})
-
--- ================= 📍 TELEPORT =================
-local Tab5 = Window:CreateTab("teleport", 4483362458)
-Tab5:CreateSection("teleport")
-
-local targetName=""
-
-Tab5:CreateInput({
-Name="Nhập tên",
-Callback=function(t)
-targetName=string.lower(t)
-end
-})
-
-local function findPlayer(n)
-for _,p in pairs(game.Players:GetPlayers()) do
-if string.find(string.lower(p.Name),n) then return p end
-end end
-
-Tab5:CreateButton({
-Name="Teleport",
-Callback=function()
-local lp=game.Players.LocalPlayer
-local char=lp.Character or lp.CharacterAdded:Wait()
-local hrp=char:WaitForChild("HumanoidRootPart")
-
-local t=findPlayer(targetName)
-if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
-hrp.CFrame=t.Character.HumanoidRootPart.CFrame*CFrame.new(0,0,3)
-end
-end})
-
--- ================= ⚔️ 1V1 =================
-local Tab6 = Window:CreateTab("1v1", 4483362458)
-Tab6:CreateSection("1v1")
-
-Tab6:CreateButton({
-Name="bắn súng",
-Callback=function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SIONELTNAMATLASIA.lua"))()
-end})
-
-Tab6:CreateButton({
-Name="Fly GUI",
-Callback=function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
-end})
-
-Tab6:CreateButton({
-Name="Invisible",
-Callback=function()
-loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invisible-script-20557"))()
-end}){"Goku","https://raw.githubusercontent.com/Nova2ezz/GokuNamekSSJ/refs/heads/main/SSJ.lua"},
-{"Deku","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Vigilante-Deku-Moveset-22700"},
-{"Special","https://rawscripts.net/raw/KJ-The-Strongest-Battlegrounds-Favilla-Moveset-Keyless-26417"},
-{"Sukuna V2","https://raw.githubusercontent.com/damir512/whendoesbrickdie/main/tspno.txt"},
-{"A-Train","https://rawscripts.net/raw/The-Strongest-Battlegrounds-A-Train-22155"}
-}
-
-for _,v in pairs(moves) do
-Tab:CreateButton({
-Name=v[1],
-Callback=function()
-pcall(function()
-loadstring(game:HttpGet(v[2]))()
-end) or warn("Lỗi: "..v[1])
-end})
-end
-
--- ================= 🧪 TECH =================
-local Tab3 = Window:CreateTab("tech", 4483362458)
-Tab3:CreateSection("tech vip")
-
-local techs = {
-{"instant twisted dash","https://raw.githubusercontent.com/Cyborg883/InstantTwistedRevamp/refs/heads/main/Protected_7455521176683315.lua"},
-{"kiba tech","https://pastefy.app/dlzS4YNz/raw"},
-{"instant lethal dash","https://raw.githubusercontent.com/Cyborg883/InstantLethal/refs/heads/main/Protected_5983112998592296.lua"},
-{"supa tech","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Supa-tech-v2-77454"},
-{"K1NG TECH","https://api.jnkie.com/api/v1/luascripts/public/db1e974cdf7fab0c8fc113c38350c94ed7d7466d617bb372e44f6acdd5fce0ea/download"},
-{"Auto Kyoto","https://raw.githubusercontent.com/sigmavexr/AUTO-KYOTO-SATURN-HUB/refs/heads/main/AUTO%20KYOTO"}
-}
-
-for _,v in pairs(techs) do
-Tab3:CreateButton({
-Name=v[1],
-Callback=function()
-task.spawn(function()
-pcall(function()
-loadstring(game:HttpGet(v[2]))()
-end)
-end)
-end})
-end
-
--- ================= 🧰 TOOLS =================
-local Tab4 = Window:CreateTab("tools", 4483362458)
-Tab4:CreateSection("tools vip")
-
-local tools = {
-{"Trash can man","https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Trashcan%20Man"},
-{"Combat gui","https://rawscripts.net/raw/The-Strongest-Battlegrounds-Combat-Gui-72274"},
-{"bắn súng [Brutal Ninja]","https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SIONELTNAMATLASIA.lua"},
-{"Fake dash","https://raw.githubusercontent.com/Cyborg883/FakeDash/refs/heads/main/Protected_5833389828844912.lua"}
-}
-
-for _,v in pairs(tools) do
-Tab4:CreateButton({
-Name=v[1],
-Callback=function()
-task.spawn(function()
-pcall(function()
-loadstring(game:HttpGet(v[2]))()
-end)
-end)
-end})
-end
-
--- 🎯 AIM LOCK (TOGGLE + FIX LEAK + MƯỢT)
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-
-getgenv().aimlock = false
-
-Tab4:CreateToggle({
-   Name = "Aim Lock",
-   CurrentValue = false,
-   Callback = function(v)
-      getgenv().aimlock = v
-   end,
-})
-
-local function getNearestPlayer()
-    local closest, shortest = nil, math.huge
-    for _,p in pairs(Players:GetPlayers()) do
-        if p~=LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-            local dist=(p.Character.HumanoidRootPart.Position-LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-            if dist<shortest then
-                shortest=dist
-                closest=p
-            end
-        end
-    end
-    return closest
-end
-
-if not getgenv().AimConnection then
-getgenv().AimConnection = RunService.RenderStepped:Connect(function()
-    if not getgenv().aimlock then return end
-
-    local char = LocalPlayer.Character
-    if not char then return end
-
-    local root = char:FindFirstChild("HumanoidRootPart")
-    if not root then return end
-
-    local target = getNearestPlayer()
-    if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-        local pos = target.Character.HumanoidRootPart.Position
-
-        root.CFrame = root.CFrame:Lerp(
-            CFrame.new(root.Position, Vector3.new(pos.X, root.Position.Y, pos.Z)),
-            0.2
-        )
-    end
-end)
-end
-
--- 💀 CÀN QUÉT
-Tab4:CreateButton({
-Name="Càn quét",
-Callback=function()
-local Players=game:GetService("Players")
-local lp=Players.LocalPlayer
-
-for _,plr in pairs(Players:GetPlayers()) do
-if plr~=lp and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-lp.Character.HumanoidRootPart.CFrame=plr.Character.HumanoidRootPart.CFrame
-task.wait(0.08)
-end
-end
-end})
-
--- ================= 📍 TELEPORT =================
-local Tab5 = Window:CreateTab("teleport", 4483362458)
-Tab5:CreateSection("teleport")
-
-local targetName=""
-
-Tab5:CreateInput({
-Name="Nhập tên player",
-Callback=function(txt)
-targetName=string.lower(txt)
-end
-})
-
-local function findPlayer(name)
-for _,plr in pairs(game:GetService("Players"):GetPlayers()) do
-if string.find(string.lower(plr.Name),name) then
-return plr
-end
-end
-end
-
-Tab5:CreateButton({
-Name="Teleport",
-Callback=function()
-local lp=game.Players.LocalPlayer
-local char=lp.Character or lp.CharacterAdded:Wait()
-local hrp=char:WaitForChild("HumanoidRootPart")
-
-local target=findPlayer(targetName)
-if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-hrp.CFrame=target.Character.HumanoidRootPart.CFrame*CFrame.new(0,0,3)
-end
-end})
-for _,v in pairs(moves) do
-Tab:CreateButton({
-Name=v[1],
-Callback=function()
-pcall(function()
-loadstring(game:HttpGet(v[2]))()
-end)
-end})
-end
-
--- ================= ⚡ ANTI LAG =================
-local Tab2 = Window:CreateTab("AntiLag", 4483362458)
-Tab2:CreateSection("🚀 FPS Boost")
-
-Tab2:CreateButton({
-Name="Boost FPS",
-Callback=function()
-pcall(function()
-local l=game:GetService("Lighting")
-for _,v in pairs(l:GetChildren()) do
-if v:IsA("PostEffect") then v.Enabled=false end end
-l.GlobalShadows=false
-settings().Rendering.QualityLevel=Enum.QualityLevel.Level01
-end)
-end})
-
--- ================= 🧪 TECH =================
-local Tab3 = Window:CreateTab("Tech", 4483362458)
-Tab3:CreateSection("⚔️ Combat Tech")
-
-local techs = {
-{"Instant Dash","https://raw.githubusercontent.com/Cyborg883/InstantTwistedRevamp/refs/heads/main/Protected_7455521176683315.lua"},
-{"Kiba Tech","https://pastefy.app/dlzS4YNz/raw"}
-}
-
-for _,v in pairs(techs) do
-Tab3:CreateButton({
-Name=v[1],
-Callback=function()
-pcall(function()
-loadstring(game:HttpGet(v[2]))()
-end)
-end})
-end
-
--- ================= 🧰 TOOLS =================
-local Tab4 = Window:CreateTab("Tools", 4483362458)
-Tab4:CreateSection("🛠 Tools")
-
--- 🔥 AIMLOCK TOGGLE (KHÔNG GUI RÁC)
-getgenv().aimEnabled = false
-
-Tab4:CreateToggle({
-   Name = "Aim Lock",
-   CurrentValue = false,
-   Callback = function(v)
-      getgenv().aimEnabled = v
-   end,
-})
-
--- ================= 🎯 AIM SYSTEM =================
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-
-local function getNearestPlayer()
-    local closest = nil
-    local shortest = math.huge
-
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-            local dist = (p.Character.HumanoidRootPart.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-            if dist < shortest then
-                shortest = dist
-                closest = p
-            end
-        end
-    end
-
-    return closest
-end
-
-RunService.RenderStepped:Connect(function()
-    if not getgenv().aimEnabled then return end
-
-    local char = LocalPlayer.Character
-    if not char then return end
-
-    local root = char:FindFirstChild("HumanoidRootPart")
-    if not root then return end
-
-    local target = getNearestPlayer()
-    if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-        local pos = target.Character.HumanoidRootPart.Position
-        root.CFrame = CFrame.new(root.Position, Vector3.new(pos.X, root.Position.Y, pos.Z))
-    end
-end)
-
--- ================= 📍 TELEPORT =================
-local Tab5 = Window:CreateTab("Teleport", 4483362458)
-Tab5:CreateSection("📍 Teleport Player")
-
-local targetName = ""
-
-Tab5:CreateInput({
-   Name = "Nhập tên player",
-   PlaceholderText = "vd: duy",
-   Callback = function(text)
-      targetName = string.lower(text)
-   end,
-})
-
-local function findPlayer(name)
-   for _,plr in pairs(Players:GetPlayers()) do
-      if string.find(string.lower(plr.Name), name) then
-         return plr
-      end
-   end
-end
-
-Tab5:CreateButton({
-   Name = "Teleport",
-   Callback = function()
-      local lp = Players.LocalPlayer
-      local char = lp.Character or lp.CharacterAdded:Wait()
-      local hrp = char:WaitForChild("HumanoidRootPart")
-
-      local target = findPlayer(targetName)
-      if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-         hrp.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,3)
-      end
    end,
 })
