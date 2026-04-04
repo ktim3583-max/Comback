@@ -175,86 +175,12 @@ end)
 
 local Tab = Window:CreateTab("Tech", 123580799570140) -- Title, Image
 
-local Section = Tab:CreateSection("all")
+local Section = Tab:CreateSection("Gui")
 
 local Button = Tab:CreateButton({
-   Name = "instant twisted ",
+   Name = "Open Gui Tech - by me",
    Callback = function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/InstantTwistedRevamp/refs/heads/main/Protected_7455521176683315.lua"))();
-   -- The function that takes place when the button is pressed
-   end,
-})
-
-local Button = Tab:CreateButton({
-   Name = "Supa tech",
-   Callback = function()
-   loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-Supa-tech-v2-77454"))();
-   -- The function that takes place when the button is pressed
-   end,
-})
-
-local Button = Tab:CreateButton({
-   Name = "K1NG Tech",
-   Callback = function()
-   loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/db1e974cdf7fab0c8fc113c38350c94ed7d7466d617bb372e44f6acdd5fce0ea/download"))();
-   -- The function that takes place when the button is pressed
-   end,
-})
-
-local Button = Tab:CreateButton({
-   Name = "error",
-   Callback = function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/MinhNhatHUB/MinhNhat/refs/heads/main/Lethal%20Kiba.lua"))()
-   end,
-})
-
-local Button = Tab:CreateButton({
-   Name = "Oreo tech",
-   Callback = function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/letuankiet09812345-cmyk/Testkiba/refs/heads/main/Oreo%20Tech%20Script%20By%20YQANTG.txt"))()
-   -- The function that takes place when the button is pressed
-   end,
-})
-
-local Button = Tab:CreateButton({
-   Name = "Backdash cancel",
-   Callback = function()
-   getgenv().keybind = "E" -- For PC users, set this to any key you want
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/BackDashCancel/refs/heads/main/Protected_8787792836664625.lua"))()
-   -- The function that takes place when the button is pressed
-   end,
-})
-
-local Button = Tab:CreateButton({
-   Name = "kiba v3 tech",
-   Callback = function()
-   loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-Yqantg-51718"))()
-   -- The function that takes place when the button is pressed
-   end,
-})
-
-local Section = Tab:CreateSection("Garou")
-
-local Button = Tab:CreateButton({
-   Name = "instant lethal dash",
-   Callback = function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/InstantLethal/refs/heads/main/Protected_5983112998592296.lua"))();
-   -- The function that takes place when the button is pressed
-   end,
-})
-
-local Button = Tab:CreateButton({
-   Name = "auto kyoto",
-   Callback = function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/sigmavexr/AUTO-KYOTO-SATURN-HUB/refs/heads/main/AUTO%20KYOTO"))();
-   -- The function that takes place when the button is pressed
-   end,
-})
-
-local Button = Tab:CreateButton({
-   Name = "Lethal kiba",
-   Callback = function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/letuankiet09812345-cmyk/Testkiba/refs/heads/main/kwjbvlaoof-obfuscated.lua.txt"))()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tech"))();
    -- The function that takes place when the button is pressed
    end,
 })
@@ -394,6 +320,14 @@ local Button = Tab:CreateButton({
 })
 
 local Button = Tab:CreateButton({
+   Name = "aim lock",
+   Callback = function()
+   loadstring(game:HttpGet("https://pastefy.app/V39HCgDD/raw"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
    Name = "Semi Godmode",
    Callback = function()
    loadstring(game:HttpGet("https://raw.githubusercontent.com/tracy738/Godmoden/main/GodmodeTsb.lua.txt"))()
@@ -434,7 +368,7 @@ local Button = Tab:CreateButton({
 local Button = Tab:CreateButton({
    Name = "auto kill",
    Callback = function()
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Auto%20kill"))();
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/hosygiahung0411-wq/Script-tsb-on-top/refs/heads/main/Tsb%20on%20top"))()
    -- The function that takes place when the button is pressed
    end,
 })
