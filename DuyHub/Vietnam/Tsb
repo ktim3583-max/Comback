@@ -397,3 +397,535 @@ local Button = Tab:CreateButton({
    -- The function that takes place when the button is pressed
    end,
 })
+
+local Button = Tab:CreateButton({
+   Name = "auto kill",
+   Callback = function()
+   -- DuyXD Auto Kill GUI
+
+local player = game.Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+local RS = game:GetService("RunService")
+local VIM = game:GetService("VirtualInputManager")
+
+-- GUI
+local gui = Instance.new("ScreenGui", game.CoreGui)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 220, 0, 180)
+frame.Position = UDim2.new(0.4, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+frame.Active = true
+frame.Draggable = true
+
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0,12)
+
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1,0,0,25)
+title.BackgroundColor3 = Color3.fromRGB(0,0,0)
+title.TextColor3 = Color3.fromRGB(0,255,0)
+title.Text = "AUTO KILL"
+title.Font = Enum.Font.SourceSansBold
+
+-- Toggle Auto Kill
+local toggle = Instance.new("TextButton", frame)
+toggle.Size = UDim2.new(0.9,0,0,30)
+toggle.Position = UDim2.new(0.05,0,0,35)
+toggle.Text = "Auto Kill: OFF"
+
+-- Mode button
+local modeBtn = Instance.new("TextButton", frame)
+modeBtn.Size = UDim2.new(0.9,0,0,30)
+modeBtn.Position = UDim2.new(0.05,0,0,70)
+modeBtn.Text = "Mode: UNDER"
+
+-- Spam button
+local spamBtn = Instance.new("TextButton", frame)
+spamBtn.Size = UDim2.new(0.9,0,0,30)
+spamBtn.Position = UDim2.new(0.05,0,0,110)
+spamBtn.Text = "Spam Skill GUI"
+
+Instance.new("UICorner", toggle)
+Instance.new("UICorner", modeBtn)
+Instance.new("UICorner", spamBtn)
+
+-- Variables
+local enabled = false
+local mode = "under"
+local orbitAngle = 0
+
+-- Get nearest player
+local function getNearest()
+    local char = player.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+
+    local nearest, dist = nil, math.huge
+
+    for _,v in pairs(game.Players:GetPlayers()) do
+        if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+            local d = (char.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude
+            if d < dist then
+                dist = d
+                nearest = v
+            end
+        end
+    end
+    return nearest
+end
+
+-- Toggle
+toggle.MouseButton1Click:Connect(function()
+    enabled = not enabled
+    toggle.Text = "Auto Kill: " .. (enabled and "ON" or "OFF")
+end)
+
+-- Mode switch
+modeBtn.MouseButton1Click:Connect(function()
+    mode = (mode == "under") and "orbit" or "under"
+    modeBtn.Text = "Mode: " .. string.upper(mode)
+end)
+
+-- Auto kill loop
+RS.Heartbeat:Connect(function(dt)
+    if not enabled then return end
+
+    local char = player.Character
+    local target = getNearest()
+
+    if char and target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        local targetHRP = target.Character.HumanoidRootPart
+
+        if mode == "under" then
+            hrp.CFrame = targetHRP.CFrame * CFrame.new(0,-3,0)
+            hrp.CFrame = CFrame.new(hrp.Position, hrp.Position + Vector3.new(0,1,0))
+
+        elseif mode == "orbit" then
+            orbitAngle += dt * 18.5
+            local x = math.cos(orbitAngle) * 3
+            local z = math.sin(orbitAngle) * 3
+
+            hrp.CFrame = targetHRP.CFrame * CFrame.new(x,0,z)
+        end
+    end
+end)
+
+-- SPAM GUI
+local spamGui
+local spamEnabled = false
+local spamSpeed = 0.2
+
+spamBtn.MouseButton1Click:Connect(function()
+    if spamGui then spamGui:Destroy() end
+
+    spamGui = Instance.new("ScreenGui", game.CoreGui)
+    local f = Instance.new("Frame", spamGui)
+    f.Size = UDim2.new(0,180,0,120)
+    f.Position = UDim2.new(0.6,0,0.3,0)
+    f.BackgroundColor3 = Color3.fromRGB(30,30,30)
+    f.Active = true
+    f.Draggable = true
+    Instance.new("UICorner", f)
+
+    local t = Instance.new("TextButton", f)
+    t.Size = UDim2.new(0.9,0,0,30)
+    t.Position = UDim2.new(0.05,0,0,10)
+    t.Text = "Spam: OFF"
+
+    local slider = Instance.new("TextButton", f)
+    slider.Size = UDim2.new(0.9,0,0,30)
+    slider.Position = UDim2.new(0.05,0,0,50)
+    slider.Text = "Speed: 0.2"
+
+    t.MouseButton1Click:Connect(function()
+        spamEnabled = not spamEnabled
+        t.Text = "Spam: " .. (spamEnabled and "ON" or "OFF")
+    end)
+
+    slider.MouseButton1Click:Connect(function()
+        spamSpeed = math.clamp(spamSpeed - 0.05, 0.05, 0.5)
+        slider.Text = "Speed: " .. tostring(spamSpeed)
+    end)
+end)
+
+-- Spam loop
+task.spawn(function()
+    while true do
+        if spamEnabled then
+            for i = 1,4 do
+                VIM:SendKeyEvent(true, tostring(i), false, game)
+                VIM:SendKeyEvent(false, tostring(i), false, game)
+            end
+
+            -- M1 click
+            VIM:SendMouseButtonEvent(0,0,0,true,game,0)
+            VIM:SendMouseButtonEvent(0,0,0,false,game,0)
+        end
+        task.wait(spamSpeed)
+    end
+end)
+   -- The function that takes place when the button is pressed
+   end,
+})   }
+})
+
+local Tab = Window:CreateTab("Moveset", 4483362458) -- Title, Image
+
+local Button = Tab:CreateButton({
+   Name = "Gojo v2",
+   Callback = function()
+   loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-TSB-Gojo-V2-Moveset-21649"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Jun",
+   Callback = function()
+   loadstring(game:HttpGet("https://gist.githubusercontent.com/GoldenHeads2/f66279000c58a020e894a6db44914838/raw/62e53e1acacec0b38b43cd0f594292c32e09c39b/gistfile1.txt"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Deku Moveset",
+   Callback = function()
+   loadstring(game:HttpGet("https://pastefy.app/S5RFLisJ/raw"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Comming soon... ",
+   Callback = function()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Tab = Window:CreateTab("Fix lag", 4483362458) -- Title, Image
+
+local Section = Tab:CreateSection("Fix lag")
+
+local Button = Tab:CreateButton({
+   Name = "FPS Boost gui",
+   Callback = function()
+   -- FPS Boost GUI - by DuyXD
+
+local player = game.Players.LocalPlayer
+
+-- GUI
+local gui = Instance.new("ScreenGui", game.CoreGui)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 200, 0, 100)
+frame.Position = UDim2.new(0.4, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+frame.Active = true
+frame.Draggable = true
+
+-- Bo góc
+local uiCorner = Instance.new("UICorner", frame)
+uiCorner.CornerRadius = UDim.new(0, 12)
+
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 25)
+title.BackgroundTransparency = 1
+title.Text = "FPS BOOST"
+title.TextColor3 = Color3.fromRGB(0,255,0)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 18
+
+-- Button
+local button = Instance.new("TextButton", frame)
+button.Size = UDim2.new(1, -20, 0, 40)
+button.Position = UDim2.new(0, 10, 0, 40)
+button.Text = "BOOST"
+button.BackgroundColor3 = Color3.fromRGB(0,0,0)
+button.TextColor3 = Color3.fromRGB(0,255,0)
+button.Font = Enum.Font.SourceSansBold
+button.TextSize = 16
+
+local corner2 = Instance.new("UICorner", button)
+corner2.CornerRadius = UDim.new(0, 8)
+
+-- Function FPS Boost
+local function boostFPS()
+    -- Xóa shadow + lighting
+    local lighting = game:GetService("Lighting")
+    lighting.GlobalShadows = false
+    lighting.FogEnd = 9e9
+    lighting.Brightness = 0
+    lighting.ClockTime = 14
+    lighting:ClearAllChildren()
+
+    -- Sky xanh đơn giản
+    local sky = Instance.new("Sky")
+    sky.SkyboxBk = "rbxassetid://159454299"
+    sky.SkyboxDn = "rbxassetid://159454296"
+    sky.SkyboxFt = "rbxassetid://159454293"
+    sky.SkyboxLf = "rbxassetid://159454286"
+    sky.SkyboxRt = "rbxassetid://159454300"
+    sky.SkyboxUp = "rbxassetid://159454288"
+    sky.Parent = lighting
+
+    -- Giảm chất lượng vật thể
+    for _,v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Material = Enum.Material.SmoothPlastic
+            v.Reflectance = 0
+        elseif v:IsA("Decal") or v:IsA("Texture") then
+            v:Destroy()
+        elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+            v:Destroy()
+        end
+    end
+
+    -- Xóa phụ kiện + tóc (visual)
+    local char = player.Character
+    if char then
+        for _,v in pairs(char:GetChildren()) do
+            if v:IsA("Accessory") then
+                v:Destroy()
+            end
+        end
+
+        -- Đầu vuông (visual)
+        local head = char:FindFirstChild("Head")
+        if head then
+            head.Shape = Enum.PartType.Block
+        end
+    end
+end
+
+-- Click
+button.MouseButton1Click:Connect(function()
+    boostFPS()
+end)
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Tab = Window:CreateTab("Tech", 4483362458) -- Title, Image
+
+local Section = Tab:CreateSection("all")
+
+local Button = Tab:CreateButton({
+   Name = "instant twisted ",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/InstantTwistedRevamp/refs/heads/main/Protected_7455521176683315.lua"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Supa tech",
+   Callback = function()
+   loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-Supa-tech-v2-77454"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "K1NG Tech",
+   Callback = function()
+   loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/db1e974cdf7fab0c8fc113c38350c94ed7d7466d617bb372e44f6acdd5fce0ea/download"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "error",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/MinhNhatHUB/MinhNhat/refs/heads/main/Lethal%20Kiba.lua"))()
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Oreo tech",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/letuankiet09812345-cmyk/Testkiba/refs/heads/main/Oreo%20Tech%20Script%20By%20YQANTG.txt"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Section = Tab:CreateSection("Garou")
+
+local Button = Tab:CreateButton({
+   Name = "instant lethal dash",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/InstantLethal/refs/heads/main/Protected_5983112998592296.lua"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "auto kyoto",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/sigmavexr/AUTO-KYOTO-SATURN-HUB/refs/heads/main/AUTO%20KYOTO"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Tab = Window:CreateTab("Tools", 4483362458) -- Title, Image
+
+local Section = Tab:CreateSection("tools")
+
+local Button = Tab:CreateButton({
+   Name = "trash can man",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Trashcan%20Man"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Combat gui",
+   Callback = function()
+   loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-Combat-Gui-72274"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Fake dash",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/FakeDash/refs/heads/main/Protected_5833389828844912.lua"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Hitbox reach",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SIONELTNAMATLASIA.lua"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "anti dead counter",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Anti%20dead%20counter%20(%20button)"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "anti ragdoll",
+   Callback = function()
+   -- Anti Ragdoll / Anti Freeze / Anti Camera Lock
+-- by DuyXD
+
+local player = game.Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+-- Notification
+pcall(function()
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "by DuyXD";
+        Text = "anti Ragdoll";
+        Duration = 5;
+    })
+end)
+
+-- Function fix character
+local function setupCharacter(char)
+    local humanoid = char:WaitForChild("Humanoid")
+
+    -- Chống ragdoll
+    humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+    humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+    humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
+    humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
+
+    -- Loop giữ trạng thái
+    task.spawn(function()
+        while char and char.Parent do
+            if humanoid:GetState() == Enum.HumanoidStateType.Ragdoll
+            or humanoid:GetState() == Enum.HumanoidStateType.FallingDown then
+                humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+            end
+
+            -- Game bắt đứng im -> vẫn đi được
+            humanoid.WalkSpeed = 16
+            humanoid.JumpPower = 50
+
+            task.wait(0.1)
+        end
+    end)
+
+    -- Anti camera lock
+    task.spawn(function()
+        while char and char.Parent do
+            if camera.CameraType ~= Enum.CameraType.Custom then
+                camera.CameraType = Enum.CameraType.Custom
+            end
+
+            if camera.CameraSubject ~= humanoid then
+                camera.CameraSubject = humanoid
+            end
+
+            task.wait(0.1)
+        end
+    end)
+end
+
+-- Khi spawn
+if player.Character then
+    setupCharacter(player.Character)
+end
+
+-- Khi chết / respawn -> tự kích hoạt lại
+player.CharacterAdded:Connect(function(char)
+    task.wait(1)
+    setupCharacter(char)
+end)
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Infinite dash",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/truly1ndonly/made-this-script-enjoy-teehee/refs/heads/main/TSB%20Infinite%20Dash"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Semi Godmode",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/tracy738/Godmoden/main/GodmodeTsb.lua.txt"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Paragraph = Tab:CreateParagraph({Title = "làm thế nào để sử dụng semi Godmode? ", Content = "1. bạn bật semi Godmode 2. bạn reset 3. bây giờ bạn đã bất tử"})
+
+local Tab = Window:CreateTab("1 vs 1", 4483362458) -- Title, Image
+
+local Section = Tab:CreateSection("PVP")
+
+local Button = Tab:CreateButton({
+   Name = "Hitbox reach",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SIONELTNAMATLASIA.lua"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Fly gui",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Invisible",
+   Callback = function()
+   loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invisible-script-20557"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
