@@ -1,0 +1,275 @@
+-- DuyXD ULTRA PANEL (ALL IN ONE)
+
+repeat task.wait() until game:IsLoaded()
+
+local player = game.Players.LocalPlayer
+local RS = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local VIM = game:GetService("VirtualInputManager")
+local TweenService = game:GetService("TweenService")
+
+-- ================= GUI =================
+local gui = Instance.new("ScreenGui", game.CoreGui)
+
+-- Blur nhẹ thôi
+local blur = Instance.new("BlurEffect", game.Lighting)
+blur.Size = 3
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 260, 0, 250)
+frame.Position = UDim2.new(0.4, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0,18)
+
+-- Gradient
+local grad = Instance.new("UIGradient", frame)
+grad.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0,255,200)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0,100,255))
+}
+
+task.spawn(function()
+    while true do
+        TweenService:Create(grad, TweenInfo.new(3), {Rotation = grad.Rotation + 180}):Play()
+        task.wait(3)
+    end
+end)
+
+-- Stroke
+local stroke = Instance.new("UIStroke", frame)
+stroke.Color = Color3.fromRGB(0,255,200)
+stroke.Thickness = 2
+
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1,0,0,30)
+title.BackgroundTransparency = 1
+title.Text = "⚡ DuyXD Control Panel"
+title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+
+-- Button maker
+local function makeButton(text, y)
+    local btn = Instance.new("TextButton", frame)
+    btn.Size = UDim2.new(0.9,0,0,35)
+    btn.Position = UDim2.new(0.05,0,0,y)
+    btn.Text = text
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.BackgroundColor3 = Color3.fromRGB(30,30,30)
+    Instance.new("UICorner", btn)
+
+    local s = Instance.new("UIStroke", btn)
+    s.Color = Color3.fromRGB(0,255,200)
+
+    btn.MouseEnter:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(0,255,200)
+        }):Play()
+    end)
+
+    btn.MouseLeave:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(30,30,30)
+        }):Play()
+    end)
+
+    return btn
+end
+
+local toggleBtn = makeButton("⚔ Auto Kill: OFF", 40)
+local modeBtn = makeButton("🌀 Mode: UNDER", 80)
+local spamBtn = makeButton("🔥 Spam GUI", 120)
+local freecamBtn = makeButton("👻 Free Cam: OFF", 160)
+
+-- ================= AUTO KILL =================
+local enabled = false
+local mode = "under"
+local orbitAngle = 0
+local orbitDistance = 5
+
+local function getNearest()
+    local char = player.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+
+    local nearest, dist = nil, math.huge
+    for _,v in pairs(game.Players:GetPlayers()) do
+        if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+            local d = (char.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude
+            if d < dist then
+                dist = d
+                nearest = v
+            end
+        end
+    end
+    return nearest
+end
+
+toggleBtn.MouseButton1Click:Connect(function()
+    enabled = not enabled
+    toggleBtn.Text = "⚔ Auto Kill: " .. (enabled and "ON" or "OFF")
+end)
+
+modeBtn.MouseButton1Click:Connect(function()
+    mode = (mode == "under") and "orbit" or "under"
+    modeBtn.Text = "🌀 Mode: " .. string.upper(mode)
+end)
+
+RS.Heartbeat:Connect(function(dt)
+    if not enabled then return end
+
+    local char = player.Character
+    local target = getNearest()
+
+    if char and target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        local targetHRP = target.Character.HumanoidRootPart
+
+        if mode == "under" then
+            hrp.CFrame = targetHRP.CFrame * CFrame.new(0,-3,0)
+            hrp.CFrame = CFrame.new(hrp.Position, hrp.Position + Vector3.new(0,1,0))
+
+        elseif mode == "orbit" then
+            orbitAngle += dt * 18.5
+            local x = math.cos(orbitAngle) * orbitDistance
+            local z = math.sin(orbitAngle) * orbitDistance
+            hrp.CFrame = targetHRP.CFrame * CFrame.new(x,0,z)
+        end
+    end
+end)
+
+-- ================= SPAM =================
+local spamEnabled = false
+local spamSpeed = 0.15
+
+spamBtn.MouseButton1Click:Connect(function()
+    local g = Instance.new("ScreenGui", game.CoreGui)
+    local f = Instance.new("Frame", g)
+    f.Size = UDim2.new(0,200,0,120)
+    f.Position = UDim2.new(0.6,0,0.3,0)
+    f.BackgroundColor3 = Color3.fromRGB(25,25,25)
+    f.Active = true
+    f.Draggable = true
+    Instance.new("UICorner", f)
+
+    local t = Instance.new("TextButton", f)
+    t.Size = UDim2.new(0.9,0,0,30)
+    t.Position = UDim2.new(0.05,0,0,10)
+    t.Text = "Spam: OFF"
+
+    local s = Instance.new("TextButton", f)
+    s.Size = UDim2.new(0.9,0,0,30)
+    s.Position = UDim2.new(0.05,0,0,50)
+    s.Text = "Speed: 0.15"
+
+    t.MouseButton1Click:Connect(function()
+        spamEnabled = not spamEnabled
+        t.Text = "Spam: " .. (spamEnabled and "ON" or "OFF")
+    end)
+
+    s.MouseButton1Click:Connect(function()
+        spamSpeed = math.clamp(spamSpeed - 0.03, 0.05, 0.3)
+        s.Text = "Speed: " .. tostring(spamSpeed)
+    end)
+end)
+
+task.spawn(function()
+    while true do
+        if spamEnabled then
+            for i = 1,4 do
+                local key = Enum.KeyCode[tostring(i)]
+                VIM:SendKeyEvent(true, key, false, game)
+                VIM:SendKeyEvent(false, key, false, game)
+            end
+
+            local cam = workspace.CurrentCamera
+            local x = cam.ViewportSize.X/2
+            local y = cam.ViewportSize.Y/2
+
+            VIM:SendMouseButtonEvent(x,y,0,true,game,0)
+            VIM:SendMouseButtonEvent(x,y,0,false,game,0)
+        end
+        task.wait(spamSpeed)
+    end
+end)
+
+-- ================= FREECAM MOBILE =================
+local freecam = false
+local camCF
+local camSpeed = 3
+local moveVec = Vector3.new()
+local dragging = false
+
+-- joystick
+local joy = Instance.new("Frame", gui)
+joy.Size = UDim2.new(0,100,0,100)
+joy.Position = UDim2.new(0,20,1,-120)
+joy.BackgroundColor3 = Color3.fromRGB(40,40,40)
+joy.BackgroundTransparency = 0.3
+Instance.new("UICorner", joy)
+
+local knob = Instance.new("Frame", joy)
+knob.Size = UDim2.new(0,40,0,40)
+knob.Position = UDim2.new(0.3,0,0.3,0)
+knob.BackgroundColor3 = Color3.fromRGB(0,255,200)
+Instance.new("UICorner", knob)
+
+knob.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch then dragging = true end
+end)
+
+knob.InputEnded:Connect(function()
+    dragging = false
+    moveVec = Vector3.new()
+    knob.Position = UDim2.new(0.3,0,0.3,0)
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.Touch then
+        local delta = (input.Position - joy.AbsolutePosition) - joy.AbsoluteSize/2
+        local x = math.clamp(delta.X/40, -1, 1)
+        local y = math.clamp(delta.Y/40, -1, 1)
+
+        moveVec = Vector3.new(x,0,y)
+        knob.Position = UDim2.new(0.3 + x*0.3,0,0.3 + y*0.3,0)
+    end
+end)
+
+UIS.TouchMoved:Connect(function(input)
+    if freecam then
+        local cam = workspace.CurrentCamera
+        camCF = camCF * CFrame.Angles(0, -input.Delta.X*0.002, 0)
+    end
+end)
+
+freecamBtn.MouseButton1Click:Connect(function()
+    freecam = not freecam
+    freecamBtn.Text = "👻 Free Cam: " .. (freecam and "ON" or "OFF")
+
+    local cam = workspace.CurrentCamera
+    if freecam then
+        cam.CameraType = Enum.CameraType.Scriptable
+        camCF = cam.CFrame
+    else
+        local char = player.Character
+        if char and char:FindFirstChild("Humanoid") then
+            cam.CameraType = Enum.CameraType.Custom
+            cam.CameraSubject = char.Humanoid
+        end
+    end
+end)
+
+RS.RenderStepped:Connect(function()
+    if not freecam then return end
+
+    local cam = workspace.CurrentCamera
+    local forward = cam.CFrame.LookVector * -moveVec.Z
+    local right = cam.CFrame.RightVector * moveVec.X
+
+    camCF = camCF + (forward + right) * camSpeed
+    cam.CFrame = camCF
+end)
