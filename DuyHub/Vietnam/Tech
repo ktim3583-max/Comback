@@ -1,0 +1,252 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "DuyXD hub | tsb tech - v 1",
+   Icon = 116156322599966, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   LoadingTitle = "Loading...",
+   LoadingSubtitle = "by DuyXD",
+   ShowText = "Yo bro", -- for mobile users to unhide Rayfield, change if you'd like
+   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+
+   ToggleUIKeybind = "g", -- The keybind to toggle the UI visibility (string like "K" or Enum.KeyCode)
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false, -- Prevents Rayfield from emitting warnings when the script has a version mismatch with the interface.
+
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "Big Hub"
+   },
+
+   Discord = {
+      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "noinvitelink", -- The Discord invite code, do not include Discord.gg/. E.g. Discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the Discord every time they load it up
+   },
+
+   KeySystem = true, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Get key",
+      Subtitle = "Key System",
+      Note = "key : DuyXD", -- Use this to tell the user how to get a ke
+      FileName = "Key", -- It is recommended to use something unique, as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"DuyXD"} -- List of keys that the system will accept, can be RAW file links (pastebin, github, etc.) or simple strings ("DuyDepTrai", "hhhh")
+   }
+})
+
+local Tab = Window:CreateTab("all charchater", 123580799570140) -- Title, Image
+
+local Section = Tab:CreateSection("all")
+
+local Button = Tab:CreateButton({
+   Name = "instant twisted",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/InstantTwistedRevamp/refs/heads/main/Protected_7455521176683315.lua"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "supa tech",
+   Callback = function()
+   loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-Supa-tech-v2-77454"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "K1NG tech",
+   Callback = function()
+   loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/db1e974cdf7fab0c8fc113c38350c94ed7d7466d617bb372e44f6acdd5fce0ea/download"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Oreo tech",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/letuankiet09812345-cmyk/Testkiba/refs/heads/main/Oreo%20Tech%20Script%20By%20YQANTG.txt"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "backdash cancel",
+   Callback = function()
+   getgenv().keybind = "E" -- For PC users, set this to any key you want
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/BackDashCancel/refs/heads/main/Protected_8787792836664625.lua"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "kiba tech",
+   Callback = function()
+   loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-Yqantg-51718"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Meow tech",
+   Callback = function()
+   loadstring(game:HttpGet("https://pastefy.app/ygCp4EZL/raw"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "VexRQ tech",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/sigmavexr/SIGMA-VEXRQ-TECH/refs/heads/main/VEXRQ"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Tab = Window:CreateTab("Garou", 124813605598337) -- Title, Image
+
+local Section = Tab:CreateSection("Tech")
+
+local Button = Tab:CreateButton({
+   Name = "instant twisted",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/InstantTwistedRevamp/refs/heads/main/Protected_7455521176683315.lua"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Surfing tech",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/GarouSurfingTech/refs/heads/main/Protected_2674673126232747.lua"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "instant lethal dash",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/InstantLethal/refs/heads/main/Protected_5983112998592296.lua"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "lethal kiba tech",
+   Callback = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/letuankiet09812345-cmyk/Testkiba/refs/heads/main/kwjbvlaoof-obfuscated.lua.txt"))()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Kyoto combo",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/sigmavexr/AUTO-KYOTO-SATURN-HUB/refs/heads/main/AUTO%20KYOTO"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Tab = Window:CreateTab("misc", 78528914598778) -- Title, Image
+
+local Section = Tab:CreateSection("sever")
+
+local Button = Tab:CreateButton({
+   Name = "server hop",
+   Callback = function()
+   local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+
+local placeId = game.PlaceId
+
+-- lấy danh sách server public
+local url = "https://games.roblox.com/v1/games/"..placeId.."/servers/Public?sortOrder=Asc&limit=100"
+
+local response = game:HttpGet(url)
+local data = HttpService:JSONDecode(response)
+
+-- chọn server ngẫu nhiên
+local servers = data.data
+
+if #servers > 0 then
+    local randomServer = servers[math.random(1, #servers)]
+    
+    TeleportService:TeleportToPlaceInstance(
+        placeId,
+        randomServer.id,
+        Players.LocalPlayer
+    )
+end
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "join low player sever",
+   Callback = function()
+   local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+
+local placeId = game.PlaceId
+
+local url = "https://games.roblox.com/v1/games/"..placeId.."/servers/Public?sortOrder=Asc&limit=100"
+
+local success, result = pcall(function()
+    return HttpService:JSONDecode(game:HttpGet(url))
+end)
+
+if success and result and result.data then
+    local bestServer = nil
+
+    -- tìm server ít người nhất
+    for _, server in pairs(result.data) do
+        if server.playing < server.maxPlayers then
+            if not bestServer or server.playing < bestServer.playing then
+                bestServer = server
+            end
+        end
+    end
+
+    if bestServer then
+        TeleportService:TeleportToPlaceInstance(placeId, bestServer.id, Players.LocalPlayer)
+    else
+        warn("Không tìm thấy server phù hợp")
+    end
+else
+    warn("Không lấy được danh sách server")
+end
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "rejoin",
+   Callback = function()
+   local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+
+TeleportService:TeleportToPlaceInstance(
+    game.PlaceId,
+    game.JobId,
+    player
+)
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Section = Tab:CreateSection("other")
+
+local Button = Tab:CreateButton({
+   Name = "aim lock",
+   Callback = function()
+   loadstring(game:HttpGet("https://pastefy.app/V39HCgDD/raw"))();
+   -- The function that takes place when the button is pressed
+   end,
+})
