@@ -1,40 +1,94 @@
 local player = game.Players.LocalPlayer
-local UIS = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
---// GUI ROOT (QUAN TRỌNG)
+-- GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "DuyXD_Hub"
+gui.Name = "DuyXD_Aim"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
---================ AIM BUTTON =================--
 local aimBtn = Instance.new("TextButton", gui)
 aimBtn.Size = UDim2.new(0,140,0,40)
-aimBtn.Position = UDim2.new(0,20,0,120)
+
+-- 📍 cao hơn ~2.5 lần
+aimBtn.Position = UDim2.new(0,10,0,5)
+
 aimBtn.Text = "AIM : OFF"
 aimBtn.TextColor3 = Color3.new(1,1,1)
 aimBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
 aimBtn.Font = Enum.Font.Arcade
 aimBtn.TextScaled = true
 
---================ SAFE BUTTON =================--
-local safeBtn = Instance.new("TextButton", gui)
-safeBtn.Size = UDim2.new(0,140,0,40)
-safeBtn.Position = UDim2.new(0,20,0,180)
-safeBtn.Text = "SAFE IN 4S"
-safeBtn.TextColor3 = Color3.new(1,1,1)
-safeBtn.BackgroundColor3 = Color3.fromRGB(50,120,255)
-safeBtn.Font = Enum.Font.Arcade
-safeBtn.TextScaled = true
+-- AIM
+local aimOn = false
 
---================ DRAG FUNCTION =================--
-local function makeDraggable(btn)
-	local dragging = false
-	local dragStart, startPos
+local function getNearest()
+	local closest, dist = nil, math.huge
+	for _,v in pairs(game.Players:GetPlayers()) do
+		if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+			local d = (player.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude
+			if d < dist then
+				dist = d
+				closest = v
+			end
+		end
+	end
+	return closest
+end
 
-	btn.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+aimBtn.MouseButton1Click:Connect(function()
+	aimOn = not aimOn
+
+	if aimOn then
+		aimBtn.Text = "AIM : ON"
+		aimBtn.BackgroundColor3 = Color3.fromRGB(50,200,50)
+	else
+		aimBtn.Text = "AIM : OFF"
+		aimBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
+	end
+end)
+
+-- LOOP
+RunService.RenderStepped:Connect(function()
+	local char = player.Character
+	if not char then return end
+
+	local root = char:FindFirstChild("HumanoidRootPart")
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if not root or not hum then return end
+
+	-- 🎯 AIM LOCK
+	if aimOn then
+		local target = getNearest()
+		if target and target.Character then
+			local tRoot = target.Character:FindFirstChild("HumanoidRootPart")
+			if tRoot then
+				root.CFrame = CFrame.new(
+					root.Position,
+					Vector3.new(tRoot.Position.X, root.Position.Y, tRoot.Position.Z)
+				)
+			end
+		end
+	end
+
+	-- 🏃 ANTI SLOW
+	if hum.WalkSpeed < 16 then
+		hum.WalkSpeed = 16
+	end
+
+	-- 🎥 ANTI CAMERA LOCK
+	local cam = workspace.CurrentCamera
+	if cam.CameraType ~= Enum.CameraType.Custom then
+		cam.CameraType = Enum.CameraType.Custom
+	end
+
+	-- ⚡ ANTI DASH COOLDOWN (basic)
+	for _,v in pairs(char:GetChildren()) do
+		if v:IsA("NumberValue") and string.lower(v.Name):find("cooldown") then
+			v.Value = 0
+		end
+	end
+end)		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			dragging = true
 			dragStart = input.Position
 			startPos = btn.Position
