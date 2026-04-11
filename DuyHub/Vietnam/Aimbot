@@ -1,0 +1,115 @@
+local player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "DuyXD_Aim"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local aimBtn = Instance.new("TextButton", gui)
+aimBtn.Size = UDim2.new(0,140,0,40)
+
+-- 📍 giữ nguyên = 5 (không nhân)
+aimBtn.Position = UDim2.new(0,10,0,5)
+
+aimBtn.Text = "AIM : OFF"
+aimBtn.TextColor3 = Color3.new(1,1,1)
+aimBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
+aimBtn.Font = Enum.Font.Arcade
+aimBtn.TextScaled = true
+
+-- TOGGLE
+local aimOn = false
+
+aimBtn.MouseButton1Click:Connect(function()
+	aimOn = not aimOn
+
+	if aimOn then
+		aimBtn.Text = "AIM : ON"
+		aimBtn.BackgroundColor3 = Color3.fromRGB(50,200,50)
+	else
+		aimBtn.Text = "AIM : OFF"
+		aimBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
+	end
+end)
+
+-- 🎯 FIND TARGET (PLAYER + DUMMY)
+local function getNearest()
+	local closest = nil
+	local dist = math.huge
+
+	local myChar = player.Character
+	if not myChar or not myChar:FindFirstChild("HumanoidRootPart") then return nil end
+
+	local myPos = myChar.HumanoidRootPart.Position
+
+	-- PLAYER
+	for _,v in pairs(game.Players:GetPlayers()) do
+		if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+			local pos = v.Character.HumanoidRootPart.Position
+			local d = (myPos - pos).Magnitude
+
+			if d < dist then
+				dist = d
+				closest = v.Character.HumanoidRootPart
+			end
+		end
+	end
+
+	-- DUMMY / NPC
+	for _,v in pairs(workspace:GetDescendants()) do
+		if v:IsA("Model") and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") then
+			if v ~= myChar then
+				local pos = v.HumanoidRootPart.Position
+				local d = (myPos - pos).Magnitude
+
+				if d < dist then
+					dist = d
+					closest = v.HumanoidRootPart
+				end
+			end
+		end
+	end
+
+	return closest
+end
+
+-- LOOP
+RunService.RenderStepped:Connect(function()
+	local char = player.Character
+	if not char then return end
+
+	local root = char:FindFirstChild("HumanoidRootPart")
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if not root or not hum then return end
+
+	-- 🎯 AIM
+	if aimOn then
+		local target = getNearest()
+		if target then
+			root.CFrame = CFrame.new(
+				root.Position,
+				Vector3.new(target.Position.X, root.Position.Y, target.Position.Z)
+			)
+		end
+	end
+
+	-- 🏃 ANTI SLOW
+	if hum.WalkSpeed < 16 then
+		hum.WalkSpeed = 16
+	end
+
+	-- 🎥 ANTI CAMERA LOCK
+	local cam = workspace.CurrentCamera
+	if cam.CameraType ~= Enum.CameraType.Custom then
+		cam.CameraType = Enum.CameraType.Custom
+	end
+
+	-- ⚡ ANTI COOLDOWN
+	for _,v in pairs(char:GetChildren()) do
+		if v:IsA("NumberValue") and string.lower(v.Name):find("cooldown") then
+			v.Value = 0
+		end
+	end
+end)
