@@ -1,2 +1,134 @@
-loadstring(game:HttpGet("https://pastefy.app/jFQr1556/raw"))();
-loadstring(game:HttpGet("https://pastefy.app/zQZ1w8AW/raw"))();
+local player = game.Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+--// GUI ROOT (QUAN TRỌNG)
+local gui = Instance.new("ScreenGui")
+gui.Name = "DuyXD_Hub"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+--================ AIM BUTTON =================--
+local aimBtn = Instance.new("TextButton", gui)
+aimBtn.Size = UDim2.new(0,140,0,40)
+aimBtn.Position = UDim2.new(0,20,0,120)
+aimBtn.Text = "AIM : OFF"
+aimBtn.TextColor3 = Color3.new(1,1,1)
+aimBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
+aimBtn.Font = Enum.Font.Arcade
+aimBtn.TextScaled = true
+
+--================ SAFE BUTTON =================--
+local safeBtn = Instance.new("TextButton", gui)
+safeBtn.Size = UDim2.new(0,140,0,40)
+safeBtn.Position = UDim2.new(0,20,0,180)
+safeBtn.Text = "SAFE IN 4S"
+safeBtn.TextColor3 = Color3.new(1,1,1)
+safeBtn.BackgroundColor3 = Color3.fromRGB(50,120,255)
+safeBtn.Font = Enum.Font.Arcade
+safeBtn.TextScaled = true
+
+--================ DRAG FUNCTION =================--
+local function makeDraggable(btn)
+	local dragging = false
+	local dragStart, startPos
+
+	btn.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			dragStart = input.Position
+			startPos = btn.Position
+		end
+	end)
+
+	UIS.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local delta = input.Position - dragStart
+			btn.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
+		end
+	end)
+
+	UIS.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+end
+
+makeDraggable(aimBtn)
+makeDraggable(safeBtn)
+
+--================ AIM SYSTEM =================--
+local aimOn = false
+
+local function getNearest()
+	local closest, dist = nil, math.huge
+
+	for _,v in pairs(game.Players:GetPlayers()) do
+		if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+			local d = (player.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude
+			if d < dist then
+				dist = d
+				closest = v
+			end
+		end
+	end
+
+	return closest
+end
+
+aimBtn.MouseButton1Click:Connect(function()
+	aimOn = not aimOn
+
+	if aimOn then
+		aimBtn.Text = "AIM : ON"
+		aimBtn.BackgroundColor3 = Color3.fromRGB(50,200,50)
+	else
+		aimBtn.Text = "AIM : OFF"
+		aimBtn.BackgroundColor3 = Color3.fromRGB(200,50,50)
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if aimOn and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+		local target = getNearest()
+		if target and target.Character then
+			local myRoot = player.Character.HumanoidRootPart
+			local targetPos = target.Character.HumanoidRootPart.Position
+
+			myRoot.CFrame = CFrame.new(
+				myRoot.Position,
+				Vector3.new(targetPos.X, myRoot.Position.Y, targetPos.Z)
+			)
+		end
+	end
+end)
+
+--================ SAFE SYSTEM =================--
+safeBtn.MouseButton1Click:Connect(function()
+	local char = player.Character
+	if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+
+	local root = char.HumanoidRootPart
+	local oldPos = root.CFrame
+
+	local part = Instance.new("Part")
+	part.Size = Vector3.new(12,1,12)
+	part.Anchored = true
+	part.CanCollide = true
+	part.Color = Color3.fromRGB(255,0,0)
+	part.Position = root.Position + Vector3.new(0,10,0)
+	part.Parent = workspace
+
+	root.CFrame = part.CFrame + Vector3.new(0,3,0)
+
+	task.wait(4)
+
+	root.CFrame = oldPos
+	part:Destroy()
+end)
