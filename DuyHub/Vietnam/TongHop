@@ -137,11 +137,17 @@ AddScript("Blox Fruit", "Longhihi", 'loadstring(game:HttpGet("https://raw.github
 AddScript("Blox Fruit", "Mukuro Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/DonateMe/main/Script.lua"))()')
 AddScript("Blox Fruit", "Thunder Z", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Chiseno/Aurora/main/Aurora.lua"))()')
 AddScript("Blox Fruit", "Auto Fruits", 'loadstring(game:HttpGet("https://pastefy.app/4yLdMHks/raw"))()')
+AddScript("Blox Fruit", "night hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Mei2202/NightHub/main/Main"))()')
+AddScript("Blox Fruit", "QuanTum hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/H20_Hub/Quantum-Hub/main/Main.lua"))()')
+AddScript("Blox Fruit", "leaf hub", 'loadstring(game:HttpGet("loadstring(game:HttpGet("https://raw.githubusercontent.com/notpoiu/LeafHub/main/main.lua"))()')
+AddScript("Blox Fruit", "Auto Fruits", 'loadstring(game:HttpGet("loadstring(game:HttpGet("https://raw.githubusercontent.com/Bacon-Cuti/BaconHub/main/Main.lua"))()')
 
 -- TSB
 AddScript("TSB", "DuyXD Hub (TSB)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tsb"))()')
 AddScript("TSB", "Aimbot (All)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))()')
 AddScript("TSB", "Invisible", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))()')
+AddScript("TSB", "invisible (no hibox) ", 'loadstring(game:HttpGet("https://pastefy.app/kVt1CN1F/raw"))()')
+AddScript("TSB", "fly bypass", 'loadstring(game:HttpGet("https://pastefy.app/rQCL3I0Q/raw"))()')
 
 -- SAILOR
 AddScript("Sailor", "Alex Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))()')
