@@ -119,6 +119,7 @@ end)
 -- Functions
 check.MouseButton1Click:Connect(function()
 	if box.Text == "Hack_DuyXD" then
+gui:Destroy()
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/TongHop"))()
 	else
 		box.Text = "không đúng key"
