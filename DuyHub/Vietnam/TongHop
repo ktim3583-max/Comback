@@ -127,7 +127,7 @@ AddScript("All Game", "Fix Lag", 'loadstring(game:HttpGet("https://raw.githubuse
 AddScript("All Game", "Wallhop", 'loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fake-Ladder-Flick-And-Wallhop-Script-37199"))()')
 
 -- BLOX FRUIT
-AddScript("All Game", "67 Tổng Hợp", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))()')
+AddScript("Blox Fruit", "67 Tổng Hợp", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))()')
 AddScript("Blox Fruit", "Banana Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/aloaloalo322/sssdas/refs/heads/main/cc"))()')
 AddScript("Blox Fruit", "Dua Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/HauScriptDev/SabNew/refs/heads/main/NewUpdate"))()')
 AddScript("Blox Fruit", "Redz Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/REDZHUB/BloxFruits/main/main.lua"))()')
@@ -140,7 +140,8 @@ AddScript("Blox Fruit", "Auto Fruits", 'loadstring(game:HttpGet("https://pastefy
 
 -- TSB
 AddScript("TSB", "DuyXD Hub (TSB)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tsb"))()')
-AddScript("All Game", "Aimbot (All)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))()')
+AddScript("TSB", "Aimbot (All)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))()')
+AddScript("TSB", "Invisible", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))()')
 
 -- SAILOR
 AddScript("Sailor", "Alex Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))()')
