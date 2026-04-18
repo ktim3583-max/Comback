@@ -1,0 +1,137 @@
+--// DuyXD Key GUI
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "DuyXD_KeySystem"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+-- Main Frame
+local main = Instance.new("Frame")
+main.Parent = gui
+main.Size = UDim2.new(0, 320, 0, 180)
+main.Position = UDim2.new(0.5, -160, 0.5, -90)
+main.BackgroundColor3 = Color3.fromRGB(125,125,125)
+main.BorderSizePixel = 0
+
+local corner = Instance.new("UICorner", main)
+corner.CornerRadius = UDim.new(0,12)
+
+local stroke = Instance.new("UIStroke", main)
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(0,170,255)
+stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+-- Neon effect
+local glow = Instance.new("UIGradient", stroke)
+glow.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(0,255,255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(0,100,255))
+}
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Parent = main
+title.Size = UDim2.new(1,0,0,35)
+title.BackgroundTransparency = 1
+title.Text = "Get Key"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 22
+title.TextColor3 = Color3.fromRGB(255,255,255)
+
+-- TextBox
+local box = Instance.new("TextBox")
+box.Parent = main
+box.Size = UDim2.new(0,280,0,35)
+box.Position = UDim2.new(0.5,-140,0,50)
+box.BackgroundColor3 = Color3.fromRGB(90,90,90)
+box.TextColor3 = Color3.fromRGB(255,255,255)
+box.PlaceholderText = "enter key..."
+box.Text = ""
+box.Font = Enum.Font.Gotham
+box.TextSize = 16
+box.ClearTextOnFocus = false
+
+local boxCorner = Instance.new("UICorner", box)
+boxCorner.CornerRadius = UDim.new(0,8)
+
+-- Check Key Button
+local check = Instance.new("TextButton")
+check.Parent = main
+check.Size = UDim2.new(0,130,0,35)
+check.Position = UDim2.new(0,20,0,105)
+check.BackgroundColor3 = Color3.fromRGB(0,170,255)
+check.Text = "check key"
+check.TextColor3 = Color3.fromRGB(255,255,255)
+check.Font = Enum.Font.GothamBold
+check.TextSize = 16
+
+local c1 = Instance.new("UICorner", check)
+c1.CornerRadius = UDim.new(0,8)
+
+-- Get Key Button
+local get = Instance.new("TextButton")
+get.Parent = main
+get.Size = UDim2.new(0,130,0,35)
+get.Position = UDim2.new(1,-150,0,105)
+get.BackgroundColor3 = Color3.fromRGB(0,170,255)
+get.Text = "get key"
+get.TextColor3 = Color3.fromRGB(255,255,255)
+get.Font = Enum.Font.GothamBold
+get.TextSize = 16
+
+local c2 = Instance.new("UICorner", get)
+c2.CornerRadius = UDim.new(0,8)
+
+-- Drag GUI
+local dragging = false
+local dragStart, startPos
+
+title.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = main.Position
+	end
+end)
+
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		main.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+-- Functions
+check.MouseButton1Click:Connect(function()
+	if box.Text == "Hack_DuyXD" then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/TongHop"))()
+	else
+		box.Text = "không đúng key"
+		task.wait(1)
+		box.Text = ""
+	end
+end)
+
+get.MouseButton1Click:Connect(function()
+	if setclipboard then
+		setclipboard("https://direct-link.net/5149016/GeV84ReJa3P2")
+	end
+	box.Text = "đã copy link!"
+	task.wait(1)
+	box.Text = ""
+end)
