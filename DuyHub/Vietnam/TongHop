@@ -119,16 +119,18 @@ end
 CreateTabBtn("All Game")
 CreateTabBtn("Blox Fruit")
 CreateTabBtn("TSB")
-CreateTabBtn("Sailor")
+CreateTabBtn("Sailor piece")
 
 -- [[ ĐỔ DỮ LIỆU SCRIPT VÀO KHUNG BÊN PHẢI ]]
 -- ALL GAME
 AddScript("All Game", "Fix Lag", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/marianscriptKing/SUPER-MAX.lau/main/SUPER%20MAX%20PERFORMANCE"))()')
 AddScript("All Game", "Wallhop", 'loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fake-Ladder-Flick-And-Wallhop-Script-37199"))()')
+AddScript("All Game", "DeX", 'loadstring(game:HttpGet("https://gist.githubusercontent.com/DikaArdnt/d8dbfd939768a3563914e7a7605963b6/raw/70f44357b98d36376878c772e737119e7a89e02c/darkdexv4.lua"))()')
+AddScript("All Game", "infinite yield", 'loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()')
 
 -- BLOX FRUIT
 AddScript("Blox Fruit", "67 Tổng Hợp", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))()')
-AddScript("Blox Fruit", "Banana Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/aloaloalo322/sssdas/refs/heads/main/cc"))()')
+AddScript("Blox Fruit", "Banana Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/aloaloalo322/ssrefs/heads/main/cc"))()')
 AddScript("Blox Fruit", "Dua Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/HauScriptDev/SabNew/refs/heads/main/NewUpdate"))()')
 AddScript("Blox Fruit", "Redz Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/REDZHUB/BloxFruits/main/main.lua"))()')
 AddScript("Blox Fruit", "Blue X Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/anhthwroblox/script/refs/heads/main/scriptbluehub.text"))()')
@@ -148,6 +150,8 @@ AddScript("TSB", "Aimbot (All)", 'loadstring(game:HttpGet("https://raw.githubuse
 AddScript("TSB", "Invisible", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))()')
 AddScript("TSB", "invisible (no hibox) ", 'loadstring(game:HttpGet("https://pastefy.app/kVt1CN1F/raw"))()')
 AddScript("TSB", "fly bypass", 'loadstring(game:HttpGet("https://pastefy.app/rQCL3I0Q/raw"))()')
+AddScript("TSB", "tp to low health ", 'loadstring(game:HttpGet("https://pastefy.app/QTdPdQjo/raw"))()')
+AddScript("TSB", "instant void kill ", 'loadstring(game:HttpGet("https://pastefy.app/qYCNHHmy/raw"))()')
 
 -- SAILOR
 AddScript("Sailor", "Alex Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))()')
