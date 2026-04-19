@@ -6,15 +6,15 @@ local UIStroke = Instance.new("UIStroke")
 local Title = Instance.new("TextLabel")
 local TabHolder = Instance.new("Frame")
 local TabList = Instance.new("UIListLayout")
-local ContentHolder = Instance.new("ScrollingFrame") -- Vùng chứa script bên phải
+local ContentHolder = Instance.new("ScrollingFrame")
 local ContentList = Instance.new("UIListLayout")
 local OpenBtn = Instance.new("TextButton")
 
-ScreenGui.Name = "DuyHub_Horizontal_Fix"
+ScreenGui.Name = "DuyHub_Horizontal_Fix_V2"
 ScreenGui.Parent = game.CoreGui
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- [[ HÀM KÉO THẢ ]]
+-- [[ HÀM KÉO THẢ MƯỢT ]]
 local function MakeDraggable(obj)
     local dragging, dragInput, dragStart, startPos
     obj.InputBegan:Connect(function(input)
@@ -37,7 +37,7 @@ MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
 MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-MainFrame.Size = UDim2.new(0, 500, 0, 300) -- Hình chữ nhật ngang
+MainFrame.Size = UDim2.new(0, 500, 0, 300)
 MainFrame.Active = true
 MakeDraggable(MainFrame)
 
@@ -55,7 +55,7 @@ Title.TextSize = 22
 Title.Font = Enum.Font.GothamBold
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- Thanh chứa Tab (Bên trái) - Đúng như ảnh của bạn
+-- Thanh chứa Tab
 TabHolder.Name = "TabHolder"
 TabHolder.Parent = MainFrame
 TabHolder.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
@@ -64,11 +64,11 @@ TabHolder.Size = UDim2.new(0, 120, 0, 220)
 local TabCorner = Instance.new("UICorner") ; TabCorner.Parent = TabHolder
 TabList.Parent = TabHolder; TabList.Padding = UDim.new(0, 10); TabList.HorizontalAlignment = Enum.HorizontalAlignment.Center; TabList.SortOrder = Enum.SortOrder.LayoutOrder
 
--- Khung chứa Script (Bên phải) - Nơi hiện các nút bấm thực thi
+-- Khung chứa Script (Bên phải)
 ContentHolder.Name = "ContentHolder"
 ContentHolder.Parent = MainFrame
 ContentHolder.BackgroundTransparency = 1
-ContentHolder.Position = UDim2.new(0.32, 0, 0.2, 0) -- Đẩy sang bên phải vùng trống
+ContentHolder.Position = UDim2.new(0.32, 0, 0.2, 0)
 ContentHolder.Size = UDim2.new(0, 320, 0, 220)
 ContentHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
 ContentHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -90,7 +90,10 @@ local function AddScript(tabName, btnName, code)
     btn.Visible = false
     btn:SetAttribute("Tab", tabName)
     local bCorner = Instance.new("UICorner"); bCorner.Parent = btn
-    btn.MouseButton1Click:Connect(function() pcall(function() loadstring(code)() end) end)
+    btn.MouseButton1Click:Connect(function() 
+        local success, err = pcall(function() loadstring(code)() end)
+        if not success then warn("Lỗi thực thi script: " .. btnName .. " | " .. err) end
+    end)
 end
 
 -- [[ HÀM CHUYỂN TAB ]]
@@ -119,43 +122,43 @@ end
 CreateTabBtn("All Game")
 CreateTabBtn("Blox Fruit")
 CreateTabBtn("TSB")
-CreateTabBtn("Sailor piece")
+CreateTabBtn("Sailor")
 
--- [[ ĐỔ DỮ LIỆU SCRIPT VÀO KHUNG BÊN PHẢI ]]
--- ALL GAME
-AddScript("All Game", "Fix Lag", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/marianscriptKing/SUPER-MAX.lau/main/SUPER%20MAX%20PERFORMANCE"))()')
-AddScript("All Game", "Wallhop", 'loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fake-Ladder-Flick-And-Wallhop-Script-37199"))()')
-AddScript("All Game", "DeX", 'loadstring(game:HttpGet("https://gist.githubusercontent.com/DikaArdnt/d8dbfd939768a3563914e7a7605963b6/raw/70f44357b98d36376878c772e737119e7a89e02c/darkdexv4.lua"))()')
-AddScript("All Game", "infinite yield", 'loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()')
+-- [[ ĐỔ DỮ LIỆU SCRIPT ]]
+-- TAB: All Game
+AddScript("All Game", "Fix Lag", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/marianscriptKing/SUPER-MAX.lau/main/SUPER%20MAX%20PERFORMANCE"))()]])
+AddScript("All Game", "Wallhop", [[loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fake-Ladder-Flick-And-Wallhop-Script-37199"))()]])
+AddScript("All Game", "DeX", [[loadstring(game:HttpGet("https://gist.githubusercontent.com/DikaArdnt/d8dbfd939768a3563914e7a7605963b6/raw/70f44357b98d36376878c772e737119e7a89e02c/darkdexv4.lua"))()]])
+AddScript("All Game", "Infinite Yield", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()]])
 
--- BLOX FRUIT
-AddScript("Blox Fruit", "67 Tổng Hợp", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))()')
-AddScript("Blox Fruit", "Banana Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/aloaloalo322/ssrefs/heads/main/cc"))()')
-AddScript("Blox Fruit", "Dua Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/HauScriptDev/SabNew/refs/heads/main/NewUpdate"))()')
-AddScript("Blox Fruit", "Redz Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/REDZHUB/BloxFruits/main/main.lua"))()')
-AddScript("Blox Fruit", "Blue X Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/anhthwroblox/script/refs/heads/main/scriptbluehub.text"))()')
-AddScript("Blox Fruit", "Auto Bounty", 'loadstring(game:HttpGet("https://pastefy.app/fjQMC3T9/raw"))()')
-AddScript("Blox Fruit", "Longhihi", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/longhihilonghihi-hub/Devs-LongHiHiV2/refs/heads/main/MainV2.txt"))()')
-AddScript("Blox Fruit", "Mukuro Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/DonateMe/main/Script.lua"))()')
-AddScript("Blox Fruit", "Thunder Z", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Chiseno/Aurora/main/Aurora.lua"))()')
-AddScript("Blox Fruit", "Auto Fruits", 'loadstring(game:HttpGet("https://pastefy.app/4yLdMHks/raw"))()')
-AddScript("Blox Fruit", "night hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Mei2202/NightHub/main/Main"))()')
-AddScript("Blox Fruit", "QuanTum hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/H20_Hub/Quantum-Hub/main/Main.lua"))()')
-AddScript("Blox Fruit", "leaf hub", 'loadstring(game:HttpGet("loadstring(game:HttpGet("https://raw.githubusercontent.com/notpoiu/LeafHub/main/main.lua"))()')
-AddScript("Blox Fruit", "Auto Fruits", 'loadstring(game:HttpGet("loadstring(game:HttpGet("https://raw.githubusercontent.com/Bacon-Cuti/BaconHub/main/Main.lua"))()')
+-- TAB: Blox Fruit
+AddScript("Blox Fruit", "67 Tổng Hợp", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))()]])
+AddScript("Blox Fruit", "Banana Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/aloaloalo322/ssRefs/heads/main/cc"))()]])
+AddScript("Blox Fruit", "Dua Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/HauScriptDev/SabNew/refs/heads/main/NewUpdate"))()]])
+AddScript("Blox Fruit", "Redz Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/REDZHUB/BloxFruits/main/main.lua"))()]])
+AddScript("Blox Fruit", "Blue X Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/anhthwroblox/script/refs/heads/main/scriptbluehub.text"))()]])
+AddScript("Blox Fruit", "Auto Bounty", [[loadstring(game:HttpGet("https://pastefy.app/fjQMC3T9/raw"))()]])
+AddScript("Blox Fruit", "Longhihi", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/longhihilonghihi-hub/Devs-LongHiHiV2/refs/heads/main/MainV2.txt"))()]])
+AddScript("Blox Fruit", "Mukuro Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/DonateMe/main/Script.lua"))()]])
+AddScript("Blox Fruit", "Thunder Z", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Chiseno/Aurora/main/Aurora.lua"))()]])
+AddScript("Blox Fruit", "Auto Fruits", [[loadstring(game:HttpGet("https://pastefy.app/4yLdMHks/raw"))()]])
+AddScript("Blox Fruit", "Night Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Mei2202/NightHub/main/Main"))()]])
+AddScript("Blox Fruit", "QuanTum Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/H20_Hub/Quantum-Hub/main/Main.lua"))()]])
+AddScript("Blox Fruit", "Leaf Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/notpoiu/LeafHub/main/main.lua"))()]])
+AddScript("Blox Fruit", "Bacon Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Bacon-Cuti/BaconHub/main/Main.lua"))()]])
 
--- TSB
-AddScript("TSB", "DuyXD Hub (TSB)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tsb"))()')
-AddScript("TSB", "Aimbot (All)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))()')
-AddScript("TSB", "Invisible", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))()')
-AddScript("TSB", "invisible (no hibox) ", 'loadstring(game:HttpGet("https://pastefy.app/kVt1CN1F/raw"))()')
-AddScript("TSB", "fly bypass", 'loadstring(game:HttpGet("https://pastefy.app/rQCL3I0Q/raw"))()')
-AddScript("TSB", "tp to low health ", 'loadstring(game:HttpGet("https://pastefy.app/QTdPdQjo/raw"))()')
-AddScript("TSB", "instant void kill ", 'loadstring(game:HttpGet("https://pastefy.app/qYCNHHmy/raw"))()')
+-- TAB: TSB
+AddScript("TSB", "DuyXD Hub (TSB)", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tsb"))()]])
+AddScript("TSB", "Aimbot (All)", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))()]])
+AddScript("TSB", "Invisible", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))()]])
+AddScript("TSB", "Invisible (No Hitbox)", [[loadstring(game:HttpGet("https://pastefy.app/kVt1CN1F/raw"))()]])
+AddScript("TSB", "Fly Bypass", [[loadstring(game:HttpGet("https://pastefy.app/rQCL3I0Q/raw"))()]])
+AddScript("TSB", "TP Low Health", [[loadstring(game:HttpGet("https://pastefy.app/QTdPdQjo/raw"))()]])
+AddScript("TSB", "Instant Void Kill", [[loadstring(game:HttpGet("https://pastefy.app/qYCNHHmy/raw"))()]])
 
--- SAILOR
-AddScript("Sailor", "Alex Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))()')
-AddScript("Sailor", "Hulk Hub", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/BestScript-netizen/Hulk.Script/refs/heads/main/SailorPiece"))()')
+-- TAB: Sailor
+AddScript("Sailor", "Alex Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))()]])
+AddScript("Sailor", "Hulk Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/BestScript-netizen/Hulk.Script/refs/heads/main/SailorPiece"))()]])
 
 -- Mặc định hiện All Game
 ShowTab("All Game")
