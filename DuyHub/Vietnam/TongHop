@@ -1,16 +1,22 @@
--- [[ KHỞI TẠO GUI ]]
+-- [[ KHỞI TẠO SERVICES ]]
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local lp = Players.LocalPlayer
+local MCFont = Enum.Font.Arcade
+
+-- [[ KHOI TAO GUI ]]
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local UICorner = Instance.new("UICorner")
 local UIStroke = Instance.new("UIStroke")
 local Title = Instance.new("TextLabel")
-local TabHolder = Instance.new("Frame")
+local TabHolder = Instance.new("ScrollingFrame")
 local TabList = Instance.new("UIListLayout")
 local ContentHolder = Instance.new("ScrollingFrame")
 local ContentList = Instance.new("UIListLayout")
 local OpenBtn = Instance.new("TextButton")
 
-ScreenGui.Name = "DuyHub_Fix_V3"
+ScreenGui.Name = "DuyHub_Full_Minecraft"
 ScreenGui.Parent = game.CoreGui
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
@@ -35,102 +41,139 @@ end
 -- Cấu hình Main Frame
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
+MainFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-MainFrame.Size = UDim2.new(0, 500, 0, 300)
+MainFrame.Size = UDim2.new(0, 520, 0, 320)
 MainFrame.Active = true
 MakeDraggable(MainFrame)
 
-UICorner.CornerRadius = UDim.new(0, 15); UICorner.Parent = MainFrame
+UICorner.CornerRadius = UDim.new(0, 5); UICorner.Parent = MainFrame
 UIStroke.Color = Color3.fromRGB(255, 0, 0); UIStroke.Thickness = 3; UIStroke.Parent = MainFrame
 
 -- Tiêu đề
 Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
 Title.Position = UDim2.new(0, 20, 0, 10)
-Title.Size = UDim2.new(0, 300, 0, 40)
-Title.Text = "DUY HUB - TỔNG HỢP - V3"
+Title.Size = UDim2.new(0, 350, 0, 40)
+Title.Text = "DUY HUB - MINECRAFT V4"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 22
-Title.Font = Enum.Font.GothamBold
+Title.TextSize = 20
+Title.Font = MCFont
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- Thanh Tab
+-- Thanh Tab Cuộn (Bên trái)
 TabHolder.Name = "TabHolder"
 TabHolder.Parent = MainFrame
-TabHolder.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
-TabHolder.Position = UDim2.new(0.04, 0, 0.2, 0)
-TabHolder.Size = UDim2.new(0, 120, 0, 220)
-local TabCorner = Instance.new("UICorner") ; TabCorner.Parent = TabHolder
-TabList.Parent = TabHolder; TabList.Padding = UDim.new(0, 10); TabList.HorizontalAlignment = Enum.HorizontalAlignment.Center
+TabHolder.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TabHolder.Position = UDim2.new(0.03, 0, 0.18, 0)
+TabHolder.Size = UDim2.new(0, 130, 0, 240)
+TabHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+TabHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
+TabHolder.ScrollBarThickness = 3
+TabHolder.ScrollBarImageColor3 = Color3.fromRGB(255, 0, 0)
+TabHolder.BorderSizePixel = 0
+TabList.Parent = TabHolder; TabList.Padding = UDim.new(0, 8); TabList.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- Khung nội dung
+-- Khung Script Cuộn (Bên phải)
 ContentHolder.Name = "ContentHolder"
 ContentHolder.Parent = MainFrame
 ContentHolder.BackgroundTransparency = 1
-ContentHolder.Position = UDim2.new(0.32, 0, 0.2, 0)
-ContentHolder.Size = UDim2.new(0, 320, 0, 220)
+ContentHolder.Position = UDim2.new(0.31, 0, 0.18, 0)
+ContentHolder.Size = UDim2.new(0, 340, 0, 240)
 ContentHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
 ContentHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
 ContentHolder.ScrollBarThickness = 4
 ContentHolder.ScrollBarImageColor3 = Color3.fromRGB(255, 0, 0)
-
 ContentList.Parent = ContentHolder; ContentList.Padding = UDim.new(0, 8); ContentList.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- [[ HÀM TẠO NÚT ]]
-local function AddScript(tabName, btnName, code)
+-- [[ LOGIC KILL ALL MM2 ]]
+local KillAllActive = false
+local originalPositions = {}
+
+local function resetPositions()
+    for p, oldCFrame in pairs(originalPositions) do
+        if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            p.Character.HumanoidRootPart.CFrame = oldCFrame
+        end
+    end
+    originalPositions = {}
+end
+
+RunService.RenderStepped:Connect(function()
+    if KillAllActive then
+        local char = lp.Character
+        local holdsKnife = char and (char:FindFirstChild("Knife") or char:FindFirstChild("Weapon"))
+        if holdsKnife and char:FindFirstChild("HumanoidRootPart") then
+            local root = char.HumanoidRootPart
+            local targetPos = root.CFrame * CFrame.new(0, 0, -0.8)
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    if not originalPositions[p] then originalPositions[p] = p.Character.HumanoidRootPart.CFrame end
+                    p.Character.HumanoidRootPart.CFrame = targetPos
+                end
+            end
+        end
+    else
+        if next(originalPositions) ~= nil then resetPositions() end
+    end
+end)
+
+-- [[ HÀM TẠO NÚT SCRIPT ]]
+local function AddScript(tabName, btnName, code, isToggle)
     local btn = Instance.new("TextButton")
     btn.Parent = ContentHolder
     btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     btn.Size = UDim2.new(0.9, 0, 0, 40)
     btn.Text = btnName
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.Font = Enum.Font.GothamSemibold
+    btn.Font = MCFont
     btn.TextSize = 14
     btn.Visible = false
     btn:SetAttribute("Tab", tabName)
-    local bCorner = Instance.new("UICorner"); bCorner.Parent = btn
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+    
     btn.MouseButton1Click:Connect(function() 
-        local success, err = pcall(function() loadstring(code)() end)
-        if not success then warn("Lỗi: " .. err) end
+        if isToggle then
+            KillAllActive = not KillAllActive
+            btn.Text = "KILL ALL: " .. (KillAllActive and "ON" or "OFF")
+            btn.BackgroundColor3 = KillAllActive and Color3.fromRGB(200, 0, 0) or Color3.fromRGB(60, 60, 60)
+        else
+            pcall(function() loadstring(code)() end)
+        end
     end)
 end
 
 local function ShowTab(name)
     for _, obj in pairs(ContentHolder:GetChildren()) do
-        if obj:IsA("TextButton") then
-            obj.Visible = (obj:GetAttribute("Tab") == name)
-        end
+        if obj:IsA("TextButton") then obj.Visible = (obj:GetAttribute("Tab") == name) end
     end
 end
 
 local function CreateTabBtn(name)
     local tBtn = Instance.new("TextButton")
     tBtn.Parent = TabHolder
-    tBtn.Size = UDim2.new(0.9, 0, 0, 40)
-    tBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    tBtn.Size = UDim2.new(0.9, 0, 0, 35)
+    tBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
     tBtn.Text = name
     tBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    tBtn.Font = Enum.Font.GothamBold
+    tBtn.Font = MCFont
     tBtn.TextSize = 13
-    local tc = Instance.new("UICorner"); tc.Parent = tBtn
+    Instance.new("UICorner", tBtn).CornerRadius = UDim.new(0, 4)
     tBtn.MouseButton1Click:Connect(function() ShowTab(name) end)
 end
 
--- TẠO TAB (Lưu ý tên tab phải khớp)
-CreateTabBtn("All Game")
-CreateTabBtn("Blox Fruit")
-CreateTabBtn("TSB")
-CreateTabBtn("Sailor")
+-- TẠO TAB
+local Tabs = {"All Game", "Blox Fruit", "TSB", "Sailor", "MM2"}
+for _, name in pairs(Tabs) do CreateTabBtn(name) end
 
--- [[ ĐỔ DỮ LIỆU SCRIPT ]]
+-- [[ ĐỔ DỮ LIỆU ĐẦY ĐỦ ]]
 
 -- ALL GAME
 AddScript("All Game", "Fix Lag", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/marianscriptKing/SUPER-MAX.lau/main/SUPER%20MAX%20PERFORMANCE"))()]])
 AddScript("All Game", "Wallhop", [[loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fake-Ladder-Flick-And-Wallhop-Script-37199"))()]])
 AddScript("All Game", "DeX", [[loadstring(game:HttpGet("https://gist.githubusercontent.com/DikaArdnt/d8dbfd939768a3563914e7a7605963b6/raw/70f44357b98d36376878c772e737119e7a89e02c/darkdexv4.lua"))()]])
 AddScript("All Game", "Infinite Yield", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()]])
-AddScript("All Game", "font minecraft", [[loadstring(game:HttpGet("https://pastefy.app/2zyihzwi/raw"))()]])
+AddScript("All Game", "Font Minecraft", [[loadstring(game:HttpGet("https://pastefy.app/2zyihzwi/raw"))()]])
 
 -- BLOX FRUIT
 AddScript("Blox Fruit", "67 Tổng Hợp", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))()]])
@@ -157,24 +200,29 @@ AddScript("TSB", "DuyXD Hub (TSB)", [[loadstring(game:HttpGet("https://raw.githu
 AddScript("TSB", "Aimbot (All)", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))()]])
 AddScript("TSB", "Invisible", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))()]])
 AddScript("TSB", "Invisible (No Hitbox)", [[loadstring(game:HttpGet("https://pastefy.app/kVt1CN1F/raw"))()]])
-AddScript("TSB", "Fly Bypass", [[loadstring(game:HttpGet("https://pastefy.app/rQCL3I0Q/raw"))()]])
+AddScript("TSB", "Fly Bypass", [[loadstring(game:HttpGet("https://pastefy.app/goiHbD1g/raw"))()]])
 AddScript("TSB", "TP Low Health", [[loadstring(game:HttpGet("https://pastefy.app/QTdPdQjo/raw"))()]])
 AddScript("TSB", "Instant Void Kill", [[loadstring(game:HttpGet("https://pastefy.app/qYCNHHmy/raw"))()]])
+AddScript("TSB", "Anti Invisible", [[loadstring(game:HttpGet("https://pastefy.app/cd1f4W3J/raw"))()]])
 
--- SAILOR (Tab "Sailor" đã sửa khớp tên)
+-- SAILOR
 AddScript("Sailor", "Alex Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))()]])
 AddScript("Sailor", "Hulk Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/BestScript-netizen/Hulk.Script/refs/heads/main/SailorPiece"))()]])
 
--- Mặc định mở All Game
+-- MM2
+AddScript("MM2", "ESP GUI", [[loadstring(game:HttpGet("https://pastefy.app/Ct5oe139/raw"))()]])
+AddScript("MM2", "Aimbot GUI", [[loadstring(game:HttpGet("https://pastefy.app/IkKo1Urx/raw"))()]])
+AddScript("MM2", "KILL ALL: OFF", "", true) -- Toggle Kill All
+
 ShowTab("All Game")
 
 -- NÚT ĐÓNG/MỞ
-local CloseBtn = Instance.new("TextButton")
-CloseBtn.Parent = MainFrame; CloseBtn.Text = "X"; CloseBtn.Position = UDim2.new(0.93, 0, 0.02, 0); CloseBtn.Size = UDim2.new(0, 30, 0, 30); CloseBtn.BackgroundTransparency = 1; CloseBtn.TextColor3 = Color3.fromRGB(255, 0, 0); CloseBtn.TextSize = 25; CloseBtn.Font = Enum.Font.GothamBold
+local CloseBtn = Instance.new("TextButton", MainFrame)
+CloseBtn.Text = "X"; CloseBtn.Position = UDim2.new(0.93, 0, 0.02, 0); CloseBtn.Size = UDim2.new(0, 30, 0, 30); CloseBtn.BackgroundTransparency = 1; CloseBtn.TextColor3 = Color3.fromRGB(255, 0, 0); CloseBtn.TextSize = 25; CloseBtn.Font = MCFont
 
-OpenBtn.Parent = ScreenGui; OpenBtn.BackgroundColor3 = Color3.fromRGB(85, 85, 85); OpenBtn.Position = UDim2.new(0.02, 0, 0.4, 0); OpenBtn.Size = UDim2.new(0, 55, 0, 55); OpenBtn.Text = "OPEN"; OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255); OpenBtn.Font = Enum.Font.GothamBold; OpenBtn.Visible = false; MakeDraggable(OpenBtn)
-local oc = Instance.new("UICorner"); oc.CornerRadius = UDim.new(1,0); oc.Parent = OpenBtn
-local os = Instance.new("UIStroke"); os.Color = Color3.fromRGB(255,0,0); os.Thickness = 2; os.Parent = OpenBtn
+OpenBtn.Parent = ScreenGui; OpenBtn.BackgroundColor3 = Color3.fromRGB(85, 85, 85); OpenBtn.Position = UDim2.new(0.02, 0, 0.4, 0); OpenBtn.Size = UDim2.new(0, 55, 0, 55); OpenBtn.Text = "OPEN"; OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255); OpenBtn.Font = MCFont; OpenBtn.Visible = false; MakeDraggable(OpenBtn)
+Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(1,0)
+local os = Instance.new("UIStroke", OpenBtn); os.Color = Color3.fromRGB(255,0,0); os.Thickness = 2
 
 CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false; OpenBtn.Visible = true end)
 OpenBtn.MouseButton1Click:Connect(function() MainFrame.Visible = true; OpenBtn.Visible = false end)
