@@ -1,1 +1,125 @@
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
 
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Tạo ScreenGui
+local gui = Instance.new("ScreenGui")
+gui.Name = "DuyHubLoading"
+gui.ResetOnSpawn = false
+gui.Parent = playerGui
+
+-- MAIN FRAME
+local main = Instance.new("Frame", gui)
+main.Size = UDim2.new(0, 400, 0, 200)
+main.Position = UDim2.new(0.5, -200, 1.2, 0) -- Bắt đầu ở dưới để trượt lên
+main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+main.BorderSizePixel = 0
+
+local corner = Instance.new("UICorner", main)
+corner.CornerRadius = UDim.new(0, 12)
+
+local stroke = Instance.new("UIStroke", main)
+stroke.Thickness = 3
+stroke.Color = Color3.new(1, 1, 1)
+
+-- Hiệu ứng cầu vồng cho viền
+task.spawn(function()
+    local hue = 0
+    while gui.Parent do
+        hue = hue + (1/300)
+        if hue > 1 then hue = 0 end
+        stroke.Color = Color3.fromHSV(hue, 0.8, 1)
+        task.wait()
+    end
+end)
+
+-- Progress Bar
+local barBg = Instance.new("Frame", main)
+barBg.Size = UDim2.new(0.8, 0, 0, 8)
+barBg.Position = UDim2.new(0.1, 0, 0.75, 0)
+barBg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Instance.new("UICorner", barBg)
+
+local bar = Instance.new("Frame", barBg)
+bar.Size = UDim2.new(0, 0, 1, 0)
+bar.BackgroundColor3 = Color3.fromRGB(0, 255, 150)
+Instance.new("UICorner", bar)
+
+-- Text Labels
+local status = Instance.new("TextLabel", main)
+status.Size = UDim2.new(1, 0, 0, 30)
+status.Position = UDim2.new(0, 0, 0.5, 0)
+status.BackgroundTransparency = 1
+status.TextColor3 = Color3.new(0.8, 0.8, 0.8)
+status.Text = "Đang khởi tạo..."
+status.Font = Enum.Font.Gotham
+status.TextSize = 14
+
+local percent = Instance.new("TextLabel", main)
+percent.Size = UDim2.new(1, 0, 0, 40)
+percent.Position = UDim2.new(0, 0, 0.35, 0)
+percent.BackgroundTransparency = 1
+percent.TextColor3 = Color3.new(1, 1, 1)
+percent.Text = "0%"
+percent.Font = Enum.Font.GothamBold
+percent.TextSize = 24
+
+-- --- BẮT ĐẦU CHẠY ---
+
+-- 1. Animation trượt lên mượt mà
+main:TweenPosition(UDim2.new(0.5, -200, 0.5, -100), "Out", "Back", 0.8, true)
+task.wait(0.8)
+
+-- 2. Tải trong vòng 30 giây
+local totalDuration = 30
+local startTick = tick()
+
+while true do
+    local elapsed = tick() - startTick
+    local progress = math.min(elapsed / totalDuration, 1)
+    
+    bar.Size = UDim2.new(progress, 0, 1, 0)
+    percent.Text = math.floor(progress * 100) .. "%"
+    
+    if progress < 0.3 then
+        status.Text = "Đang kiểm tra hệ thống..."
+    elseif progress < 0.6 then
+        status.Text = "Đang tải tài nguyên DuyHub..."
+    elseif progress < 0.9 then
+        status.Text = "Đang tối ưu hóa script..."
+    else
+        status.Text = "Gần xong rồi..."
+    end
+    
+    if progress >= 1 then break end
+    task.wait()
+end
+
+status.Text = "Hoàn tất!"
+task.wait(2) -- Đợi 2 giây theo yêu cầu
+
+-- 3. Animation biến mất
+local fade = TweenService:Create(main, TweenInfo.new(0.5), {BackgroundTransparency = 1, Position = UDim2.new(0.5, -200, 0.4, -100)})
+fade:Play()
+-- Làm mờ các thành phần con
+for _, child in pairs(main:GetChildren()) do
+    if child:IsA("TextLabel") or child:IsA("Frame") then
+        TweenService:Create(child, TweenInfo.new(0.5), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+    end
+end
+
+fade.Completed:Connect(function()
+    -- Xóa hoàn toàn GUI trước khi chạy script chính
+    gui:Destroy()
+    
+    -- Kích hoạt script chính
+    local success, err = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/TongHop"))()
+    end)
+    
+    if not success then
+        warn("Lỗi tải script: " .. err)
+    end
+end)
