@@ -1,6 +1,18 @@
+-- [[ ĐOẠN CHAT KHỞI ĐỘNG ]]
+local startMsg = "Script DuyXD has been activated!"
+pcall(function()
+    local chatEvents = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
+    if chatEvents then
+        chatEvents.SayMessageRequest:FireServer(startMsg, "All")
+    else
+        game:GetService("TextChatService").TextChannels.RBXGeneral:SendAsync(startMsg)
+    end
+end)
+
 -- [[ KHỞI TẠO SERVICES ]]
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 local lp = Players.LocalPlayer
 local MCFont = Enum.Font.Arcade
 
@@ -14,11 +26,15 @@ local TabHolder = Instance.new("ScrollingFrame")
 local TabList = Instance.new("UIListLayout")
 local ContentHolder = Instance.new("ScrollingFrame")
 local ContentList = Instance.new("UIListLayout")
-local OpenBtn = Instance.new("TextButton")
+local OpenBtn = Instance.new("ImageButton")
 
-ScreenGui.Name = "DuyHub_Full_Minecraft"
+ScreenGui.Name = "DuyHub_Full_V5_Animated"
 ScreenGui.Parent = game.CoreGui
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- Tọa độ vị trí cho Animation
+local PosCenter = UDim2.new(0.3, 0, 0.3, 0) 
+local PosHidden = UDim2.new(-0.7, 0, 0.3, 0) -- Trượt xa hẳn ra ngoài lề trái
 
 -- [[ HÀM KÉO THẢ ]]
 local function MakeDraggable(obj)
@@ -34,6 +50,227 @@ local function MakeDraggable(obj)
         if input == dragInput and dragging then
             local delta = input.Position - dragStart
             obj.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+-- Cấu hình Main Frame
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+MainFrame.Position = PosHidden
+MainFrame.Size = UDim2.new(0, 520, 0, 320)
+MainFrame.Active = true
+MainFrame.Visible = false
+MakeDraggable(MainFrame)
+
+UICorner.CornerRadius = UDim.new(0, 5); UICorner.Parent = MainFrame
+UIStroke.Color = Color3.fromRGB(255, 0, 0); UIStroke.Thickness = 3; UIStroke.Parent = MainFrame
+
+-- Tiêu đề
+Title.Parent = MainFrame
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 20, 0, 10)
+Title.Size = UDim2.new(0, 350, 0, 40)
+Title.Text = "DUY TỔNG HỢP - V4"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 22
+Title.Font = MCFont
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Thanh Tab Cuộn
+TabHolder.Name = "TabHolder"
+TabHolder.Parent = MainFrame
+TabHolder.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TabHolder.Position = UDim2.new(0.03, 0, 0.18, 0)
+TabHolder.Size = UDim2.new(0, 130, 0, 240)
+TabHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+TabHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
+TabHolder.ScrollBarThickness = 3
+TabHolder.ScrollBarImageColor3 = Color3.fromRGB(255, 0, 0)
+TabHolder.BorderSizePixel = 0
+TabList.Parent = TabHolder; TabList.Padding = UDim.new(0, 8); TabList.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+-- Khung Script Cuộn
+ContentHolder.Name = "ContentHolder"
+ContentHolder.Parent = MainFrame
+ContentHolder.BackgroundTransparency = 1
+ContentHolder.Position = UDim2.new(0.31, 0, 0.18, 0)
+ContentHolder.Size = UDim2.new(0, 340, 0, 240)
+ContentHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+ContentHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
+ContentHolder.ScrollBarThickness = 4
+ContentHolder.ScrollBarImageColor3 = Color3.fromRGB(255, 0, 0)
+ContentList.Parent = ContentHolder; ContentList.Padding = UDim.new(0, 8); ContentList.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+-- [[ LOGIC KILL ALL MM2 ]]
+local KillAllActive = false
+local originalPositions = {}
+local function resetPositions()
+    for p, oldCFrame in pairs(originalPositions) do
+        if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            p.Character.HumanoidRootPart.CFrame = oldCFrame
+        end
+    end
+    originalPositions = {}
+end
+
+RunService.RenderStepped:Connect(function()
+    if KillAllActive then
+        local char = lp.Character
+        local holdsKnife = char and (char:FindFirstChild("Knife") or char:FindFirstChild("Weapon"))
+        if holdsKnife and char:FindFirstChild("HumanoidRootPart") then
+            local root = char.HumanoidRootPart
+            local targetPos = root.CFrame * CFrame.new(0, 0, -0.8)
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    if not originalPositions[p] then originalPositions[p] = p.Character.HumanoidRootPart.CFrame end
+                    p.Character.HumanoidRootPart.CFrame = targetPos
+                end
+            end
+        end
+    else
+        if next(originalPositions) ~= nil then resetPositions() end
+    end
+end)
+
+-- [[ HÀM TẠO NÚT SCRIPT ]]
+local function AddScript(tabName, btnName, code, isToggle)
+    local btn = Instance.new("TextButton")
+    btn.Parent = ContentHolder
+    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    btn.Size = UDim2.new(0.9, 0, 0, 40)
+    btn.Text = btnName
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = MCFont
+    btn.TextSize = 14
+    btn.Visible = false
+    btn:SetAttribute("Tab", tabName)
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+    
+    btn.MouseButton1Click:Connect(function() 
+        if isToggle then
+            KillAllActive = not KillAllActive
+            btn.Text = "KILL ALL: " .. (KillAllActive and "ON" or "OFF")
+            btn.BackgroundColor3 = KillAllActive and Color3.fromRGB(200, 0, 0) or Color3.fromRGB(60, 60, 60)
+        else
+            pcall(function() loadstring(code)() end)
+        end
+    end)
+end
+
+local function ShowTab(name)
+    for _, obj in pairs(ContentHolder:GetChildren()) do
+        if obj:IsA("TextButton") then obj.Visible = (obj:GetAttribute("Tab") == name) end
+    end
+end
+
+local function CreateTabBtn(name)
+    local tBtn = Instance.new("TextButton")
+    tBtn.Parent = TabHolder
+    tBtn.Size = UDim2.new(0.9, 0, 0, 35)
+    tBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    tBtn.Text = name
+    tBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tBtn.Font = MCFont
+    tBtn.TextSize = 13
+    Instance.new("UICorner", tBtn).CornerRadius = UDim.new(0, 4)
+    tBtn.MouseButton1Click:Connect(function() ShowTab(name) end)
+end
+
+-- TẠO TAB
+local Tabs = {"All Game", "Blox Fruit", "TSB", "Sailor", "MM2"}
+for _, name in pairs(Tabs) do CreateTabBtn(name) end
+
+-- [[ ĐỔ DỮ LIỆU ĐẦY ĐỦ ]]
+
+-- ALL GAME
+AddScript("All Game", "Fix Lag", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/marianscriptKing/SUPER-MAX.lau/main/SUPER%20MAX%20PERFORMANCE"))()]])
+AddScript("All Game", "Wallhop", [[loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fake-Ladder-Flick-And-Wallhop-Script-37199"))()]])
+AddScript("All Game", "DeX", [[loadstring(game:HttpGet("https://gist.githubusercontent.com/DikaArdnt/d8dbfd939768a3563914e7a7605963b6/raw/70f44357b98d36376878c772e737119e7a89e02c/darkdexv4.lua"))()]])
+AddScript("All Game", "Infinite Yield", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()]])
+AddScript("All Game", "Font Minecraft", [[loadstring(game:HttpGet("https://pastefy.app/2zyihzwi/raw"))()]])
+AddScript("All Game", "AFEM emote (op!)", [[loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-AFEM-Max-Open-Alpha-50210"))()]])
+AddScript("All Game", "Music gui (op!)", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Music%20gui"))()]])
+
+-- BLOX FRUIT (ĐỦ 18 NÚT)
+AddScript("Blox Fruit", "67 Tổng Hợp", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))()]])
+AddScript("Blox Fruit", "Banana Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/aloaloalo322/sssdas/refs/heads/main/cc"))()]])
+AddScript("Blox Fruit", "Dua Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/HauScriptDev/SabNew/refs/heads/main/NewUpdate"))()]])
+AddScript("Blox Fruit", "Redz Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/REDZHUB/BloxFruits/main/main.lua"))()]])
+AddScript("Blox Fruit", "Blue X Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/anhthwroblox/script/refs/heads/main/scriptbluehub.text"))()]])
+AddScript("Blox Fruit", "Auto Bounty", [[loadstring(game:HttpGet("https://pastefy.app/fjQMC3T9/raw"))()]])
+AddScript("Blox Fruit", "Longhihi", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/longhihilonghihi-hub/Devs-LongHiHiV2/refs/heads/main/MainV2.txt"))()]])
+AddScript("Blox Fruit", "Mukuro Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/DonateMe/main/Script.lua"))()]])
+AddScript("Blox Fruit", "Thunder Z", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Chiseno/Aurora/main/Aurora.lua"))()]])
+AddScript("Blox Fruit", "Auto Fruits", [[loadstring(game:HttpGet("https://pastefy.app/4yLdMHks/raw"))()]])
+AddScript("Blox Fruit", "Night Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Mei2202/NightHub/main/Main"))()]])
+AddScript("Blox Fruit", "Quantum Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/H20_Hub/Quantum-Hub/main/Main.lua"))()]])
+AddScript("Blox Fruit", "Leaf Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/notpoiu/LeafHub/main/main.lua"))()]])
+AddScript("Blox Fruit", "Bacon Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Bacon-Cuti/BaconHub/main/Main.lua"))()]])
+AddScript("Blox Fruit", "Tuấn IOS", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/AnhDzaiScript/TuanAnhIOSNew/refs/heads/main/TuanAnhIOS-TongHop.Lua"))()]])
+AddScript("Blox Fruit", "AK Gaming", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Teddyseetink/AkGamingEz/refs/heads/main/AkGaming-V3"))()]])
+AddScript("Blox Fruit", "RuBu Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Bubu2k/Rubutv/refs/heads/main/rubuhubv5.lua"))()]])
+AddScript("Blox Fruit", "Min Hub", [[loadstring(game:HttpGet("https://github.com/LuaCrack/Min/raw/refs/heads/main/MinVnV5"))()]])
+
+-- TSB (ĐỦ 8 NÚT)
+AddScript("TSB", "DuyXD Hub (TSB)", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tsb"))()]])
+AddScript("TSB", "Aimbot (All)", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))()]])
+AddScript("TSB", "Invisible", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))()]])
+AddScript("TSB", "Invisible (No Hitbox)", [[loadstring(game:HttpGet("https://pastefy.app/kVt1CN1F/raw"))()]])
+AddScript("TSB", "Fly Bypass", [[loadstring(game:HttpGet("https://pastefy.app/goiHbD1g/raw"))()]])
+AddScript("TSB", "TP Low Health", [[loadstring(game:HttpGet("https://pastefy.app/QTdPdQjo/raw"))()]])
+AddScript("TSB", "Instant Void Kill", [[loadstring(game:HttpGet("https://pastefy.app/qYCNHHmy/raw"))()]])
+AddScript("TSB", "Anti Invisible", [[loadstring(game:HttpGet("https://pastefy.app/cd1f4W3J/raw"))()]])
+
+-- SAILOR
+AddScript("Sailor", "Alex Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))()]])
+AddScript("Sailor", "Hulk Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/BestScript-netizen/Hulk.Script/refs/heads/main/SailorPiece"))()]])
+
+-- MM2
+AddScript("MM2", "ESP GUI", [[loadstring(game:HttpGet("https://pastefy.app/Ct5oe139/raw"))()]])
+AddScript("MM2", "Aimbot GUI", [[loadstring(game:HttpGet("https://pastefy.app/IkKo1Urx/raw"))()]])
+AddScript("MM2", "KILL ALL: OFF", "", true)
+
+ShowTab("All Game")
+
+-- [[ CÀI ĐẶT NÚT OPEN (IMAGE) ]]
+OpenBtn.Parent = ScreenGui
+OpenBtn.BackgroundTransparency = 1
+OpenBtn.Position = UDim2.new(0.02, 0, 0.4, 0)
+OpenBtn.Size = UDim2.new(0, 60, 0, 60)
+OpenBtn.Image = "rbxassetid://116156322599966"
+OpenBtn.Visible = true
+MakeDraggable(OpenBtn)
+
+-- Nút đóng (X)
+local CloseBtn = Instance.new("TextButton", MainFrame)
+CloseBtn.Text = "X"; CloseBtn.Position = UDim2.new(0.93, 0, 0.02, 0); CloseBtn.Size = UDim2.new(0, 30, 0, 30); CloseBtn.BackgroundTransparency = 1; CloseBtn.TextColor3 = Color3.fromRGB(255, 0, 0); CloseBtn.TextSize = 25; CloseBtn.Font = MCFont
+
+-- [[ HÀM ANIMATION TRƯỢT ]]
+local function OpenUI()
+    MainFrame.Visible = true
+    MainFrame.Position = PosHidden -- Bắt đầu từ ngoài lề trái
+    local tween = TweenService:Create(MainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = PosCenter})
+    tween:Play()
+    OpenBtn.Visible = false
+end
+
+local function CloseUI()
+    local tween = TweenService:Create(MainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = PosHidden})
+    tween:Play()
+    tween.Completed:Connect(function()
+        MainFrame.Visible = false
+        OpenBtn.Visible = true
+    end)
+end
+
+CloseBtn.MouseButton1Click:Connect(CloseUI)
+OpenBtn.MouseButton1Click:Connect(OpenUI)
+
+-- Khởi động
+task.wait(0.5)
+OpenUI()
         end
     end)
 end
