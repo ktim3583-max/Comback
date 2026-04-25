@@ -1,0 +1,181 @@
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Xóa GUI cũ nếu tồn tại
+if playerGui:FindFirstChild("DuyMusicHub") then
+	playerGui:FindFirstChild("DuyMusicHub"):Destroy()
+end
+
+local gui = Instance.new("ScreenGui", playerGui)
+gui.Name = "DuyMusicHub"
+gui.ResetOnSpawn = false
+
+-- BIẾN QUẢN LÝ NHẠC (Chống chồng nhạc)
+local currentSound = nil
+
+-- --- MAIN FRAME ---
+local main = Instance.new("Frame", gui)
+main.Size = UDim2.new(0, 260, 0, 350)
+main.Position = UDim2.new(0.5, -130, 0.5, -175)
+main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+main.BackgroundTransparency = 0.5 -- Nền trong suốt 0.5
+main.Active = true -- Quan trọng để bấm ăn
+main.BorderSizePixel = 0
+
+local corner = Instance.new("UICorner", main)
+corner.CornerRadius = UDim.new(0, 15)
+
+-- Viền cầu vồng
+local stroke = Instance.new("UIStroke", main)
+stroke.Thickness = 2.5
+task.spawn(function()
+	local h = 0
+	while main.Parent do
+		h = h + (1/400)
+		if h > 1 then h = 0 end
+		stroke.Color = Color3.fromHSV(h, 0.8, 1)
+		task.wait()
+	end
+end)
+
+-- --- HỆ THỐNG KÉO THẢ (FIXED) ---
+local dragging, dragInput, dragStart, startPos
+local function update(input)
+	local delta = input.Position - dragStart
+	main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+main.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = main.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then dragging = false end
+		end)
+	end
+end)
+
+main.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then update(input) end
+end)
+
+-- --- TIÊU ĐỀ ---
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.new(1, -40, 0, 35)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "DUY MUSIC SYSTEM"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 14
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- --- NÚT THU GỌN (-) ---
+local toggleBtn = Instance.new("TextButton", main)
+toggleBtn.Size = UDim2.new(0, 30, 0, 30)
+toggleBtn.Position = UDim2.new(1, -35, 0, 2)
+toggleBtn.BackgroundTransparency = 1
+toggleBtn.Text = "-"
+toggleBtn.TextColor3 = Color3.new(1, 1, 1)
+toggleBtn.TextSize = 25
+toggleBtn.Font = Enum.Font.GothamBold
+
+local isMinimized = false
+local originalSize = main.Size
+
+toggleBtn.MouseButton1Click:Connect(function()
+	isMinimized = not isMinimized
+	if isMinimized then
+		main:TweenSize(UDim2.new(0, 260, 0, 35), "Out", "Quart", 0.3, true)
+		toggleBtn.Text = "+"
+		main.ClipsDescendants = true
+	else
+		main:TweenSize(originalSize, "Out", "Quart", 0.3, true)
+		toggleBtn.Text = "-"
+		main.ClipsDescendants = false
+	end
+end)
+
+-- --- SCROLLING FRAME ---
+local scroll = Instance.new("ScrollingFrame", main)
+scroll.Size = UDim2.new(1, -15, 1, -50)
+scroll.Position = UDim2.new(0, 7, 0, 40)
+scroll.BackgroundTransparency = 1
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollBarThickness = 2
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scroll.ScrollBarImageColor3 = Color3.new(1,1,1)
+
+local layout = Instance.new("UIListLayout", scroll)
+layout.Padding = UDim.new(0, 6)
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+-- --- HÀM TẠO NÚT NHẠC ---
+local function createMusicBtn(name, id)
+	local btn = Instance.new("TextButton", scroll)
+	btn.Size = UDim2.new(0.95, 0, 0, 35)
+	btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	btn.BackgroundTransparency = 0.85
+	btn.Text = name
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.Font = Enum.Font.GothamMedium
+	btn.TextSize = 12
+	btn.AutoButtonColor = true
+
+	local bCorner = Instance.new("UICorner", btn)
+	bCorner.CornerRadius = UDim.new(0, 6)
+
+	btn.MouseButton1Click:Connect(function()
+		-- XÓA NHẠC ĐANG CHẠY TRƯỚC ĐÓ
+		if currentSound then
+			currentSound:Stop()
+			currentSound:Destroy()
+		end
+
+		-- PHÁT NHẠC MỚI
+		currentSound = Instance.new("Sound", game.Workspace)
+		local cleanId = string.match(id, "%d+") -- Chỉ lấy số từ ID
+		currentSound.SoundId = "rbxassetid://" .. cleanId
+		currentSound.Volume = 2
+		currentSound:Play()
+		
+		-- Hiệu ứng nháy nhẹ khi bấm cho biết là "ăn" nút
+		btn.BackgroundTransparency = 0.5
+		task.wait(0.1)
+		btn.BackgroundTransparency = 0.85
+	end)
+end
+
+-- --- DANH SÁCH NHẠC ---
+local songs = {
+	{"Ai đưa em về", "110919391228823"},
+	{"Khô gà", "99152674992699"},
+	{"Bad ending funk", "135526249310486"},
+	{"Heavenly jumpstyle", "139945126932727"},
+	{"Var var var", "118088133904805"},
+	{"Dark age funk", "8429565611850"},
+	{"Alone - Marshmello", "108092699453319"},
+	{"NUMBER HARDTEKK", "82696338249251"},
+	{"Tinh vệ", "124044109756641"},
+	{"TheFatRat", "108531350726198"},
+	{"Cửu môn kí ức", "124384558101360"},
+	{"2 phút hơn", "115091532663996"},
+	{"I love you so", "131483103484348"},
+	{"Sans released", "4585315043"},
+	{"Mạc Vấn Quy Kì", "126846792948717"}
+}
+
+for _, data in ipairs(songs) do
+	createMusicBtn(data[1], data[2])
+end
