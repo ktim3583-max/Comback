@@ -1,0 +1,31 @@
+-- Chạy Script chính của bạn
+loadstring(game:HttpGet("https://raw.githubusercontent.com/platinww/CrustyMain/refs/heads/main/universal/DropKick.lua"))()
+
+-- Thiết lập hệ thống Auto Noclip khi hồi sinh
+local Player = game:GetService("Players").LocalPlayer
+local RunService = game:GetService("RunService")
+
+local function EnableNoclip()
+    local Character = Player.Character or Player.CharacterAdded:Wait()
+    
+    -- Sử dụng Stepped để đảm bảo Noclip hoạt động mọi frame
+    local Connection
+    Connection = RunService.Stepped:Connect(function()
+        if Character and Character:Parent() then
+            for _, part in pairs(Character:GetDescendants()) do
+                if part:IsA("BasePart") and part.CanCollide then
+                    part.CanCollide = false
+                end
+            end
+        else
+            -- Hủy kết nối nếu nhân vật không còn tồn tại để tránh tốn tài nguyên
+            Connection:Disconnect()
+        end
+    end)
+end
+
+-- Kích hoạt lần đầu và mỗi khi hồi sinh
+Player.CharacterAdded:Connect(EnableNoclip)
+if Player.Character then
+    task.spawn(EnableNoclip)
+end
