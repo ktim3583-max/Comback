@@ -1,0 +1,206 @@
+local DuyXD_Lib = {}
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+
+function DuyXD_Lib:CreateWindow(Settings)
+    local Name = Settings.Name or "DuyXD UI"
+    
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "DuyXD_Premium_Lib"
+    ScreenGui.Parent = CoreGui
+    ScreenGui.ResetOnSpawn = false
+
+    -- GUI CHÍNH
+    local Main = Instance.new("Frame")
+    Main.Name = "Main"
+    Main.Parent = ScreenGui
+    Main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Main.BackgroundTransparency = 0.5 -- Nền trong suốt
+    Main.Size = UDim2.new(0, 240, 0, 280)
+    Main.Position = UDim2.new(0.5, -120, 1.2, 0) -- Vị trí ban đầu để trượt lên
+    Main.BorderSizePixel = 0
+    Main.ClipsDescendants = true
+
+    local MainCorner = Instance.new("UICorner")
+    MainCorner.CornerRadius = UDim.new(0, 15)
+    MainCorner.Parent = Main
+
+    -- VIỀN TRẮNG
+    local WhiteStroke = Instance.new("UIStroke")
+    WhiteStroke.Color = Color3.fromRGB(255, 255, 255)
+    WhiteStroke.Thickness = 1.5
+    WhiteStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    WhiteStroke.Parent = Main
+
+    -- VIỀN CẦU VỒNG (Rainbow Stroke)
+    local RainbowStroke = Instance.new("UIStroke")
+    RainbowStroke.Thickness = 2.5
+    RainbowStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    RainbowStroke.Parent = Main
+    
+    task.spawn(function()
+        local h = 0
+        while true do
+            RainbowStroke.Color = Color3.fromHSV(h, 0.8, 1)
+            h = h + (1/360)
+            if h >= 1 then h = 0 end
+            RunService.RenderStepped:Wait()
+        end
+    end)
+
+    local Title = Instance.new("TextLabel")
+    Title.Size = UDim2.new(1, 0, 0, 40)
+    Title.BackgroundTransparency = 1
+    Title.Text = Name
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.Font = Enum.Font.GothamBold
+    Title.TextSize = 16
+    Title.Parent = Main
+
+    -- NÚT BÁNH RĂNG (Ẩn/Hiện)
+    local ToggleBtn = Instance.new("TextButton")
+    ToggleBtn.Size = UDim2.new(0, 40, 0, 40)
+    ToggleBtn.Position = UDim2.new(0.05, 0, 0.05, 0)
+    ToggleBtn.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    ToggleBtn.BackgroundTransparency = 0.5
+    ToggleBtn.Text = "⚙️"
+    ToggleBtn.TextSize = 20
+    ToggleBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    ToggleBtn.Parent = ScreenGui
+    Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
+    Instance.new("UIStroke", ToggleBtn).Color = Color3.fromRGB(255,255,255)
+
+    -- HIỆU ỨNG TRƯỢT (Animation)
+    local isVisible = false
+    local function ToggleGUI()
+        isVisible = not isVisible
+        local targetPos = isVisible and UDim2.new(0.5, -120, 0.4, 0) or UDim2.new(0.5, -120, 1.2, 0)
+        TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = targetPos}):Play()
+    end
+    ToggleBtn.MouseButton1Click:Connect(ToggleGUI)
+    task.delay(0.1, ToggleGUI) -- Hiện GUI khi vừa chạy
+
+    -- KÉO THẢ
+    local dragging, dragInput, dragStart, startPos
+    Main.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true; dragStart = input.Position; startPos = Main.Position
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+    UserInputService.InputEnded:Connect(function() dragging = false end)
+
+    local Container = Instance.new("ScrollingFrame")
+    Container.Size = UDim2.new(1, -20, 1, -50)
+    Container.Position = UDim2.new(0, 10, 0, 45)
+    Container.BackgroundTransparency = 1
+    Container.CanvasSize = UDim2.new(0, 0, 2, 0)
+    Container.ScrollBarThickness = 0
+    Container.Parent = Main
+    Instance.new("UIListLayout", Container).Padding = UDim.new(0, 10)
+
+    local Elements = {}
+
+    -- BUTTON: Nền trong suốt, Viền trắng
+    function Elements:CreateButton(Text, Callback)
+        local Btn = Instance.new("TextButton", Container)
+        Btn.Size = UDim2.new(1, 0, 0, 35)
+        Btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        Btn.BackgroundTransparency = 0.8
+        Btn.Text = Text
+        Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Btn.Font = Enum.Font.GothamBold
+        Instance.new("UICorner", Btn)
+        local s = Instance.new("UIStroke", Btn)
+        s.Color = Color3.fromRGB(255,255,255)
+        Btn.MouseButton1Click:Connect(Callback)
+    end
+
+    -- TOGGLE: Viền Đỏ (Off) -> Xanh lá (On)
+    function Elements:CreateToggle(Text, Callback)
+        local State = false
+        local Tgl = Instance.new("TextButton", Container)
+        Tgl.Size = UDim2.new(1, 0, 0, 35)
+        Tgl.BackgroundTransparency = 0.8
+        Tgl.BackgroundColor3 = Color3.fromRGB(0,0,0)
+        Tgl.Text = Text
+        Tgl.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Instance.new("UICorner", Tgl)
+        local Stroke = Instance.new("UIStroke", Tgl)
+        Stroke.Thickness = 2
+        Stroke.Color = Color3.fromRGB(255, 0, 0)
+
+        Tgl.MouseButton1Click:Connect(function()
+            State = not State
+            Stroke.Color = State and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+            Callback(State)
+        end)
+    end
+
+    -- SLIDER: Thanh trắng, Nút cầu vồng
+    function Elements:CreateSlider(Text, Min, Max, Default, Callback)
+        local SFrame = Instance.new("Frame", Container)
+        SFrame.Size = UDim2.new(1, 0, 0, 50)
+        SFrame.BackgroundTransparency = 1
+        
+        local Label = Instance.new("TextLabel", SFrame)
+        Label.Text = Text .. " : " .. Default
+        Label.Size = UDim2.new(1, 0, 0, 20)
+        Label.TextColor3 = Color3.fromRGB(255,255,255)
+        Label.BackgroundTransparency = 1
+
+        local Bar = Instance.new("Frame", SFrame)
+        Bar.Size = UDim2.new(0.9, 0, 0, 4)
+        Bar.Position = UDim2.new(0.05, 0, 0.7, 0)
+        Bar.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- Thanh màu trắng
+
+        local Knob = Instance.new("Frame", Bar)
+        Knob.Size = UDim2.new(0, 14, 0, 14)
+        Knob.AnchorPoint = Vector2.new(0.5, 0.5)
+        Knob.Position = UDim2.new((Default-Min)/(Max-Min), 0, 0.5, 0)
+        Instance.new("UICorner", Knob).CornerRadius = UDim.new(1,0)
+        
+        -- Nút cầu vồng
+        task.spawn(function()
+            local h = 0
+            while true do
+                Knob.BackgroundColor3 = Color3.fromHSV(h, 0.7, 1)
+                h = h + (1/360)
+                if h >= 1 then h = 0 end
+                RunService.RenderStepped:Wait()
+            end
+        end)
+
+        local draggingSlider = false
+        local function Update(input)
+            local rel = math.clamp((input.Position.X - Bar.AbsolutePosition.X) / Bar.AbsoluteSize.X, 0, 1)
+            Knob.Position = UDim2.new(rel, 0, 0.5, 0)
+            local val = math.floor(Min + (rel * (Max - Min)))
+            Label.Text = Text .. " : " .. val
+            Callback(val)
+        end
+
+        SFrame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                draggingSlider = true; Update(input)
+            end
+        end)
+        UserInputService.InputChanged:Connect(function(input)
+            if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                Update(input)
+            end
+        end)
+        UserInputService.InputEnded:Connect(function() draggingSlider = false end)
+    end
+
+    return Elements
+end
+
+return DuyXD_Lib
