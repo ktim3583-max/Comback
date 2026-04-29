@@ -1,15 +1,5 @@
--- [[ ĐOẠN CHAT KHỞI ĐỘNG ]]
-local startMsg = "Script DuyXD has been activated!"
-pcall(function()
-    local chatEvents = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
-    if chatEvents then
-        chatEvents.SayMessageRequest:FireServer(startMsg, "All")
-    else
-        game:GetService("TextChatService").TextChannels.RBXGeneral:SendAsync(startMsg)
-    end
-end)
+game.StarterGui:SetCore("SendNotification", {Title = "Đã tải gui xong", Text = "DuyXD-Script"})
 
--- [[ KHỞI TẠO SERVICES ]]
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
