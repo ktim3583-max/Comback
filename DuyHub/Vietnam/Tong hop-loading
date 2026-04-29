@@ -111,6 +111,8 @@ local function StartLoading()
     
     task.wait(0.8)
     ScreenGui:Destroy()
+task.wait(0)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tong%20hop))();
 end
 
 -- Chạy Loading
