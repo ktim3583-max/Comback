@@ -1,111 +1,117 @@
+-- // SERVICES
 local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
 
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+-- // XÓA UI CŨ NẾU CÓ
+if CoreGui:FindFirstChild("DuyXD_Loading") then CoreGui.DuyXD_Loading:Destroy() end
 
--- 1. XÓA GUI CŨ NẾU TỒN TẠI
-if playerGui:FindFirstChild("DuyHubLoading") then
-    playerGui:FindFirstChild("DuyHubLoading"):Destroy()
-end
+-- // TẠO SCREEN GUI
+local ScreenGui = Instance.new("ScreenGui", CoreGui)
+ScreenGui.Name = "DuyXD_Loading"
 
--- 2. TẠO GUI
-local gui = Instance.new("ScreenGui")
-gui.Name = "DuyHubLoading"
-gui.DisplayOrder = 999
-gui.Parent = playerGui
+-- // KHUNG CHÍNH (MAIN FRAME)
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 350, 0, 180)
+MainFrame.Position = UDim2.new(0.5, -175, 1.2, 0) -- Bắt đầu ở dưới màn hình để trượt lên
+MainFrame.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
+MainFrame.BackgroundTransparency = 0.5
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true -- Có thể kéo thả
 
-local main = Instance.new("Frame", gui)
-main.Size = UDim2.new(0, 400, 0, 220)
-main.Position = UDim2.new(0.5, -200, 1.2, 0) -- Vị trí bắt đầu (trượt lên)
-main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-main.BackgroundTransparency = 0.5 -- Nền mờ 0.5 theo ý bạn
-main.BorderSizePixel = 0
+local MainCorner = Instance.new("UICorner", MainFrame)
+MainCorner.CornerRadius = UDim.new(0, 15)
 
-local corner = Instance.new("UICorner", main)
-corner.CornerRadius = UDim.new(0, 15)
+-- CHỮ LOADING
+local LoadingText = Instance.new("TextLabel", MainFrame)
+LoadingText.Size = UDim2.new(1, 0, 0, 40)
+LoadingText.Position = UDim2.new(0, 0, 0, 10)
+LoadingText.BackgroundTransparency = 1
+LoadingText.Text = "LOADING"
+LoadingText.TextColor3 = Color3.new(1, 1, 1)
+LoadingText.Font = Enum.Font.GothamBold
+LoadingText.TextSize = 20
 
-local stroke = Instance.new("UIStroke", main)
-stroke.Thickness = 3
-stroke.Color = Color3.new(1, 1, 1)
+-- CHỮ % (TRÊN THANH BAR)
+local PercentText = Instance.new("TextLabel", MainFrame)
+PercentText.Size = UDim2.new(1, 0, 0, 20)
+PercentText.Position = UDim2.new(0, 0, 0, 65)
+PercentText.BackgroundTransparency = 1
+PercentText.Text = "0%"
+PercentText.TextColor3 = Color3.new(1, 1, 1)
+PercentText.Font = Enum.Font.GothamSemibold
+PercentText.TextSize = 14
 
--- Viền cầu vồng
-task.spawn(function()
-    local hue = 0
-    while gui.Parent do
-        hue = hue + (1/400)
-        if hue > 1 then hue = 0 end
-        stroke.Color = Color3.fromHSV(hue, 0.8, 1)
-        task.wait()
-    end
-end)
+-- THANH TIẾN TRÌNH (BACKGROUND BAR)
+local BarBG = Instance.new("Frame", MainFrame)
+BarBG.Size = UDim2.new(0.8, 0, 0, 10)
+BarBG.Position = UDim2.new(0.1, 0, 0, 90)
+BarBG.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+BarBG.BackgroundTransparency = 0.3
+Instance.new("UICorner", BarBG)
 
--- CHỮ LOADING MÀU ĐEN Ở TRÊN
-local title = Instance.new("TextLabel", main)
-title.Size = UDim2.new(1, 0, 0, 40)
-title.Position = UDim2.new(0, 0, 0, 10)
-title.BackgroundTransparency = 1
-title.Text = "LOADING"
-title.TextColor3 = Color3.new(0, 0, 0) -- Màu đen
-title.Font = Enum.Font.GothamBlack
-title.TextSize = 30
+-- THANH TIẾN TRÌNH (FILLING BAR)
+local BarFill = Instance.new("Frame", BarBG)
+BarFill.Size = UDim2.new(0, 0, 1, 0)
+BarFill.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", BarFill)
 
--- Phần trăm tải
-local percent = Instance.new("TextLabel", main)
-percent.Size = UDim2.new(1, 0, 0, 40)
-percent.Position = UDim2.new(0, 0, 0.4, 0)
-percent.BackgroundTransparency = 1
-percent.TextColor3 = Color3.new(1, 1, 1)
-percent.Text = "0%"
-percent.Font = Enum.Font.GothamBold
-percent.TextSize = 24
+-- CHỮ TRẠNG THÁI (DƯỚI THANH BAR)
+local StatusText = Instance.new("TextLabel", MainFrame)
+StatusText.Size = UDim2.new(1, 0, 0, 30)
+StatusText.Position = UDim2.new(0, 0, 0, 110)
+StatusText.BackgroundTransparency = 1
+StatusText.Text = "Đang khởi tạo..."
+StatusText.TextColor3 = Color3.new(1, 1, 1)
+StatusText.Font = Enum.Font.Gotham
+StatusText.TextSize = 13
 
--- Thanh tiến trình
-local barBg = Instance.new("Frame", main)
-barBg.Size = UDim2.new(0.8, 0, 0, 10)
-barBg.Position = UDim2.new(0.1, 0, 0.75, 0)
-barBg.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Instance.new("UICorner", barBg)
+-- // LOGIC ANIMATION & LOADING
+local function StartLoading()
+    -- 1. Animation trượt lên
+    MainFrame:TweenPosition(UDim2.new(0.5, -175, 0.5, -90), "Out", "Back", 0.8, true)
+    task.wait(1)
 
-local bar = Instance.new("Frame", barBg)
-bar.Size = UDim2.new(0, 0, 1, 0)
-bar.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
-Instance.new("UICorner", bar)
-
--- --- XỬ LÝ CHÍNH ---
-
--- Animation trượt lên mượt
-main:TweenPosition(UDim2.new(0.5, -200, 0.5, -110), "Out", "Back", 0.8, true)
-
--- Tải trong 30 giây
-local duration = 30
-local start = tick()
-
-repeat
-    local elapsed = tick() - start
-    local p = math.min(elapsed / duration, 1)
+    local currentPercent = 0
     
-    bar.Size = UDim2.new(p, 0, 1, 0)
-    percent.Text = math.floor(p * 100) .. "%"
-    task.wait()
-until elapsed >= duration
+    -- Vòng lặp loading 20s
+    for i = 1, 100 do
+        currentPercent = i
+        
+        -- Cập nhật Text % và Thanh Bar
+        PercentText.Text = currentPercent .. "%"
+        TweenService:Create(BarFill, TweenInfo.new(0.1), {Size = UDim2.new(currentPercent/100, 0, 1, 0)}):Play()
+        
+        -- Cập nhật nội dung chữ "h"
+        if currentPercent <= 30 then
+            StatusText.Text = "Đang tải dữ liệu (" .. currentPercent .. "%)"
+        elseif currentPercent <= 65 then
+            StatusText.Text = "Đang bật anti cheat (" .. currentPercent .. "%)"
+        elseif currentPercent <= 85 then
+            StatusText.Text = "Đang tải gui chính (" .. currentPercent .. "%)"
+        elseif currentPercent <= 98 then
+            StatusText.Text = "Sắp hoàn tất (" .. currentPercent .. "%)"
+        else
+            StatusText.Text = "Hoàn tất ✅"
+        end
 
-task.wait(2) -- Đợi 2 giây sau khi xong 100%
+        -- Logic khựng mỗi 10%
+        if i % 10 == 0 then
+            task.wait(0.5) -- Khựng lại 0.5 giây
+        else
+            task.wait(0.15) -- Tốc độ bình thường (tổng cộng ~20s)
+        end
+    end
 
--- Animation trượt xuống để biến mất
-main:TweenPosition(UDim2.new(0.5, -200, 1.2, 0), "In", "Quart", 0.5, true)
-task.wait(0.6)
-
--- XÓA GUI HOÀN TOÀN
-gui:Destroy()
-
--- CHẠY SCRIPT
-local success, result = pcall(function()
-    return game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/TongHop")
-end)
-
-if success then
-    loadstring(result)()
-else
-    warn("Lỗi tải script DuyHub!")
+    task.wait(1)
+    
+    -- 2. Animation trượt xuống khi biến mất
+    MainFrame:TweenPosition(UDim2.new(0.5, -175, 1.2, 0), "In", "Back", 0.8, true)
+    
+    task.wait(0.8)
+    ScreenGui:Destroy()
 end
+
+-- Chạy Loading
+task.spawn(StartLoading)
