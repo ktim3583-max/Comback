@@ -1,0 +1,120 @@
+local player = game.Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+
+-- 1. THÔNG BÁO (Chỉ hiện 1 lần khi chạy script)
+local function notify(title, text)
+    StarterGui:SetCore("SendNotification", {
+        Title = title,
+        Text = text,
+        Duration = 2
+    })
+end
+
+notify("DuyXD - Spiderman 🕷", "đang tải")
+task.wait(1)
+notify("DuyXD - Spiderman 🕷", "Tải hoàn tất✅")
+
+-- Các biến điều khiển
+local canShoot = true
+local WEB_SPEED = 100 
+
+-- 2. HÀM KÍCH HOẠT LOGIC SPIDERMAN
+local function initSpiderman(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    local rootPart = character:WaitForChild("HumanoidRootPart")
+    
+    -- Xử lý leo tường cho nhân vật mới
+    local climbConnection
+    climbConnection = RunService.Stepped:Connect(function()
+        -- Nếu nhân vật chết thì ngắt kết nối vòng lặp này
+        if not character or not character.Parent or humanoid.Health <= 0 then
+            climbConnection:Disconnect()
+            return
+        end
+
+        local rayOrigin = rootPart.Position
+        local rayDirection = rootPart.CFrame.LookVector * 2.5
+        local raycastParams = RaycastParams.new()
+        raycastParams.FilterDescendantsInstances = {character}
+        raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+
+        local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+
+        if raycastResult and humanoid.MoveDirection.Magnitude > 0 then
+            rootPart.Velocity = Vector3.new(rootPart.Velocity.X, 35, rootPart.Velocity.Z)
+        end
+    end)
+end
+
+-- 3. XỬ LÝ PHÓNG TƠ (Dùng chung cho mọi lần hồi sinh)
+UserInputService.InputBegan:Connect(function(input, processed)
+    if processed then return end
+    if input.KeyCode == Enum.KeyCode.E and canShoot then
+        local character = player.Character
+        local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+        if not rootPart then return end
+
+        local camera = workspace.CurrentCamera
+        local raycastParams = RaycastParams.new()
+        raycastParams.FilterDescendantsInstances = {character}
+        
+        local rayResult = workspace:Raycast(camera.CFrame.Position, camera.CFrame.LookVector * 500, raycastParams)
+
+        if rayResult and rayResult.Instance then
+            canShoot = false
+            local targetPos = rayResult.Position
+            
+            -- Tạo sợi tơ
+            local rope = Instance.new("Part")
+            rope.Color = Color3.fromRGB(255, 255, 255)
+            rope.Material = Enum.Material.Neon
+            rope.CanCollide = false
+            rope.Anchored = true
+            rope.Parent = workspace
+            
+            local renderConnection
+            renderConnection = RunService.RenderStepped:Connect(function()
+                if rope and rope.Parent and rootPart.Parent then
+                    local startPos = rootPart.Position
+                    local dist = (targetPos - startPos).Magnitude
+                    rope.Size = Vector3.new(0.15, 0.15, dist)
+                    rope.CFrame = CFrame.new(startPos:Lerp(targetPos, 0.5), targetPos)
+                else
+                    renderConnection:Disconnect()
+                    if rope then rope:Destroy() end
+                end
+            end)
+
+            -- Tween di chuyển
+            local distance = (targetPos - rootPart.Position).Magnitude
+            local duration = distance / WEB_SPEED
+            
+            local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+            local tween = TweenService:Create(rootPart, tweenInfo, {CFrame = CFrame.new(targetPos + Vector3.new(0, 2, 0))})
+            
+            local antiGravity = Instance.new("BodyVelocity")
+            antiGravity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+            antiGravity.Velocity = Vector3.new(0,0,0)
+            antiGravity.Parent = rootPart
+
+            tween:Play()
+            tween.Completed:Connect(function()
+                if rope then rope:Destroy() end
+                if antiGravity then antiGravity:Destroy() end
+                task.wait(0.1)
+                canShoot = true
+            end)
+        end
+    end
+end)
+
+-- 4. TỰ ĐỘNG CHẠY KHI HỒI SINH
+player.CharacterAdded:Connect(initSpiderman)
+
+-- Chạy lần đầu nếu đã có nhân vật
+if player.Character then
+    initSpiderman(player.Character)
+end
