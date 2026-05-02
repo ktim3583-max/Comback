@@ -1,0 +1,130 @@
+local Players = game:GetService("Players")
+local VIM = game:GetService("VirtualInputManager")
+local UIS = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+
+local function MakeDraggable(obj)
+    local dragging, dragInput, dragStart, startPos
+    obj.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = obj.Position
+        end
+    end)
+    obj.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    UIS.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            obj.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+    obj.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "DuyTSB_V2_Fixed"
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Parent = ScreenGui
+ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
+ToggleBtn.Position = UDim2.new(0, 50, 0.5, 0)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ToggleBtn.Text = "Duy"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.Font = Enum.Font.GothamBold
+MakeDraggable(ToggleBtn)
+
+local ToggleCorner = Instance.new("UICorner")
+ToggleCorner.CornerRadius = UDim.new(1, 0)
+ToggleCorner.Parent = ToggleBtn
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Parent = ScreenGui
+MainFrame.Size = UDim2.new(0, 160, 0, 210)
+MainFrame.Position = UDim2.new(0.5, -80, 0.4, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(150, 150, 150)
+MainFrame.BorderSizePixel = 2
+MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.Visible = true
+MakeDraggable(MainFrame)
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = MainFrame
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 2)
+
+local function CreateBtn(text, order)
+    local btn = Instance.new("TextButton")
+    btn.Parent = MainFrame
+    btn.Size = UDim2.new(1, 0, 0, 40)
+    btn.BackgroundColor3 = Color3.fromRGB(150, 150, 150)
+    btn.BorderSizePixel = 1
+    btn.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+    btn.LayoutOrder = order
+    return btn
+end
+
+local SaitamaBtn = CreateBtn("Saitama combo", 1)
+local MetalBatBtn = CreateBtn("Metal bat combo", 2)
+local GarouBtn = CreateBtn("Garou Combo", 3)
+local DragonBtn = CreateBtn("Dragon Combo", 4)
+
+local Empty = Instance.new("Frame")
+Empty.Parent = MainFrame
+Empty.Size = UDim2.new(1, 0, 0, 40)
+Empty.BackgroundColor3 = Color3.fromRGB(150, 150, 150)
+Empty.BorderSizePixel = 1
+Empty.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Empty.LayoutOrder = 5
+
+ToggleBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+local function Press(key)
+    VIM:SendKeyEvent(true, key, false, game)
+    task.wait(0.05)
+    VIM:SendKeyEvent(false, key, false, game)
+end
+
+SaitamaBtn.MouseButton1Click:Connect(function()
+    Press(Enum.KeyCode.Two); task.wait(2)
+    Press(Enum.KeyCode.Three); task.wait(1.2)
+    Press(Enum.KeyCode.Q); task.wait(0.9)
+    Press(Enum.KeyCode.One)
+end)
+
+MetalBatBtn.MouseButton1Click:Connect(function()
+    Press(Enum.KeyCode.Two); task.wait(2.5)
+    Press(Enum.KeyCode.One); task.wait(1.5)
+    Press(Enum.KeyCode.Four); task.wait(3)
+    Press(Enum.KeyCode.Three)
+end)
+
+GarouBtn.MouseButton1Click:Connect(function()
+    Press(Enum.KeyCode.Two); task.wait(2.47)
+    Press(Enum.KeyCode.One); task.wait(2.47)
+    Press(Enum.KeyCode.Q); task.wait(1.2)
+    Press(Enum.KeyCode.Three)
+end)
+
+DragonBtn.MouseButton1Click:Connect(function()
+    Press(Enum.KeyCode.Four); task.wait(4)
+    Press(Enum.KeyCode.One); task.wait(2.67)
+    Press(Enum.KeyCode.Three)
+end)
