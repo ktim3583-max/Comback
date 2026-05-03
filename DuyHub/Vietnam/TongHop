@@ -104,6 +104,7 @@ TabTSB:CreateButton({ Name = "TP Low Health", Callback = function() loadstring(g
 TabTSB:CreateButton({ Name = "Instant Void Kill", Callback = function() loadstring(game:HttpGet("https://pastefy.app/qYCNHHmy/raw"))() end })
 TabTSB:CreateButton({ Name = "Anti Invisible", Callback = function() loadstring(game:HttpGet("https://pastefy.app/cd1f4W3J/raw"))() end })
 TabTSB:CreateButton({ Name = "DuyXD×GhostHub | Tsb", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/DuyXD%C3%97GhostHub"))() end })
+TabTSB:CreateButton({ Name = "Orbit + Spam | Auto farm kill", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/Orbit%2BSpam"))() end })
 
 -- ==========================================
 -- [[ DỮ LIỆU: SAILOR ]]
