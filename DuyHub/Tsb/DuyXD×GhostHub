@@ -1,3 +1,48 @@
+--[[
+    DUYXD × TSB - GHOST STYLE
+    Library: Ghost Gui
+    Game: The Strongest Battlegrounds
+]]
+
+-- Khởi tạo Library
+loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/UI-Library/refs/heads/main/Ghost%20Gui'))()
+
+-- Thiết lập Title
+game.CoreGui.GhostGui.MainFrame.Title.Text = "DuyXD × TSB"
+
+-- 1. Phát thông báo khi kích hoạt (DuyXD Style)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "DuyXD script | tsb",
+    Text = "Đã tải gui, trải nghiệm miễn phí✅",
+    Duration = 5,
+    Icon = "rbxassetid://100477387630279" -- Icon của sếp
+})
+
+-- 2. Button: Kyoto Combo (Saitama/Garou combo vip)
+AddContent("TextButton", "Kyoto Combo", [[
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/Kyoto%20Combo"))();
+]])
+
+-- 3. Button: Aimbot (Character - Khóa nhân vật)
+AddContent("TextButton", "Aimbot (Character)", [[
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))();
+]])
+
+-- 4. Button: Aimbot (Camera - Khóa góc nhìn)
+AddContent("TextButton", "Aimbot (Camera)", [[
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Totocoems/Ace/main/Ace"))()
+]])
+
+-- 5. Button: DuyXD Hub Tsb Tổng Hợp (Vip nhất)
 AddContent("TextButton", "DuyXD Hub Tsb Tổng Hợp", [[
     loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tsb"))();
 ]])
+
+AddContent("TextButton", "Auto Combo Tsb", [[
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Auto%20Combo"))();
+]])
+
+-- 6. Thêm một cái TextLabel đánh dấu bản quyền (Bonus)
+TextLabel = AddContent("TextLabel")
+TextLabel.Text = "Developer: DuyXD - Top 1 AI Support"
+TextLabel.TextColor3 = Color3.fromRGB(0, 170, 255) -- Màu Blue Neon sếp thích
