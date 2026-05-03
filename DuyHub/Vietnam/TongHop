@@ -1,99 +1,11 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
 local lp = Players.LocalPlayer
-local MCFont = Enum.Font.Arcade
 
--- [[ KHOI TAO GUI ]]
-local ScreenGui = Instance.new("ScreenGui")
-local MainFrame = Instance.new("Frame")
-local UICorner = Instance.new("UICorner")
-local UIStroke = Instance.new("UIStroke")
-local Title = Instance.new("TextLabel")
-local TabHolder = Instance.new("ScrollingFrame")
-local TabList = Instance.new("UIListLayout")
-local ContentHolder = Instance.new("ScrollingFrame")
-local ContentList = Instance.new("UIListLayout")
-local OpenBtn = Instance.new("ImageButton")
-
-ScreenGui.Name = "DuyHub_Full_V5_Animated"
-ScreenGui.Parent = game.CoreGui
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
--- Tọa độ vị trí cho Animation
-local PosCenter = UDim2.new(0.3, 0, 0.3, 0) 
-local PosHidden = UDim2.new(-0.7, 0, 0.3, 0) -- Trượt xa hẳn ra ngoài lề trái
-
--- [[ HÀM KÉO THẢ ]]
-local function MakeDraggable(obj)
-    local dragging, dragInput, dragStart, startPos
-    obj.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true; dragStart = input.Position; startPos = obj.Position
-            input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
-        end
-    end)
-    obj.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end end)
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            local delta = input.Position - dragStart
-            obj.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
-end
-
--- Cấu hình Main Frame
-MainFrame.Name = "MainFrame"
-MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-MainFrame.Position = PosHidden
-MainFrame.Size = UDim2.new(0, 520, 0, 320)
-MainFrame.Active = true
-MainFrame.Visible = false
-MakeDraggable(MainFrame)
-
-UICorner.CornerRadius = UDim.new(0, 5); UICorner.Parent = MainFrame
-UIStroke.Color = Color3.fromRGB(255, 0, 0); UIStroke.Thickness = 3; UIStroke.Parent = MainFrame
-
--- Tiêu đề
-Title.Parent = MainFrame
-Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0, 20, 0, 10)
-Title.Size = UDim2.new(0, 350, 0, 40)
-Title.Text = "DUY TỔNG HỢP - V4"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 22
-Title.Font = MCFont
-Title.TextXAlignment = Enum.TextXAlignment.Left
-
--- Thanh Tab Cuộn
-TabHolder.Name = "TabHolder"
-TabHolder.Parent = MainFrame
-TabHolder.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-TabHolder.Position = UDim2.new(0.03, 0, 0.18, 0)
-TabHolder.Size = UDim2.new(0, 130, 0, 240)
-TabHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
-TabHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
-TabHolder.ScrollBarThickness = 3
-TabHolder.ScrollBarImageColor3 = Color3.fromRGB(255, 0, 0)
-TabHolder.BorderSizePixel = 0
-TabList.Parent = TabHolder; TabList.Padding = UDim.new(0, 8); TabList.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
--- Khung Script Cuộn
-ContentHolder.Name = "ContentHolder"
-ContentHolder.Parent = MainFrame
-ContentHolder.BackgroundTransparency = 1
-ContentHolder.Position = UDim2.new(0.31, 0, 0.18, 0)
-ContentHolder.Size = UDim2.new(0, 340, 0, 240)
-ContentHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
-ContentHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
-ContentHolder.ScrollBarThickness = 4
-ContentHolder.ScrollBarImageColor3 = Color3.fromRGB(255, 0, 0)
-ContentList.Parent = ContentHolder; ContentList.Padding = UDim.new(0, 8); ContentList.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
--- [[ LOGIC KILL ALL MM2 ]]
+-- [[ LOGIC KILL ALL MM2 (GIỮ NGUYÊN TỪ BẢN CŨ) ]]
 local KillAllActive = false
 local originalPositions = {}
+
 local function resetPositions()
     for p, oldCFrame in pairs(originalPositions) do
         if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
@@ -122,144 +34,105 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- [[ HÀM TẠO NÚT SCRIPT ]]
-local function AddScript(tabName, btnName, code, isToggle)
-    local btn = Instance.new("TextButton")
-    btn.Parent = ContentHolder
-    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    btn.Size = UDim2.new(0.9, 0, 0, 40)
-    btn.Text = btnName
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.Font = MCFont
-    btn.TextSize = 14
-    btn.Visible = false
-    btn:SetAttribute("Tab", tabName)
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
-    
-    btn.MouseButton1Click:Connect(function() 
-        if isToggle then
-            KillAllActive = not KillAllActive
-            btn.Text = "KILL ALL: " .. (KillAllActive and "ON" or "OFF")
-            btn.BackgroundColor3 = KillAllActive and Color3.fromRGB(200, 0, 0) or Color3.fromRGB(60, 60, 60)
-        else
-            pcall(function() loadstring(code)() end)
-        end
-    end)
-end
+-- [[ KHỞI TẠO RAYFIELD ]]
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local function ShowTab(name)
-    for _, obj in pairs(ContentHolder:GetChildren()) do
-        if obj:IsA("TextButton") then obj.Visible = (obj:GetAttribute("Tab") == name) end
-    end
-end
+local Window = Rayfield:CreateWindow({
+    Name = "DUY TỔNG HỢP - V5 (Rayfield)",
+    LoadingTitle = "Duy Hub Loading...",
+    LoadingSubtitle = "By DuyXD",
+    ConfigurationSaving = {
+       Enabled = false,
+    },
+    Discord = {
+       Enabled = false,
+    },
+    KeySystem = false
+})
 
-local function CreateTabBtn(name)
-    local tBtn = Instance.new("TextButton")
-    tBtn.Parent = TabHolder
-    tBtn.Size = UDim2.new(0.9, 0, 0, 35)
-    tBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-    tBtn.Text = name
-    tBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    tBtn.Font = MCFont
-    tBtn.TextSize = 13
-    Instance.new("UICorner", tBtn).CornerRadius = UDim.new(0, 4)
-    tBtn.MouseButton1Click:Connect(function() ShowTab(name) end)
-end
+-- [[ TẠO CÁC TAB ]]
+local TabAllGame = Window:CreateTab("All Game", "gamepad-2")
+local TabBloxFruit = Window:CreateTab("Blox Fruit", "swords")
+local TabTSB = Window:CreateTab("TSB", "shield")
+local TabSailor = Window:CreateTab("Sailor", "anchor")
+local TabMM2 = Window:CreateTab("MM2", "crosshair")
 
--- TẠO TAB
-local Tabs = {"All Game", "Blox Fruit", "TSB", "Sailor", "MM2"}
-for _, name in pairs(Tabs) do CreateTabBtn(name) end
+-- ==========================================
+-- [[ DỮ LIỆU: ALL GAME ]]
+-- ==========================================
+TabAllGame:CreateButton({ Name = "Fix Lag", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/marianscriptKing/SUPER-MAX.lau/main/SUPER%20MAX%20PERFORMANCE"))() end })
+TabAllGame:CreateButton({ Name = "Wallhop", Callback = function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fake-Ladder-Flick-And-Wallhop-Script-37199"))() end })
+TabAllGame:CreateButton({ Name = "DeX", Callback = function() loadstring(game:HttpGet("https://gist.githubusercontent.com/DikaArdnt/d8dbfd939768a3563914e7a7605963b6/raw/70f44357b98d36376878c772e737119e7a89e02c/darkdexv4.lua"))() end })
+TabAllGame:CreateButton({ Name = "Infinite Yield", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))() end })
+TabAllGame:CreateButton({ Name = "Font Minecraft", Callback = function() loadstring(game:HttpGet("https://pastefy.app/2zyihzwi/raw"))() end })
+TabAllGame:CreateButton({ Name = "AFEM emote (op!)", Callback = function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-AFEM-Max-Open-Alpha-50210"))() end })
+TabAllGame:CreateButton({ Name = "Music gui (op!)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Music%20gui"))() end })
+TabAllGame:CreateButton({ Name = "Scp-096", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Scp-096"))() end })
+TabAllGame:CreateButton({ Name = "DropKick (no error)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Dropkick"))() end })
 
--- [[ ĐỔ DỮ LIỆU ĐẦY ĐỦ ]]
+-- ==========================================
+-- [[ DỮ LIỆU: BLOX FRUIT (18 NÚT) ]]
+-- ==========================================
+TabBloxFruit:CreateButton({ Name = "67 Tổng Hợp", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))() end })
+TabBloxFruit:CreateButton({ Name = "Banana Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/aloaloalo322/sssdas/refs/heads/main/cc"))() end })
+TabBloxFruit:CreateButton({ Name = "Dua Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/HauScriptDev/SabNew/refs/heads/main/NewUpdate"))() end })
+TabBloxFruit:CreateButton({ Name = "Redz Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/REDZHUB/BloxFruits/main/main.lua"))() end })
+TabBloxFruit:CreateButton({ Name = "Blue X Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/anhthwroblox/script/refs/heads/main/scriptbluehub.text"))() end })
+TabBloxFruit:CreateButton({ Name = "Auto Bounty", Callback = function() loadstring(game:HttpGet("https://pastefy.app/fjQMC3T9/raw"))() end })
+TabBloxFruit:CreateButton({ Name = "Longhihi", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/longhihilonghihi-hub/Devs-LongHiHiV2/refs/heads/main/MainV2.txt"))() end })
+TabBloxFruit:CreateButton({ Name = "Mukuro Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/DonateMe/main/Script.lua"))() end })
+TabBloxFruit:CreateButton({ Name = "Thunder Z", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Chiseno/Aurora/main/Aurora.lua"))() end })
+TabBloxFruit:CreateButton({ Name = "Auto Fruits", Callback = function() loadstring(game:HttpGet("https://pastefy.app/4yLdMHks/raw"))() end })
+TabBloxFruit:CreateButton({ Name = "Night Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Mei2202/NightHub/main/Main"))() end })
+TabBloxFruit:CreateButton({ Name = "Quantum Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/H20_Hub/Quantum-Hub/main/Main.lua"))() end })
+TabBloxFruit:CreateButton({ Name = "Leaf Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/notpoiu/LeafHub/main/main.lua"))() end })
+TabBloxFruit:CreateButton({ Name = "Bacon Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Bacon-Cuti/BaconHub/main/Main.lua"))() end })
+TabBloxFruit:CreateButton({ Name = "Tuấn IOS", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AnhDzaiScript/TuanAnhIOSNew/refs/heads/main/TuanAnhIOS-TongHop.Lua"))() end })
+TabBloxFruit:CreateButton({ Name = "AK Gaming", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Teddyseetink/AkGamingEz/refs/heads/main/AkGaming-V3"))() end })
+TabBloxFruit:CreateButton({ Name = "RuBu Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Bubu2k/Rubutv/refs/heads/main/rubuhubv5.lua"))() end })
+TabBloxFruit:CreateButton({ Name = "Min Hub", Callback = function() loadstring(game:HttpGet("https://github.com/LuaCrack/Min/raw/refs/heads/main/MinVnV5"))() end })
 
--- ALL GAME
-AddScript("All Game", "Fix Lag", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/marianscriptKing/SUPER-MAX.lau/main/SUPER%20MAX%20PERFORMANCE"))()]])
-AddScript("All Game", "Wallhop", [[loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fake-Ladder-Flick-And-Wallhop-Script-37199"))()]])
-AddScript("All Game", "DeX", [[loadstring(game:HttpGet("https://gist.githubusercontent.com/DikaArdnt/d8dbfd939768a3563914e7a7605963b6/raw/70f44357b98d36376878c772e737119e7a89e02c/darkdexv4.lua"))()]])
-AddScript("All Game", "Infinite Yield", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()]])
-AddScript("All Game", "Font Minecraft", [[loadstring(game:HttpGet("https://pastefy.app/2zyihzwi/raw"))()]])
-AddScript("All Game", "AFEM emote (op!)", [[loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-AFEM-Max-Open-Alpha-50210"))()]])
-AddScript("All Game", "Music gui (op!)", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Music%20gui"))()]])
-AddScript("All Game", "Scp-096", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Scp-096"))()]])
-AddScript("All Game", "DropKick (no error)", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Dropkick"))()]])
+-- ==========================================
+-- [[ DỮ LIỆU: TSB (8 NÚT) ]]
+-- ==========================================
+TabTSB:CreateButton({ Name = "DuyXD Hub (TSB)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tsb"))() end })
+TabTSB:CreateButton({ Name = "Aimbot (All)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))() end })
+TabTSB:CreateButton({ Name = "Invisible", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))() end })
+TabTSB:CreateButton({ Name = "Invisible (No Hitbox)", Callback = function() loadstring(game:HttpGet("https://pastefy.app/kVt1CN1F/raw"))() end })
+TabTSB:CreateButton({ Name = "Fly Bypass", Callback = function() loadstring(game:HttpGet("https://pastefy.app/goiHbD1g/raw"))() end })
+TabTSB:CreateButton({ Name = "TP Low Health", Callback = function() loadstring(game:HttpGet("https://pastefy.app/QTdPdQjo/raw"))() end })
+TabTSB:CreateButton({ Name = "Instant Void Kill", Callback = function() loadstring(game:HttpGet("https://pastefy.app/qYCNHHmy/raw"))() end })
+TabTSB:CreateButton({ Name = "Anti Invisible", Callback = function() loadstring(game:HttpGet("https://pastefy.app/cd1f4W3J/raw"))() end })
+TabTSB:CreateButton({ Name = "DuyXD×GhostHub | Tsb", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/DuyXD%C3%97GhostHub"))() end })
 
--- BLOX FRUIT (ĐỦ 18 NÚT)
-AddScript("Blox Fruit", "67 Tổng Hợp", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))()]])
-AddScript("Blox Fruit", "Banana Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/aloaloalo322/sssdas/refs/heads/main/cc"))()]])
-AddScript("Blox Fruit", "Dua Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/HauScriptDev/SabNew/refs/heads/main/NewUpdate"))()]])
-AddScript("Blox Fruit", "Redz Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/REDZHUB/BloxFruits/main/main.lua"))()]])
-AddScript("Blox Fruit", "Blue X Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/anhthwroblox/script/refs/heads/main/scriptbluehub.text"))()]])
-AddScript("Blox Fruit", "Auto Bounty", [[loadstring(game:HttpGet("https://pastefy.app/fjQMC3T9/raw"))()]])
-AddScript("Blox Fruit", "Longhihi", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/longhihilonghihi-hub/Devs-LongHiHiV2/refs/heads/main/MainV2.txt"))()]])
-AddScript("Blox Fruit", "Mukuro Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/DonateMe/main/Script.lua"))()]])
-AddScript("Blox Fruit", "Thunder Z", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Chiseno/Aurora/main/Aurora.lua"))()]])
-AddScript("Blox Fruit", "Auto Fruits", [[loadstring(game:HttpGet("https://pastefy.app/4yLdMHks/raw"))()]])
-AddScript("Blox Fruit", "Night Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Mei2202/NightHub/main/Main"))()]])
-AddScript("Blox Fruit", "Quantum Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/H20_Hub/Quantum-Hub/main/Main.lua"))()]])
-AddScript("Blox Fruit", "Leaf Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/notpoiu/LeafHub/main/main.lua"))()]])
-AddScript("Blox Fruit", "Bacon Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Bacon-Cuti/BaconHub/main/Main.lua"))()]])
-AddScript("Blox Fruit", "Tuấn IOS", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/AnhDzaiScript/TuanAnhIOSNew/refs/heads/main/TuanAnhIOS-TongHop.Lua"))()]])
-AddScript("Blox Fruit", "AK Gaming", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Teddyseetink/AkGamingEz/refs/heads/main/AkGaming-V3"))()]])
-AddScript("Blox Fruit", "RuBu Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/Bubu2k/Rubutv/refs/heads/main/rubuhubv5.lua"))()]])
-AddScript("Blox Fruit", "Min Hub", [[loadstring(game:HttpGet("https://github.com/LuaCrack/Min/raw/refs/heads/main/MinVnV5"))()]])
+-- ==========================================
+-- [[ DỮ LIỆU: SAILOR ]]
+-- ==========================================
+TabSailor:CreateButton({ Name = "Alex Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))() end })
+TabSailor:CreateButton({ Name = "Hulk Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/BestScript-netizen/Hulk.Script/refs/heads/main/SailorPiece"))() end })
 
--- TSB (ĐỦ 8 NÚT)
-AddScript("TSB", "DuyXD Hub (TSB)", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tsb"))()]])
-AddScript("TSB", "Aimbot (All)", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))()]])
-AddScript("TSB", "Invisible", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))()]])
-AddScript("TSB", "Invisible (No Hitbox)", [[loadstring(game:HttpGet("https://pastefy.app/kVt1CN1F/raw"))()]])
-AddScript("TSB", "Fly Bypass", [[loadstring(game:HttpGet("https://pastefy.app/goiHbD1g/raw"))()]])
-AddScript("TSB", "TP Low Health", [[loadstring(game:HttpGet("https://pastefy.app/QTdPdQjo/raw"))()]])
-AddScript("TSB", "Instant Void Kill", [[loadstring(game:HttpGet("https://pastefy.app/qYCNHHmy/raw"))()]])
-AddScript("TSB", "Anti Invisible", [[loadstring(game:HttpGet("https://pastefy.app/cd1f4W3J/raw"))()]])
+-- ==========================================
+-- [[ DỮ LIỆU: MM2 & TOGGLE KILL ALL ]]
+-- ==========================================
+TabMM2:CreateButton({ Name = "ESP GUI", Callback = function() loadstring(game:HttpGet("https://pastefy.app/Ct5oe139/raw"))() end })
+TabMM2:CreateButton({ Name = "Aimbot GUI", Callback = function() loadstring(game:HttpGet("https://pastefy.app/IkKo1Urx/raw"))() end })
 
--- SAILOR
-AddScript("Sailor", "Alex Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))()]])
-AddScript("Sailor", "Hulk Hub", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/BestScript-netizen/Hulk.Script/refs/heads/main/SailorPiece"))()]])
+TabMM2:CreateToggle({
+    Name = "Kill All",
+    CurrentValue = false,
+    Flag = "KillAllToggle",
+    Callback = function(Value)
+        KillAllActive = Value
+    end,
+})
 
--- MM2
-AddScript("MM2", "ESP GUI", [[loadstring(game:HttpGet("https://pastefy.app/Ct5oe139/raw"))()]])
-AddScript("MM2", "Aimbot GUI", [[loadstring(game:HttpGet("https://pastefy.app/IkKo1Urx/raw"))()]])
-AddScript("MM2", "KILL ALL: OFF", "", true)
-AddScript("MM2", "Bug Speed", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/BugSpeed"))()]])
-AddScript("MM2", "Tiny Skin (op!)", [[loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Tiny%20Skin"))()]])
+TabMM2:CreateButton({ Name = "Bug Speed", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/BugSpeed"))() end })
+TabMM2:CreateButton({ Name = "Tiny Skin (op!)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Tiny%20Skin"))() end })
 
-ShowTab("All Game")
-
--- [[ CÀI ĐẶT NÚT OPEN (IMAGE) ]]
-OpenBtn.Parent = ScreenGui
-OpenBtn.BackgroundTransparency = 1
-OpenBtn.Position = UDim2.new(0.02, 0, 0.4, 0)
-OpenBtn.Size = UDim2.new(0, 60, 0, 60)
-OpenBtn.Image = "rbxassetid://116156322599966"
-OpenBtn.Visible = true
-MakeDraggable(OpenBtn)
-
--- Nút đóng (X)
-local CloseBtn = Instance.new("TextButton", MainFrame)
-CloseBtn.Text = "X"; CloseBtn.Position = UDim2.new(0.93, 0, 0.02, 0); CloseBtn.Size = UDim2.new(0, 30, 0, 30); CloseBtn.BackgroundTransparency = 1; CloseBtn.TextColor3 = Color3.fromRGB(255, 0, 0); CloseBtn.TextSize = 25; CloseBtn.Font = MCFont
-
--- [[ HÀM ANIMATION TRƯỢT ]]
-local function OpenUI()
-    MainFrame.Visible = true
-    MainFrame.Position = PosHidden -- Bắt đầu từ ngoài lề trái
-    local tween = TweenService:Create(MainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = PosCenter})
-    tween:Play()
-    OpenBtn.Visible = false
-end
-
-local function CloseUI()
-    local tween = TweenService:Create(MainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = PosHidden})
-    tween:Play()
-    tween.Completed:Connect(function()
-        MainFrame.Visible = false
-        OpenBtn.Visible = true
-    end)
-end
-
-CloseBtn.MouseButton1Click:Connect(CloseUI)
-OpenBtn.MouseButton1Click:Connect(OpenUI)
-
--- Khởi động
-task.wait(0.5)
-OpenUI()
+-- Thông báo khi load xong
+Rayfield:Notify({
+    Title = "Duy Hub",
+    Content = "Đã load xong GUI xịn xò!",
+    Duration = 3,
+    Image = 4483362458,
+})
