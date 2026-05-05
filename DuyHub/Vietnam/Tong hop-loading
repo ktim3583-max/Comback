@@ -147,5 +147,5 @@ task.spawn(function()
     ScreenGui:Destroy()
     
     -- KÍCH HOẠT SCRIPT CHÍNH
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/TongHop"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Roblox"))()
 end)
