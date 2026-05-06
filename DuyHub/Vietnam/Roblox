@@ -2,7 +2,9 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local lp = Players.LocalPlayer
 
--- [[ LOGIC KILL ALL MM2 (GIỮ NGUYÊN TỪ BẢN CŨ) ]]
+-- ==========================================
+-- [[ LOGIC KILL ALL MM2 ]]
+-- ==========================================
 local KillAllActive = false
 local originalPositions = {}
 
@@ -34,105 +36,94 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- [[ KHỞI TẠO RAYFIELD ]]
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
-local Window = Rayfield:CreateWindow({
-    Name = "DUY TỔNG HỢP - V5 (Rayfield)",
-    LoadingTitle = "Duy Hub Loading...",
-    LoadingSubtitle = "By DuyXD",
-    ConfigurationSaving = {
-       Enabled = false,
-    },
-    Discord = {
-       Enabled = false,
-    },
-    KeySystem = false
-})
+-- ==========================================
+-- [[ KHỞI TẠO GUI MỚI (DUYXD SYSTEM) ]]
+-- ==========================================
+local Library = loadstring(game:HttpGet("https://pastefy.app/YeF5O3vl/raw"))()
+local DuyHub = Library:CreateWindow("DUY TỔNG HỢP - V5")
 
 -- [[ TẠO CÁC TAB ]]
-local TabAllGame = Window:CreateTab("All Game", "gamepad-2")
-local TabBloxFruit = Window:CreateTab("Blox Fruit", "swords")
-local TabTSB = Window:CreateTab("TSB", "shield")
-local TabSailor = Window:CreateTab("Sailor", "anchor")
-local TabMM2 = Window:CreateTab("MM2", "crosshair")
+local TabAllGame = DuyHub:AddTab("All Game")
+local TabBloxFruit = DuyHub:AddTab("Blox Fruit")
+local TabTSB = DuyHub:AddTab("TSB")
+local TabSailor = DuyHub:AddTab("Sailor")
+local TabMM2 = DuyHub:AddTab("MM2")
+local SettingTab = DuyHub:AddTab("Setting")
 
 -- ==========================================
 -- [[ DỮ LIỆU: ALL GAME ]]
 -- ==========================================
-TabAllGame:CreateButton({ Name = "Fix Lag", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/marianscriptKing/SUPER-MAX.lau/main/SUPER%20MAX%20PERFORMANCE"))() end })
-TabAllGame:CreateButton({ Name = "Wallhop", Callback = function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fake-Ladder-Flick-And-Wallhop-Script-37199"))() end })
-TabAllGame:CreateButton({ Name = "DeX", Callback = function() loadstring(game:HttpGet("https://gist.githubusercontent.com/DikaArdnt/d8dbfd939768a3563914e7a7605963b6/raw/70f44357b98d36376878c772e737119e7a89e02c/darkdexv4.lua"))() end })
-TabAllGame:CreateButton({ Name = "Infinite Yield", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))() end })
-TabAllGame:CreateButton({ Name = "Font Minecraft", Callback = function() loadstring(game:HttpGet("https://pastefy.app/2zyihzwi/raw"))() end })
-TabAllGame:CreateButton({ Name = "AFEM emote (op!)", Callback = function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-AFEM-Max-Open-Alpha-50210"))() end })
-TabAllGame:CreateButton({ Name = "Music gui (op!)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Music%20gui"))() end })
-TabAllGame:CreateButton({ Name = "Scp-096", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Scp-096"))() end })
-TabAllGame:CreateButton({ Name = "DropKick (no error)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Dropkick"))() end })
+TabAllGame:AddButton("Fix Lag", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/marianscriptKing/SUPER-MAX.lau/main/SUPER%20MAX%20PERFORMANCE"))() end)
+TabAllGame:AddButton("Wallhop", function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fake-Ladder-Flick-And-Wallhop-Script-37199"))() end)
+TabAllGame:AddButton("DeX", function() loadstring(game:HttpGet("https://gist.githubusercontent.com/DikaArdnt/d8dbfd939768a3563914e7a7605963b6/raw/70f44357b98d36376878c772e737119e7a89e02c/darkdexv4.lua"))() end)
+TabAllGame:AddButton("Infinite Yield", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))() end)
+TabAllGame:AddButton("Font Minecraft", function() loadstring(game:HttpGet("https://pastefy.app/2zyihzwi/raw"))() end)
+TabAllGame:AddButton("AFEM emote (op!)", function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-AFEM-Max-Open-Alpha-50210"))() end)
+TabAllGame:AddButton("Music gui (op!)", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Music%20gui"))() end)
+TabAllGame:AddButton("Scp-096", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Scp-096"))() end)
+TabAllGame:AddButton("DropKick (no error)", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Dropkick"))() end)
 
 -- ==========================================
--- [[ DỮ LIỆU: BLOX FRUIT (18 NÚT) ]]
+-- [[ DỮ LIỆU: BLOX FRUIT ]]
 -- ==========================================
-TabBloxFruit:CreateButton({ Name = "67 Tổng Hợp", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))() end })
-TabBloxFruit:CreateButton({ Name = "Banana Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/aloaloalo322/sssdas/refs/heads/main/cc"))() end })
-TabBloxFruit:CreateButton({ Name = "Dua Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/HauScriptDev/SabNew/refs/heads/main/NewUpdate"))() end })
-TabBloxFruit:CreateButton({ Name = "Redz Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/REDZHUB/BloxFruits/main/main.lua"))() end })
-TabBloxFruit:CreateButton({ Name = "Blue X Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/anhthwroblox/script/refs/heads/main/scriptbluehub.text"))() end })
-TabBloxFruit:CreateButton({ Name = "Auto Bounty", Callback = function() loadstring(game:HttpGet("https://pastefy.app/fjQMC3T9/raw"))() end })
-TabBloxFruit:CreateButton({ Name = "Longhihi", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/longhihilonghihi-hub/Devs-LongHiHiV2/refs/heads/main/MainV2.txt"))() end })
-TabBloxFruit:CreateButton({ Name = "Mukuro Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/DonateMe/main/Script.lua"))() end })
-TabBloxFruit:CreateButton({ Name = "Thunder Z", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Chiseno/Aurora/main/Aurora.lua"))() end })
-TabBloxFruit:CreateButton({ Name = "Auto Fruits", Callback = function() loadstring(game:HttpGet("https://pastefy.app/4yLdMHks/raw"))() end })
-TabBloxFruit:CreateButton({ Name = "Night Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Mei2202/NightHub/main/Main"))() end })
-TabBloxFruit:CreateButton({ Name = "Quantum Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/H20_Hub/Quantum-Hub/main/Main.lua"))() end })
-TabBloxFruit:CreateButton({ Name = "Leaf Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/notpoiu/LeafHub/main/main.lua"))() end })
-TabBloxFruit:CreateButton({ Name = "Bacon Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Bacon-Cuti/BaconHub/main/Main.lua"))() end })
-TabBloxFruit:CreateButton({ Name = "Tuấn IOS", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AnhDzaiScript/TuanAnhIOSNew/refs/heads/main/TuanAnhIOS-TongHop.Lua"))() end })
-TabBloxFruit:CreateButton({ Name = "AK Gaming", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Teddyseetink/AkGamingEz/refs/heads/main/AkGaming-V3"))() end })
-TabBloxFruit:CreateButton({ Name = "RuBu Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Bubu2k/Rubutv/refs/heads/main/rubuhubv5.lua"))() end })
-TabBloxFruit:CreateButton({ Name = "Min Hub", Callback = function() loadstring(game:HttpGet("https://github.com/LuaCrack/Min/raw/refs/heads/main/MinVnV5"))() end })
+TabBloxFruit:AddButton("67 Tổng Hợp", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/67HubDev/all/refs/heads/main/67hub.vn.lua"))() end)
+TabBloxFruit:AddButton("Banana Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/aloaloalo322/sssdas/refs/heads/main/cc"))() end)
+TabBloxFruit:AddButton("Dua Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/HauScriptDev/SabNew/refs/heads/main/NewUpdate"))() end)
+TabBloxFruit:AddButton("Redz Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/REDZHUB/BloxFruits/main/main.lua"))() end)
+TabBloxFruit:AddButton("Blue X Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/anhthwroblox/script/refs/heads/main/scriptbluehub.text"))() end)
+TabBloxFruit:AddButton("Auto Bounty", function() loadstring(game:HttpGet("https://pastefy.app/fjQMC3T9/raw"))() end)
+TabBloxFruit:AddButton("Longhihi", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/longhihilonghihi-hub/Devs-LongHiHiV2/refs/heads/main/MainV2.txt"))() end)
+TabBloxFruit:AddButton("Mukuro Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/DonateMe/main/Script.lua"))() end)
+TabBloxFruit:AddButton("Thunder Z", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Chiseno/Aurora/main/Aurora.lua"))() end)
+TabBloxFruit:AddButton("Auto Fruits", function() loadstring(game:HttpGet("https://pastefy.app/4yLdMHks/raw"))() end)
+TabBloxFruit:AddButton("Night Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Mei2202/NightHub/main/Main"))() end)
+TabBloxFruit:AddButton("Quantum Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/H20_Hub/Quantum-Hub/main/Main.lua"))() end)
+TabBloxFruit:AddButton("Leaf Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/notpoiu/LeafHub/main/main.lua"))() end)
+TabBloxFruit:AddButton("Bacon Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Bacon-Cuti/BaconHub/main/Main.lua"))() end)
+TabBloxFruit:AddButton("Tuấn IOS", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/AnhDzaiScript/TuanAnhIOSNew/refs/heads/main/TuanAnhIOS-TongHop.Lua"))() end)
+TabBloxFruit:AddButton("AK Gaming", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Teddyseetink/AkGamingEz/refs/heads/main/AkGaming-V3"))() end)
+TabBloxFruit:AddButton("RuBu Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Bubu2k/Rubutv/refs/heads/main/rubuhubv5.lua"))() end)
+TabBloxFruit:AddButton("Min Hub", function() loadstring(game:HttpGet("https://github.com/LuaCrack/Min/raw/refs/heads/main/MinVnV5"))() end)
 
 -- ==========================================
--- [[ DỮ LIỆU: TSB (8 NÚT) ]]
+-- [[ DỮ LIỆU: TSB ]]
 -- ==========================================
-TabTSB:CreateButton({ Name = "DuyXD Hub (TSB)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tsb"))() end })
-TabTSB:CreateButton({ Name = "Aimbot (All)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))() end })
-TabTSB:CreateButton({ Name = "Invisible", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))() end })
-TabTSB:CreateButton({ Name = "Invisible (No Hitbox)", Callback = function() loadstring(game:HttpGet("https://pastefy.app/kVt1CN1F/raw"))() end })
-TabTSB:CreateButton({ Name = "Fly Bypass", Callback = function() loadstring(game:HttpGet("https://pastefy.app/goiHbD1g/raw"))() end })
-TabTSB:CreateButton({ Name = "TP Low Health", Callback = function() loadstring(game:HttpGet("https://pastefy.app/QTdPdQjo/raw"))() end })
-TabTSB:CreateButton({ Name = "Instant Void Kill", Callback = function() loadstring(game:HttpGet("https://pastefy.app/qYCNHHmy/raw"))() end })
-TabTSB:CreateButton({ Name = "Anti Invisible", Callback = function() loadstring(game:HttpGet("https://pastefy.app/cd1f4W3J/raw"))() end })
-TabTSB:CreateButton({ Name = "DuyXD×GhostHub | Tsb", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/DuyXD%C3%97GhostHub"))() end })
+TabTSB:AddButton("DuyXD Hub (TSB)", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tsb"))() end)
+TabTSB:AddButton("Aimbot (All)", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Aimbot"))() end)
+TabTSB:AddButton("Invisible", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))() end)
+TabTSB:AddButton("Invisible (No Hitbox)", function() loadstring(game:HttpGet("https://pastefy.app/kVt1CN1F/raw"))() end)
+TabTSB:AddButton("Fly Bypass", function() loadstring(game:HttpGet("https://pastefy.app/goiHbD1g/raw"))() end)
+TabTSB:AddButton("TP Low Health", function() loadstring(game:HttpGet("https://pastefy.app/QTdPdQjo/raw"))() end)
+TabTSB:AddButton("Instant Void Kill", function() loadstring(game:HttpGet("https://pastefy.app/qYCNHHmy/raw"))() end)
+TabTSB:AddButton("Anti Invisible", function() loadstring(game:HttpGet("https://pastefy.app/cd1f4W3J/raw"))() end)
+TabTSB:AddButton("DuyXD×GhostHub | Tsb", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/DuyXD%C3%97GhostHub"))() end)
+TabTSB:AddButton("Orbit + Spam | Auto farm kill", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/Orbit%2BSpam"))() end)
 
 -- ==========================================
 -- [[ DỮ LIỆU: SAILOR ]]
 -- ==========================================
-TabSailor:CreateButton({ Name = "Alex Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))() end })
-TabSailor:CreateButton({ Name = "Hulk Hub", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/BestScript-netizen/Hulk.Script/refs/heads/main/SailorPiece"))() end })
+TabSailor:AddButton("Alex Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))() end)
+TabSailor:AddButton("Hulk Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/BestScript-netizen/Hulk.Script/refs/heads/main/SailorPiece"))() end)
 
 -- ==========================================
--- [[ DỮ LIỆU: MM2 & TOGGLE KILL ALL ]]
+-- [[ DỮ LIỆU: MM2 ]]
 -- ==========================================
-TabMM2:CreateButton({ Name = "ESP GUI", Callback = function() loadstring(game:HttpGet("https://pastefy.app/Ct5oe139/raw"))() end })
-TabMM2:CreateButton({ Name = "Aimbot GUI", Callback = function() loadstring(game:HttpGet("https://pastefy.app/IkKo1Urx/raw"))() end })
+TabMM2:AddButton("ESP GUI", function() loadstring(game:HttpGet("https://pastefy.app/Ct5oe139/raw"))() end)
+TabMM2:AddButton("Aimbot GUI", function() loadstring(game:HttpGet("https://pastefy.app/IkKo1Urx/raw"))() end)
+TabMM2:AddToggle("Kill All", function(Value) KillAllActive = Value end)
+TabMM2:AddButton("Bug Speed", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/BugSpeed"))() end)
+TabMM2:AddButton("Tiny Skin (op!)", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Tiny%20Skin"))() end)
 
-TabMM2:CreateToggle({
-    Name = "Kill All",
-    CurrentValue = false,
-    Flag = "KillAllToggle",
-    Callback = function(Value)
-        KillAllActive = Value
-    end,
-})
-
-TabMM2:CreateButton({ Name = "Bug Speed", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/BugSpeed"))() end })
-TabMM2:CreateButton({ Name = "Tiny Skin (op!)", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Tiny%20Skin"))() end })
-
--- Thông báo khi load xong
-Rayfield:Notify({
-    Title = "Duy Hub",
-    Content = "Đã load xong GUI xịn xò!",
-    Duration = 3,
-    Image = 4483362458,
-})
+-- ==========================================
+-- [[ CÀI ĐẶT & HỆ THỐNG ]]
+-- ==========================================
+SettingTab:AddButton("Xóa GUI (Trượt xuống)", function()
+    local core = game:GetService("CoreGui")
+    local sg = core:FindFirstChild("DuyXD_System") or game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("DuyXD_System")
+    
+    if sg and sg:FindFirstChild("Gui") then
+        sg.Gui:TweenPosition(UDim2.new(0.5, -218, 1, 50), "In", "Quart", 0.5, true, function()
+            sg:Destroy()
+        end)
+    end
+end)
