@@ -1,0 +1,123 @@
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local UIS = game:GetService("UserInputService")
+
+local lp = Players.LocalPlayer
+
+if CoreGui:FindFirstChild("DuyXD_TrollTSB_V2") then
+    CoreGui.DuyXD_TrollTSB_V2:Destroy()
+end
+
+local Gui = Instance.new("ScreenGui", CoreGui)
+Gui.Name = "DuyXD_TrollTSB_V2"
+
+local Main = Instance.new("Frame", Gui)
+Main.Size = UDim2.new(0,170,0,240)
+Main.Position = UDim2.new(0.5,-85,0.3,0)
+Main.BackgroundColor3 = Color3.fromRGB(20,20,20)
+Main.BorderSizePixel = 0
+Main.Active = true
+
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0,10)
+
+local Stroke = Instance.new("UIStroke", Main)
+Stroke.Thickness = 2
+Stroke.Color = Color3.fromRGB(200,0,0)
+Stroke.Transparency = 0.3
+
+local Header = Instance.new("TextLabel", Main)
+Header.Size = UDim2.new(1,0,0,30)
+Header.BackgroundColor3 = Color3.fromRGB(30,30,30)
+Header.Text = "TROLL TSB MINI"
+Header.TextColor3 = Color3.fromRGB(200,0,0)
+Header.Font = Enum.Font.GothamBold
+Header.TextSize = 12
+
+Instance.new("UICorner", Header)
+
+local Container = Instance.new("Frame", Main)
+Container.Size = UDim2.new(1,0,1,-35)
+Container.Position = UDim2.new(0,0,0,35)
+Container.BackgroundTransparency = 1
+
+local List = Instance.new("UIListLayout", Container)
+List.Padding = UDim.new(0,6)
+List.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+local function PlayAnim(id)
+    local char = lp.Character
+    local hum = char and char:FindFirstChild("Humanoid")
+
+    if hum then
+        for _,v in pairs(hum:GetPlayingAnimationTracks()) do
+            v:Stop()
+        end
+
+        local anim = Instance.new("Animation")
+        anim.AnimationId = id
+
+        hum:LoadAnimation(anim):Play()
+    end
+end
+
+local function AddButton(text,color,id)
+    local btn = Instance.new("TextButton", Container)
+
+    btn.Size = UDim2.new(0.9,0,0,32)
+    btn.BackgroundColor3 = color
+    btn.Text = text
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Font = Enum.Font.GothamSemibold
+    btn.TextSize = 12
+
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0,6)
+
+    btn.MouseButton1Click:Connect(function()
+        local hum = lp.Character and lp.Character:FindFirstChild("Humanoid")
+
+        if id == "STOP" then
+            if hum then
+                for _,v in pairs(hum:GetPlayingAnimationTracks()) do
+                    v:Stop()
+                end
+            end
+        else
+            PlayAnim(id)
+        end
+    end)
+end
+
+AddButton("Serious Punch",Color3.fromRGB(45,45,45),"rbxassetid://12983333733")
+AddButton("Serious Mode",Color3.fromRGB(45,45,45),"rbxassetid://12447707844")
+AddButton("Garou Awakening",Color3.fromRGB(45,45,45),"rbxassetid://12342141464")
+AddButton("Firewall (Genos)",Color3.fromRGB(45,45,45),"rbxassetid://13146710762")
+AddButton("Dừng Anim 🛑",Color3.fromRGB(150,0,0),"STOP")
+
+local drag,start,pos
+
+Header.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        drag = true
+        start = i.Position
+        pos = Main.Position
+    end
+end)
+
+UIS.InputChanged:Connect(function(i)
+    if drag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+        local delta = i.Position - start
+
+        Main.Position = UDim2.new(
+            pos.X.Scale,
+            pos.X.Offset + delta.X,
+            pos.Y.Scale,
+            pos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+UIS.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        drag = false
+    end
+end)
