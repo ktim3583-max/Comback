@@ -1,0 +1,151 @@
+local LMG2L = {}
+local UserInputService = game:GetService("UserInputService")
+
+function LMG2L:CreateWindow()
+    local Lib = { CurrentTab = nil }
+    
+    -- ScreenGui
+    local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+    ScreenGui.Name = "DuyXD_Lib_V2"
+    
+    -- Main Frame (gui chính)
+    local Main = Instance.new("Frame", ScreenGui)
+    Main.Name = "gui chính"
+    Main.BackgroundColor3 = Color3.fromRGB(46, 46, 46)
+    Main.Size = UDim2.new(0, 346, 0, 238)
+    Main.Position = UDim2.new(0.5, -173, 0.5, -119)
+    Main.BackgroundTransparency = 0.1
+    Instance.new("UICorner", Main)
+
+    -- Bar
+    local Bar = Instance.new("TextLabel", Main)
+    Bar.Name = "bar"
+    Bar.Size = UDim2.new(1, 0, 0, 28)
+    Bar.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
+    Bar.Text = "DuyXD TSB - v2  "
+    Bar.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Bar.TextSize = 20
+    Bar.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json")
+    Bar.TextXAlignment = Enum.TextXAlignment.Right
+    Instance.new("UICorner", Bar)
+
+    -- Nút Select Tab
+    local SelectTabBtn = Instance.new("TextButton", Main)
+    SelectTabBtn.Name = "select tab"
+    SelectTabBtn.Size = UDim2.new(0, 64, 0, 22)
+    SelectTabBtn.Position = UDim2.new(0, 2, 0, 2)
+    SelectTabBtn.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
+    SelectTabBtn.Text = "Chọn Tab"
+    SelectTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SelectTabBtn.ZIndex = 10
+    Instance.new("UICorner", SelectTabBtn)
+
+    -- Đựng Tab
+    local DungTab = Instance.new("Frame", SelectTabBtn)
+    DungTab.Name = "đựng tab"
+    DungTab.Visible = false
+    DungTab.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
+    DungTab.Size = UDim2.new(0, 70, 0, 0)
+    DungTab.Position = UDim2.new(0, 0, 0, 28)
+    DungTab.BorderSizePixel = 0
+    Instance.new("UICorner", DungTab)
+    
+    local TabListLayout = Instance.new("UIListLayout", DungTab)
+    TabListLayout.Padding = UDim.new(0, 4)
+    TabListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    
+    -- Toggle menu tab
+    SelectTabBtn.MouseButton1Click:Connect(function()
+        DungTab.Visible = not DungTab.Visible
+    end)
+
+    -- Nơi chứa nội dung
+    local ContentHolder = Instance.new("Frame", Main)
+    ContentHolder.Name = "ContentHolder"
+    ContentHolder.Size = UDim2.new(1, -12, 1, -40)
+    ContentHolder.Position = UDim2.new(0, 6, 0, 35)
+    ContentHolder.BackgroundTransparency = 1
+
+    -- Hàm tạo Tab
+    function Lib:CreateTab(tabName)
+        local TabObj = {}
+        
+        local TabBtn = Instance.new("TextButton", DungTab)
+        TabBtn.Name = "tab"
+        TabBtn.Size = UDim2.new(0, 64, 0, 24)
+        TabBtn.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
+        TabBtn.Text = tabName
+        TabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Instance.new("UICorner", TabBtn)
+        
+        DungTab.Size = UDim2.new(0, 70, 0, TabListLayout.AbsoluteContentSize.Y + 10)
+
+        local TabPage = Instance.new("ScrollingFrame", ContentHolder)
+        TabPage.Name = tabName .. "_Page"
+        TabPage.Size = UDim2.new(1, 0, 1, 0)
+        TabPage.BackgroundTransparency = 1
+        TabPage.Visible = false
+        TabPage.CanvasSize = UDim2.new(0, 0, 0, 0)
+        TabPage.ScrollBarThickness = 0
+        local PageLayout = Instance.new("UIListLayout", TabPage)
+        PageLayout.Padding = UDim.new(0, 5)
+
+        TabBtn.MouseButton1Click:Connect(function()
+            DungTab.Visible = false
+            SelectTabBtn.Text = tabName
+            for _, page in pairs(ContentHolder:GetChildren()) do
+                if page:IsA("ScrollingFrame") then page.Visible = false end
+            end
+            TabPage.Visible = true
+        end)
+
+        function TabObj:AddButton(text, callback)
+            local Btn = Instance.new("TextButton", TabPage)
+            Btn.Size = UDim2.new(1, -5, 0, 30)
+            Btn.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
+            Btn.Text = "  " .. text
+            Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Btn.TextXAlignment = Enum.TextXAlignment.Left
+            Instance.new("UICorner", Btn)
+
+            local Hint = Instance.new("TextLabel", Btn)
+            Hint.Text = "Click here"
+            Hint.Size = UDim2.new(0, 66, 1, 0)
+            Hint.Position = UDim2.new(1, -70, 0, 0)
+            Hint.BackgroundTransparency = 1
+            Hint.TextColor3 = Color3.fromRGB(200, 200, 200)
+            Hint.TextSize = 10
+            Hint.TextTransparency = 0.5
+
+            Btn.MouseButton1Click:Connect(callback)
+            TabPage.CanvasSize = UDim2.new(0, 0, 0, PageLayout.AbsoluteContentSize.Y)
+        end
+
+        if Lib.CurrentTab == nil then
+            Lib.CurrentTab = tabName
+            TabPage.Visible = true
+            SelectTabBtn.Text = tabName
+        end
+
+        return TabObj
+    end
+
+    -- Kéo thả
+    local dragging, dragStart, startPos
+    Main.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true; dragStart = input.Position; startPos = Main.Position
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local delta = input.Position - dragStart
+            Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+    Main.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end end)
+
+    return Lib
+end
+
+_G.DuyLib = LMG2L -- Lưu vào biến global để file khác gọi được
