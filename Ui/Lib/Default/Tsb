@@ -1,17 +1,30 @@
 local LMG2L = {}
 local UserInputService = game:GetService("UserInputService")
 
--- Đảm bảo GUI không bị xóa khi hồi sinh
-local Parent = game:GetService("CoreGui")
-
 function LMG2L:CreateWindow(title)
-    local Lib = { CurrentTab = nil }
+    local Lib = { CurrentTab = nil, Pages = {} }
     title = title or "DuyXD Hub"
 
     -- ScreenGui
-    local ScreenGui = Instance.new("ScreenGui", Parent)
-    ScreenGui.Name = "DuyXD_Lib_V2"
+    local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+    ScreenGui.Name = "DuyXD_Final_Lib"
     ScreenGui.ResetOnSpawn = false
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+    -- Nút Ẩn/Hiện "Yo bro" (Có thể kéo thả)
+    local ToggleBtn = Instance.new("TextButton", ScreenGui)
+    ToggleBtn.Name = "Nút ẩn hiện gui"
+    ToggleBtn.Size = UDim2.new(0, 72, 0, 18)
+    ToggleBtn.Position = UDim2.new(0, 84, 0, 2)
+    ToggleBtn.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
+    ToggleBtn.BackgroundTransparency = 0.5
+    ToggleBtn.Text = "Yo bro"
+    ToggleBtn.TextColor3 = Color3.fromRGB(227, 255, 234)
+    ToggleBtn.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json")
+    ToggleBtn.TextSize = 15
+    ToggleBtn.ZIndex = 100
+    local btnCorner = Instance.new("UICorner", ToggleBtn)
+    btnCorner.CornerRadius = UDim.new(2, 0)
 
     -- Main Frame
     local Main = Instance.new("Frame", ScreenGui)
@@ -20,16 +33,22 @@ function LMG2L:CreateWindow(title)
     Main.Size = UDim2.new(0, 346, 0, 238)
     Main.Position = UDim2.new(0.5, -173, 0.5, -119)
     Main.BackgroundTransparency = 0.1
+    Main.ZIndex = 1
     Instance.new("UICorner", Main)
 
-    -- Top Bar
+    -- Logic Ẩn hiện
+    ToggleBtn.MouseButton1Click:Connect(function()
+        Main.Visible = not Main.Visible
+    end)
+
+    -- Bar
     local Bar = Instance.new("TextLabel", Main)
     Bar.Name = "bar"
     Bar.Size = UDim2.new(1, 0, 0, 28)
     Bar.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
     Bar.Text = title .. "  "
     Bar.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Bar.TextSize = 18
+    Bar.TextSize = 20
     Bar.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json")
     Bar.TextXAlignment = Enum.TextXAlignment.Right
     Instance.new("UICorner", Bar)
@@ -37,54 +56,76 @@ function LMG2L:CreateWindow(title)
     -- Nút Select Tab
     local SelectTabBtn = Instance.new("TextButton", Main)
     SelectTabBtn.Name = "select tab"
-    SelectTabBtn.Size = UDim2.new(0, 75, 0, 22)
-    SelectTabBtn.Position = UDim2.new(0, 5, 0, 3)
+    SelectTabBtn.Size = UDim2.new(0, 64, 0, 22)
+    SelectTabBtn.Position = UDim2.new(0, 2, 0, 2)
     SelectTabBtn.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
     SelectTabBtn.Text = "Chọn Tab"
     SelectTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    SelectTabBtn.ZIndex = 10
+    SelectTabBtn.ZIndex = 50 -- Cao hơn để không bị Button che
     Instance.new("UICorner", SelectTabBtn)
 
-    -- Khung Đựng Tab
+    -- Đựng Tab
     local DungTab = Instance.new("Frame", SelectTabBtn)
     DungTab.Name = "đựng tab"
     DungTab.Visible = false
-    DungTab.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    DungTab.Position = UDim2.new(0, 0, 1, 5)
+    DungTab.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
+    DungTab.Position = UDim2.new(0, 0, 0, 28)
+    DungTab.Size = UDim2.new(0, 70, 0, 0)
     DungTab.BorderSizePixel = 0
+    DungTab.ZIndex = 51
     Instance.new("UICorner", DungTab)
     
     local TabListLayout = Instance.new("UIListLayout", DungTab)
-    TabListLayout.Padding = UDim.new(0, 5)
+    TabListLayout.Padding = UDim.new(0, 4)
     TabListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
     SelectTabBtn.MouseButton1Click:Connect(function()
         DungTab.Visible = not DungTab.Visible
     end)
 
-    -- Nơi chứa các Page
+    -- Content Holder
     local ContentHolder = Instance.new("Frame", Main)
-    ContentHolder.Name = "ContentHolder"
-    ContentHolder.Size = UDim2.new(1, -12, 1, -45)
-    ContentHolder.Position = UDim2.new(0, 6, 0, 38)
+    ContentHolder.Size = UDim2.new(1, -12, 1, -40)
+    ContentHolder.Position = UDim2.new(0, 6, 0, 35)
     ContentHolder.BackgroundTransparency = 1
+    ContentHolder.ZIndex = 2
 
-    -- Hàm tạo Tab
+    -- Hàm Kéo Thả (Dùng chung cho Main và Nút Yo bro)
+    local function MakeDraggable(obj)
+        local dragging, dragStart, startPos
+        obj.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                dragging = true; dragStart = input.Position; startPos = obj.Position
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End then dragging = false end
+                end)
+            end
+        end)
+        UserInputService.InputChanged:Connect(function(input)
+            if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                local delta = input.Position - dragStart
+                obj.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            end
+        end)
+    end
+    MakeDraggable(Main)
+    MakeDraggable(ToggleBtn)
+
     function Lib:CreateTab(tabName)
         local TabObj = {}
         
+        -- Button trong menu dropdown
         local TabBtn = Instance.new("TextButton", DungTab)
-        TabBtn.Name = "tab_" .. tabName
-        TabBtn.Size = UDim2.new(0, 65, 0, 25)
-        TabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        TabBtn.Size = UDim2.new(0, 64, 0, 24)
+        TabBtn.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
         TabBtn.Text = tabName
         TabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TabBtn.ZIndex = 52
         Instance.new("UICorner", TabBtn)
         
-        -- Auto size cho khung đựng tab
-        DungTab.Size = UDim2.new(0, 75, 0, TabListLayout.AbsoluteContentSize.Y + 10)
+        DungTab.Size = UDim2.new(0, 70, 0, TabListLayout.AbsoluteContentSize.Y + 10)
 
+        -- Trang nội dung (ScrollingFrame)
         local TabPage = Instance.new("ScrollingFrame", ContentHolder)
         TabPage.Size = UDim2.new(1, 0, 1, 0)
         TabPage.BackgroundTransparency = 1
@@ -92,41 +133,40 @@ function LMG2L:CreateWindow(title)
         TabPage.ScrollBarThickness = 2
         TabPage.CanvasSize = UDim2.new(0, 0, 0, 0)
         local PageLayout = Instance.new("UIListLayout", TabPage)
-        PageLayout.Padding = UDim.new(0, 6)
+        PageLayout.Padding = UDim.new(0, 5)
+
+        table.insert(Lib.Pages, TabPage)
 
         TabBtn.MouseButton1Click:Connect(function()
-            DungTab.Visible = false
-            SelectTabBtn.Text = tabName
-            for _, page in pairs(ContentHolder:GetChildren()) do
-                page.Visible = false
-            end
+            for _, page in pairs(Lib.Pages) do page.Visible = false end
             TabPage.Visible = true
+            SelectTabBtn.Text = tabName
+            DungTab.Visible = false
         end)
 
-        -- Hàm thêm Button
         function TabObj:AddButton(text, callback)
             local Btn = Instance.new("TextButton", TabPage)
-            Btn.Size = UDim2.new(1, -8, 0, 32)
+            Btn.Size = UDim2.new(1, -10, 0, 30)
             Btn.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
             Btn.Text = "  " .. text
             Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
             Btn.TextXAlignment = Enum.TextXAlignment.Left
+            Btn.ZIndex = 3
             Instance.new("UICorner", Btn)
 
             local Hint = Instance.new("TextLabel", Btn)
             Hint.Text = "Click here"
-            Hint.Size = UDim2.new(0, 70, 1, 0)
-            Hint.Position = UDim2.new(1, -75, 0, 0)
+            Hint.Size = UDim2.new(0, 66, 1, 0)
+            Hint.Position = UDim2.new(1, -70, 0, 0)
             Hint.BackgroundTransparency = 1
-            Hint.TextColor3 = Color3.fromRGB(180, 180, 180)
+            Hint.TextColor3 = Color3.fromRGB(200, 200, 200)
             Hint.TextSize = 10
-            Hint.TextTransparency = 0.4
+            Hint.ZIndex = 4
 
             Btn.MouseButton1Click:Connect(callback)
             TabPage.CanvasSize = UDim2.new(0, 0, 0, PageLayout.AbsoluteContentSize.Y)
         end
 
-        -- Mặc định Tab đầu tiên hiện lên
         if Lib.CurrentTab == nil then
             Lib.CurrentTab = tabName
             TabPage.Visible = true
@@ -135,25 +175,6 @@ function LMG2L:CreateWindow(title)
 
         return TabObj
     end
-
-    -- Logic kéo thả (Mobile & PC)
-    local dragging, dragInput, dragStart, startPos
-    Main.InputBegan:Connect(function(input)
-        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
-            dragging = true
-            dragStart = input.Position
-            startPos = Main.Position
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then dragging = false end
-            end)
-        end
-    end)
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            local delta = input.Position - dragStart
-            Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
 
     return Lib
 end
