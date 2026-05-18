@@ -46,7 +46,7 @@ local DuyHub = Library:CreateWindow("DUY TỔNG HỢP - V5")
 local TabAllGame = DuyHub:AddTab("All Game")
 local TabBloxFruit = DuyHub:AddTab("Blox Fruit")
 local TabTSB = DuyHub:AddTab("TSB")
-local TabSailor = DuyHub:AddTab("Sailor")
+local TabJJS = DuyHub:AddTab("JJS")
 local TabMM2 = DuyHub:AddTab("MM2")
 local SettingTab = DuyHub:AddTab("Setting")
 
@@ -100,10 +100,9 @@ TabTSB:AddButton("DuyXD×GhostHub | Tsb", function() loadstring(game:HttpGet("ht
 TabTSB:AddButton("Orbit + Spam | Auto farm kill", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/Orbit%2BSpam"))() end)
 
 -- ==========================================
--- [[ DỮ LIỆU: SAILOR ]]
+-- [[ DỮ LIỆU: JJS ]]
 -- ==========================================
-TabSailor:AddButton("Alex Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/oblivionscripts/Sailorpiece/refs/heads/main/Sailor"))() end)
-TabSailor:AddButton("Hulk Hub", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/BestScript-netizen/Hulk.Script/refs/heads/main/SailorPiece"))() end)
+TabJJS:AddButton("Kill all (gojo ult)", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Kill_All"))() end)
 
 -- ==========================================
 -- [[ DỮ LIỆU: MM2 ]]
