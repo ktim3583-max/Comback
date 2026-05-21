@@ -1,0 +1,156 @@
+local LMG2L = {}
+
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local lp = Players.LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+
+local old = CoreGui:FindFirstChild("DuyXD_Main_KeySystem")
+if old then old:Destroy() end
+
+local ScreenGui = Instance.new("ScreenGui", CoreGui)
+ScreenGui.Name = "DuyXD_Main_KeySystem"
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local OpenBtn = Instance.new("TextButton", ScreenGui)
+OpenBtn.BorderSizePixel = 0
+OpenBtn.TextSize = 18
+OpenBtn.BackgroundColor3 = Color3.fromRGB(22, 255, 0)
+OpenBtn.FontFace = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+OpenBtn.Size = UDim2.new(0, 58, 0, 56)
+OpenBtn.Text = "DuyXD"
+OpenBtn.Position = UDim2.new(0.05, 0, 0.2, 0)
+
+Instance.new("UICorner", OpenBtn)
+
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Visible = false
+Frame.BorderSizePixel = 0
+Frame.BackgroundColor3 = Color3.fromRGB(0, 225, 20)
+Frame.Size = UDim2.new(0, 150, 0, 240)
+Frame.Position = UDim2.new(0.5, -75, 0.4, -120)
+
+Instance.new("UICorner", Frame)
+
+local Bar = Instance.new("TextLabel", Frame)
+Bar.BorderSizePixel = 0
+Bar.TextSize = 11
+Bar.BackgroundColor3 = Color3.fromRGB(0, 199, 23)
+Bar.FontFace = Font.new([[rbxasset://fonts/families/Guru.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+Bar.TextColor3 = Color3.fromRGB(255, 255, 255)
+Bar.Size = UDim2.new(0, 150, 0, 28)
+Bar.Text = "DuyXD tổng hợp - made by discord"
+
+local KeyBox = Instance.new("TextBox", Frame)
+KeyBox.BorderSizePixel = 0
+KeyBox.TextSize = 16
+KeyBox.BackgroundColor3 = Color3.fromRGB(2, 203, 0)
+KeyBox.Size = UDim2.new(0, 136, 0, 24)
+KeyBox.Position = UDim2.new(0, 8, 0, 32)
+KeyBox.Text = "enter key"
+KeyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local CheckBtn = Instance.new("TextButton", Frame)
+CheckBtn.BorderSizePixel = 0
+CheckBtn.TextSize = 11
+CheckBtn.BackgroundColor3 = Color3.fromRGB(2, 204, 0)
+CheckBtn.Size = UDim2.new(0, 136, 0, 24)
+CheckBtn.Text = "check key"
+CheckBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CheckBtn.Position = UDim2.new(0, 8, 0, 62)
+
+local Template = Instance.new("TextButton", Frame)
+Template.BorderSizePixel = 0
+Template.TextSize = 11
+Template.BackgroundColor3 = Color3.fromRGB(2, 204, 0)
+Template.Size = UDim2.new(0, 136, 0, 24)
+Template.Text = "button"
+Template.TextColor3 = Color3.fromRGB(255, 255, 255)
+Template.Visible = false
+
+local Scroll = Instance.new("ScrollingFrame", Frame)
+Scroll.Name = "ScriptScrollContainer"
+Scroll.Size = UDim2.new(0, 142, 0, 140)
+Scroll.Position = UDim2.new(0, 4, 0, 92)
+Scroll.BackgroundTransparency = 1
+Scroll.ScrollBarThickness = 3
+Scroll.Visible = false
+
+local Layout = Instance.new("UIListLayout", Scroll)
+Layout.Padding = UDim.new(0, 6)
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 5)
+end)
+
+local function AddScript(text, code)
+    local b = Template:Clone()
+    b.Parent = Scroll
+    b.Visible = true
+    b.Text = text
+
+    b.MouseButton1Click:Connect(function()
+        local f = loadstring(code)
+        if f then task.spawn(f) end
+    end)
+end
+
+AddScript("DuyXD tổng hợp - nokey", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Roblox"))()')
+AddScript("DuyXD - tsb", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Tsb"))();')
+AddScript("TinXD - tsb", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/TinXD-IQ/Hack/refs/heads/main/TinXD/Farm%20kill-sieungon"))();')
+AddScript("Auto block(tsb)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/Auto%20block"))();')
+AddScript("Auto wallcombo(tsb)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/WallCombo"))();')
+AddScript("JJS kill all (gojo)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Kill_All"))();')
+AddScript("auto kyoto(tsb)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/Kyoto%20Combo"))();')
+AddScript("orbit + spam", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Tsb/Orbit%2BSpam"))();')
+AddScript("camlock", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/Vietnam/Camlock"))();')
+AddScript("bug speed (mm2)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/BugSpeed"))();')
+AddScript("tiny skin (r15)", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Tiny%20Skin"))();')
+AddScript("scp 096 + touch fling", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Scp-096"))();')
+AddScript("drop kick", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/Universal/Dropkick"))();')
+AddScript("Fake Dash", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/FakeDash/refs/heads/main/Protected_5833389828844912.lua"))()')
+AddScript("Fix Lag", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/louismich4el/ItsLouisPlayz-Scripts/main/TSB%20Anti%20Lag.lua"))()')
+AddScript("Combat Gui", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/TSB/refs/heads/main/CombatGui"))()')
+AddScript("aim script", 'loadstring(game:HttpGet("https://raw.githubusercontent.com/MerebennieOfficial/ExoticJn/refs/heads/main/AIMLOCK"))()')
+
+OpenBtn.MouseButton1Click:Connect(function()
+    Frame.Visible = not Frame.Visible
+end)
+
+CheckBtn.MouseButton1Click:Connect(function()
+    if KeyBox.Text == "LegitDuyXD" then
+        Scroll.Visible = true
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Success!",
+            Text = "Đã kích hoạt DuyXD Hub!",
+            Duration = 3
+        })
+    else
+        KeyBox.Text = "Wrong key!"
+        task.delay(1.2, function()
+            KeyBox.Text = "enter key"
+        end)
+    end
+end)
+
+local function Drag(gui, handle)
+    local dragging, start, pos
+    handle.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            start = i.Position
+            pos = gui.Position
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(i)
+        if dragging and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+            local d = i.Position - start
+            gui.Position = UDim2.new(pos.X.Scale, pos.X.Offset + d.X, pos.Y.Scale, pos.Y.Offset + d.Y)
+        end
+    end)
+end
+
+Drag(OpenBtn, OpenBtn)
+Drag(Frame, Bar)
