@@ -1,530 +1,119 @@
--- =====================================================================
--- MM2 VINYSOUA - BẢN HOÀN THIỆN TỐI THƯỢNG (FIX DRAG, FIX MEMORY LEAK)
--- =====================================================================
+-- [[ ĐOẠN SCRIPT GUI KEY SYSTEM - BY DUYXD ]] --
 
-local LMG2L = {};
-local Connections = {} -- Danh sách quản lý các vòng lặp ngầm tránh Memory Leak
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UICorner_Main = Instance.new("UICorner")
+local UIStroke_Main = Instance.new("UIStroke")
+local Title_GetKey = Instance.new("TextLabel")
+local KeyInput = Instance.new("TextBox")
+local UICorner_Input = Instance.new("UICorner")
+local UIStroke_Input = Instance.new("UIStroke")
+local CheckBtn = Instance.new("TextButton")
+local UICorner_Btn = Instance.new("UICorner")
+local UIStroke_Btn = Instance.new("UIStroke")
+local SubTitle_Discord = Instance.new("TextLabel")
 
--- 1. ScreenGui
-LMG2L["ScreenGui_1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"));
-LMG2L["ScreenGui_1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
-LMG2L["ScreenGui_1"].ResetOnSpawn = false
+-- Thuộc tính chính của GUI
+ScreenGui.Name = "DuyXD_KeySystem"
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- 2. Bảng Frame chính (222 x 304)
-LMG2L["Frame_2"] = Instance.new("Frame", LMG2L["ScreenGui_1"]);
-LMG2L["Frame_2"]["BorderSizePixel"] = 0;
-LMG2L["Frame_2"]["BackgroundColor3"] = Color3.fromRGB(36, 36, 36);
-LMG2L["Frame_2"]["Size"] = UDim2.new(0, 222, 0, 304);
-LMG2L["Frame_2"]["Position"] = UDim2.new(0.5, -111, 0.5, -152);
+-- Main Frame (Nền 35,35,35 | Bo góc | Viền đỏ)
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+MainFrame.Size = UDim2.new(0, 300, 0, 200)
+MainFrame.Active = true
+MainFrame.Draggable = true -- Hỗ trợ kéo thả trên Mobile
 
-local FrameCorner = Instance.new("UICorner", LMG2L["Frame_2"]);
+UICorner_Main.CornerRadius = UDim.new(0, 12) -- Bo góc frame chính
+UICorner_Main.Parent = MainFrame
 
--- Tiêu đề Bảng (Dùng làm thanh kéo thả)
-LMG2L["bar_4"] = Instance.new("TextLabel", LMG2L["Frame_2"]);
-LMG2L["bar_4"]["BorderSizePixel"] = 0;
-LMG2L["bar_4"]["TextSize"] = 14;
-LMG2L["bar_4"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-LMG2L["bar_4"]["FontFace"] = Font.new([[rbxasset://fonts/families/PressStart2P.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-LMG2L["bar_4"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-LMG2L["bar_4"]["BackgroundTransparency"] = 1;
-LMG2L["bar_4"]["Size"] = UDim2.new(0, 222, 0, 36);
-LMG2L["bar_4"]["Text"] = [[MM2 Vinysoua]];
-LMG2L["bar_4"]["Name"] = [[bar]];
+UIStroke_Main.Color = Color3.fromRGB(255, 0, 0) -- Viền đỏ
+UIStroke_Main.Thickness = 2
+UIStroke_Main.Parent = MainFrame
 
--- =====================================================================
--- TẠO SCROLLING FRAME (BẢNG CUỘN TỰ ĐỘNG CO GIÃN)
--- =====================================================================
-local Scroll = Instance.new("ScrollingFrame", LMG2L["Frame_2"])
-Scroll.Size = UDim2.new(0, 214, 0, 255)
-Scroll.Position = UDim2.new(0, 4, 0, 40)
-Scroll.BackgroundTransparency = 1
-Scroll.BorderSizePixel = 0
-Scroll.ScrollBarThickness = 4
-Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+-- TextLabel: Get key
+Title_GetKey.Name = "Title_GetKey"
+Title_GetKey.Parent = MainFrame
+Title_GetKey.BackgroundTransparency = 1
+Title_GetKey.Position = UDim2.new(0, 0, 0, 15)
+Title_GetKey.Size = UDim2.new(1, 0, 0, 30)
+Title_GetKey.Font = Enum.Font.GothamBold
+Title_GetKey.Text = "GET KEY"
+Title_GetKey.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title_GetKey.TextSize = 22
 
-local Layout = Instance.new("UIListLayout", Scroll)
-Layout.SortOrder = Enum.SortOrder.LayoutOrder
-Layout.Padding = UDim.new(0, 6)
+-- TextBox: Nhập Key...
+KeyInput.Name = "KeyInput"
+KeyInput.Parent = MainFrame
+KeyInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+KeyInput.Position = UDim2.new(0.05, 0, 0.35, 0)
+KeyInput.Size = UDim2.new(0.9, 0, 0, 35)
+KeyInput.Font = Enum.Font.Gotham
+KeyInput.PlaceholderText = "Key..."
+KeyInput.Text = ""
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.TextSize = 14
 
-Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 15)
-end)
+UICorner_Input.CornerRadius = UDim.new(0, 6)
+UICorner_Input.Parent = KeyInput
 
--- =====================================================================
--- HÀM KHỞI TẠO CÁC NÚT VÀ TOGGLE
--- =====================================================================
-local function CreateButton(text)
-    local btn = Instance.new("TextButton", Scroll)
-    btn.BorderSizePixel = 0
-    btn.TextSize = 10
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
-    btn.FontFace = Font.new([[rbxasset://fonts/families/PressStart2P.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-    btn.Size = UDim2.new(0, 204, 0, 34)
-    btn.Text = text
-    Instance.new("UICorner", btn)
-    return btn
-end
+UIStroke_Input.Color = Color3.fromRGB(255, 0, 0) -- Viền đỏ nhẹ cho ô nhập
+UIStroke_Input.Thickness = 1
+UIStroke_Input.Parent = KeyInput
 
-local function CreateToggle(text)
-    local tog = Instance.new("TextButton", Scroll)
-    tog.BorderSizePixel = 0
-    tog.TextXAlignment = Enum.TextXAlignment.Left
-    tog.TextSize = 9
-    tog.TextColor3 = Color3.fromRGB(255, 255, 255)
-    tog.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
-    tog.FontFace = Font.new([[rbxasset://fonts/families/PressStart2P.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-    tog.Size = UDim2.new(0, 204, 0, 34)
-    tog.Text = " " .. text
-    Instance.new("UICorner", tog)
+-- TextButton: Check key (Nút kiểm tra)
+CheckBtn.Name = "CheckBtn"
+CheckBtn.Parent = MainFrame
+CheckBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Nút nền đỏ cho tone-sur-tone
+CheckBtn.Position = UDim2.new(0.25, 0, 0.6, 0)
+CheckBtn.Size = UDim2.new(0.5, 0, 0, 35)
+CheckBtn.Font = Enum.Font.GothamBold
+CheckBtn.Text = "CHECK KEY"
+CheckBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CheckBtn.TextSize = 14
 
-    local indicator = Instance.new("Frame", tog)
-    indicator.BorderSizePixel = 0
-    indicator.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    indicator.Size = UDim2.new(0, 24, 0, 24)
-    indicator.Position = UDim2.new(1, -30, 0, 5)
-    Instance.new("UICorner", indicator)
+UICorner_Btn.CornerRadius = UDim.new(0, 6)
+UICorner_Btn.Parent = CheckBtn
 
-    return tog, indicator
-end
+-- TextLabel nhỏ ở dưới: Key in discord
+SubTitle_Discord.Name = "SubTitle_Discord"
+SubTitle_Discord.Parent = MainFrame
+SubTitle_Discord.BackgroundTransparency = 1
+SubTitle_Discord.Position = UDim2.new(0, 0, 0.85, 0)
+SubTitle_Discord.Size = UDim2.new(1, 0, 0, 20)
+SubTitle_Discord.Font = Enum.Font.GothamItalic
+SubTitle_Discord.Text = "Key in discord"
+SubTitle_Discord.TextColor3 = Color3.fromRGB(150, 150, 150)
+SubTitle_Discord.TextSize = 12
 
--- --- THÊM CÁC TÍNH NĂNG VÀO HÀNG CUỘN ---
-local btn_ShootMurder = CreateButton("Shoot Murder")
-btn_ShootMurder.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
+-- [[ XỬ LÝ LOGIC CHECK KEY ]] --
 
-local btn_ThrowKnife = CreateButton("Throw Knife")
-btn_ThrowKnife.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
+local CorrectKey = "36 thanh hóa + 67"
 
-local btn_Esp, espInd = CreateToggle("ESP")
-local btn_Xray, xrayInd = CreateToggle("X-Ray")
-local btn_Noclip, noclipInd = CreateToggle("Noclip")
-local btn_InfJump, infJumpInd = CreateToggle("Inf Jump")
-local btn_AntiFling, antiFlingInd = CreateToggle("Anti Fling")
-local btn_AutoGrab, autoGrabInd = CreateToggle("Auto Grab Gun")
-
-local btn_GrabMode = CreateButton("Mode: Bring")
-btn_GrabMode.BackgroundColor3 = Color3.fromRGB(150, 0, 200)
-
--- Khung Fling
-local txt_FlingName = Instance.new("TextBox", Scroll)
-txt_FlingName.Size = UDim2.new(0, 204, 0, 34)
-txt_FlingName.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
-txt_FlingName.TextColor3 = Color3.fromRGB(255, 255, 255)
-txt_FlingName.FontFace = Font.new([[rbxasset://fonts/families/PressStart2P.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-txt_FlingName.TextSize = 10
-txt_FlingName.PlaceholderText = "Fling Name..."
-txt_FlingName.Text = ""
-Instance.new("UICorner", txt_FlingName)
-
-local btn_Fling = CreateButton("Fling Select")
-
--- Khung Speed
-local txt_Speed = Instance.new("TextBox", Scroll)
-txt_Speed.Size = UDim2.new(0, 204, 0, 34)
-txt_Speed.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
-txt_Speed.TextColor3 = Color3.fromRGB(255, 255, 255)
-txt_Speed.FontFace = Font.new([[rbxasset://fonts/families/PressStart2P.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-txt_Speed.TextSize = 10
-txt_Speed.PlaceholderText = "Speed..."
-txt_Speed.Text = ""
-Instance.new("UICorner", txt_Speed)
-
-local btn_SetSpeed = CreateButton("Set Speed")
-
--- Các nút Teleport dịch chuyển
-local btn_TPMap = CreateButton("TP Map")
-local btn_TPLobby = CreateButton("TP Lobby")
-local btn_TPMur = CreateButton("TP Murder")
-local btn_TPSher = CreateButton("TP Sheriff")
-local btn_TPInno = CreateButton("TP Innocent")
-
--- Các nút quản lý hệ thống
-local btn_Rejoin = CreateButton("Rejoin Server")
-btn_Rejoin.BackgroundColor3 = Color3.fromRGB(0, 100, 150)
-
-local btn_Destroy = CreateButton("Destroy Hub")
-btn_Destroy.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-
--- =====================================================================
--- NÚT TOGGLE ẨN/HIỆN MENU GỐC GÓC TRÊN MÀN HÌNH
--- =====================================================================
-LMG2L["TextButton_d"] = Instance.new("TextButton", LMG2L["ScreenGui_1"]);
-LMG2L["TextButton_d"]["BorderSizePixel"] = 0;
-LMG2L["TextButton_d"]["TextSize"] = 14;
-LMG2L["TextButton_d"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-LMG2L["TextButton_d"]["BackgroundColor3"] = Color3.fromRGB(36, 36, 36);
-LMG2L["TextButton_d"]["Size"] = UDim2.new(0, 100, 0, 40);
-LMG2L["TextButton_d"]["Text"] = [[Toggle]];
-LMG2L["TextButton_d"]["Position"] = UDim2.new(0, 10, 0, 10);
-LMG2L["TextButton_d"]["FontFace"] = Font.new([[rbxasset://fonts/families/PressStart2P.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-Instance.new("UICorner", LMG2L["TextButton_d"]);
-
-local MenuOpen = true
-LMG2L["TextButton_d"].MouseButton1Click:Connect(function()
-    MenuOpen = not MenuOpen
-    LMG2L["Frame_2"].Visible = MenuOpen
-end)
-
--- =====================================================================
--- HỆ THỐNG KÉO THẢ (DRAGGABLE) - ĐÃ FIX KHÔNG XUNG ĐỘT SCROLL TRÊN MOBILE
--- =====================================================================
-local UserInputService = game:GetService("UserInputService")
-local dragToggle, dragStart, startPos
-local draggingFrame = LMG2L["Frame_2"]
-local dragHandle = LMG2L["bar_4"] -- CHỈ CHO KÉO KHI CHẠM VÀO THANH TIÊU ĐỀ
-
-dragHandle.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragToggle = true
-        dragStart = input.Position
-        startPos = draggingFrame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then dragToggle = false end
-        end)
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if (input.UserInputType == Enum.UserInputType.MouseMove or input.UserInputType == Enum.UserInputType.Touch) and dragToggle then
-        local delta = input.Position - dragStart
-        draggingFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
-
--- =====================================================================
--- XỬ LÝ LOGIC TÍNH NĂNG
--- =====================================================================
-local lp = game.Players.LocalPlayer
-local RunService = game:GetService("RunService")
-local TeleportService = game:GetService("TeleportService")
-
-local EspActive, XrayActive, NoclipActive, InfJumpActive, AntiFlingActive, AutoGrabActive = false, false, false, false, false, false
-local GrabMode = "Bring"
-local TargetName = ""
-local Flinging = false
-local CurrentSpeed = 16
-local OriginalTransparencies = {}
-local ScriptRunning = true
-
--- Quản lý Nhân vật hồi sinh liên tục
-local char = lp.Character or lp.CharacterAdded:Wait()
-local humanoid = char:WaitForChild("Humanoid")
-local hrp = char:WaitForChild("HumanoidRootPart")
-
-lp.CharacterAdded:Connect(function(newChar)
-    char = newChar
-    humanoid = newChar:WaitForChild("Humanoid")
-    hrp = newChar:WaitForChild("HumanoidRootPart")
-end)
-
--- --- KÍCH HOẠT LOADSTRING SHOOT MURDER ---
-btn_ShootMurder.MouseButton1Click:Connect(function()
-    local success, err = pcall(function()
-        loadstring(game:HttpGet("https://pastefy.app/eBMM6V3c/raw"))()
-    end)
-    if not success then warn("Lỗi loadstring Shoot Murder: ", err) end
-end)
-
--- --- KÍCH HOẠT LOADSTRING THROW KNIFE ---
-btn_ThrowKnife.MouseButton1Click:Connect(function()
-    local success, err = pcall(function()
-        loadstring(game:HttpGet("https://pastefy.app/3kN02QYJ/raw"))()
-    end)
-    if not success then warn("Lỗi loadstring Throw Knife: ", err) end
-end)
-
--- --- TỐC ĐỘ (SPEED) CHẠY LIÊN TỤC TRÊN MOBILE ---
-btn_SetSpeed.MouseButton1Click:Connect(function()
-    local targetSpeed = tonumber(txt_Speed.Text)
-    if targetSpeed then CurrentSpeed = targetSpeed end
-end)
-
-table.insert(Connections, RunService.Heartbeat:Connect(function()
-    if not ScriptRunning then return end
-    if char and humanoid and humanoid.Parent then
-        humanoid.WalkSpeed = CurrentSpeed
-    end
-end))
-
--- --- NHẢY VÔ HẠN (INF JUMP) ---
-table.insert(Connections, UserInputService.JumpRequest:Connect(function()
-    if InfJumpActive and ScriptRunning and char and hrp and hrp.Parent then
-        hrp.Velocity = Vector3.new(hrp.Velocity.X, 50, hrp.Velocity.Z)
-    end
-end))
-
-btn_InfJump.MouseButton1Click:Connect(function()
-    InfJumpActive = not InfJumpActive
-    infJumpInd.BackgroundColor3 = InfJumpActive and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-end)
-
--- --- NOCLIP XUYÊN TƯỜNG ---
-table.insert(Connections, RunService.Stepped:Connect(function()
-    if NoclipActive and ScriptRunning and char then
-        for _, part in pairs(char:GetChildren()) do
-            if part:IsA("BasePart") then part.CanCollide = false end
-        end
-    end
-end))
-
-btn_Noclip.MouseButton1Click:Connect(function()
-    NoclipActive = not NoclipActive
-    noclipInd.BackgroundColor3 = NoclipActive and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-end)
-
--- --- ANTI-FLING (XUYÊN NGƯỜI) ---
-table.insert(Connections, RunService.Stepped:Connect(function()
-    if AntiFlingActive and ScriptRunning then
-        for _, p in pairs(game.Players:GetPlayers()) do
-            if p ~= lp and p.Character then
-                for _, part in pairs(p.Character:GetChildren()) do
-                    if part:IsA("BasePart") then part.CanCollide = false end
-                end
-            end
-        end
-    end
-end))
-
-btn_AntiFling.MouseButton1Click:Connect(function()
-    AntiFlingActive = not AntiFlingActive
-    antiFlingInd.BackgroundColor3 = AntiFlingActive and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-end)
-
--- --- AUTO GRAB GUN ---
-local function GetDroppedGun()
-    local Names = {"GunDrop", "DropGun", "Gundrop", "gundrop", "Dropgun", "dropgun"}
-    for _, name in pairs(Names) do
-        local gun = workspace:FindFirstChild(name, true)
-        if gun and (gun:IsA("Model") or gun:IsA("BasePart")) then return gun end
-    end
-    return nil
-end
-
-btn_GrabMode.MouseButton1Click:Connect(function()
-    if GrabMode == "Bring" then
-        GrabMode = "Teleport"
-        btn_GrabMode.Text = "Mode: TP"
-        btn_GrabMode.BackgroundColor3 = Color3.fromRGB(200, 50, 0)
-    else
-        GrabMode = "Bring"
-        btn_GrabMode.Text = "Mode: Bring"
-        btn_GrabMode.BackgroundColor3 = Color3.fromRGB(150, 0, 200)
-    end
-end)
-
-task.spawn(function()
-    while ScriptRunning do
-        task.wait()
-        if AutoGrabActive and char and hrp and hrp.Parent then
-            local gun = GetDroppedGun()
-            if gun then
-                local gunPart = gun:IsA("Model") and (gun:FindFirstChildWhichIsA("BasePart", true) or gun.PrimaryPart) or gun
-                if gunPart then
-                    if GrabMode == "Bring" then
-                        gunPart.CFrame = hrp.CFrame
-                    elseif GrabMode == "Teleport" then
-                        local OldCFrame = hrp.CFrame
-                        hrp.CFrame = gunPart.CFrame
-                        task.wait(0.1)
-                        hrp.CFrame = OldCFrame
-                        task.wait(0.5)
-                    end
-                end
-            end
-        end
-    end
-end)
-
-btn_AutoGrab.MouseButton1Click:Connect(function()
-    AutoGrabActive = not AutoGrabActive
-    autoGrabInd.BackgroundColor3 = AutoGrabActive and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-end)
-
--- --- ESP PLAYER & ESP GUN ---
-local function CleanESP()
-    for _, p in pairs(game.Players:GetPlayers()) do
-        if p.Character and p.Character:FindFirstChild("MM2_TotalESP") then p.Character.MM2_TotalESP:Destroy() end
-    end
-    for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("BillboardGui") and v.Name == "MM2_GunESP" then v:Destroy() end
-    end
-end
-
-btn_Esp.MouseButton1Click:Connect(function()
-    EspActive = not EspActive
-    espInd.BackgroundColor3 = EspActive and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-    
-    if EspActive then
-        task.spawn(function()
-            while EspActive and ScriptRunning do
-                for _, p in pairs(game.Players:GetPlayers()) do
-                    if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                        local hl = p.Character:FindFirstChild("MM2_TotalESP")
-                        if not hl then
-                            hl = Instance.new("Highlight")
-                            hl.Name = "MM2_TotalESP"
-                            hl.FillTransparency = 0.5
-                            hl.Parent = p.Character
-                        end
-                        if p.Backpack:FindFirstChild("Knife") or p.Character:FindFirstChild("Knife") then
-                            hl.FillColor = Color3.fromRGB(255, 0, 0)
-                        elseif p.Backpack:FindFirstChild("Gun") or p.Character:FindFirstChild("Gun") then
-                            hl.FillColor = Color3.fromRGB(0, 0, 255)
-                        else
-                            hl.FillColor = Color3.fromRGB(0, 255, 0)
-                        end
-                    end
-                end
-
-                local gun = GetDroppedGun()
-                if gun then
-                    local gunPart = gun:IsA("Model") and (gun:FindFirstChildWhichIsA("BasePart", true) or gun.PrimaryPart) or gun
-                    if gunPart and not gunPart:FindFirstChild("MM2_GunESP") then
-                        local bbgui = Instance.new("BillboardGui")
-                        bbgui.Name = "MM2_GunESP"
-                        bbgui.AlwaysOnTop = true
-                        bbgui.Size = UDim2.new(0, 50, 0, 20)
-                        bbgui.StudsOffset = Vector3.new(0, 2, 0)
-                        bbgui.Parent = gunPart
-
-                        local label = Instance.new("TextLabel")
-                        label.Size = UDim2.new(1, 0, 1, 0)
-                        label.BackgroundTransparency = 1
-                        label.Text = "GUN"
-                        label.TextColor3 = Color3.fromRGB(255, 255, 0)
-                        label.TextSize = 14
-                        label.Font = Enum.Font.SourceSansBold
-                        label.Parent = bbgui
-                    end
-                end
-                task.wait(0.5)
-            end
-        end)
-    else
-        CleanESP()
-    end
-end)
-
--- --- X-RAY MAP ---
-btn_Xray.MouseButton1Click:Connect(function()
-    XrayActive = not XrayActive
-    xrayInd.BackgroundColor3 = XrayActive and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
-    if XrayActive then
-        for _, obj in pairs(workspace:GetDescendants()) do
-            if (obj:IsA("BasePart") or obj:IsA("MeshPart")) and not obj:IsDescendantOf(game.Players) then
-                OriginalTransparencies[obj] = obj.Transparency
-                obj.Transparency = 0.3
-            end
-        end
-    else
-        for obj, trans in pairs(OriginalTransparencies) do if obj and obj.Parent then obj.Transparency = trans end end
-        OriginalTransparencies = {}
-    end
-end)
-
--- --- LẬP TRÌNH FLING BÁM ĐUÔI XOAY VÒNG ---
-btn_Fling.MouseButton1Click:Connect(function()
-    Flinging = not Flinging
-    TargetName = string.lower(txt_FlingName.Text) -- Lấy trực tiếp text ngay lúc bấm nút để không hụt mục tiêu trên mobile
-    
-    if Flinging and hrp and hrp.Parent then
-        local target = nil
-        if TargetName ~= "" then
-            for _, v in pairs(game.Players:GetPlayers()) do
-                if v ~= lp and (string.find(string.lower(v.Name), TargetName) or string.find(string.lower(v.DisplayName), TargetName)) then 
-                    target = v 
-                    break 
-                end
-            end
-        end
+CheckBtn.MouseButton1Click:Connect(function()
+    if KeyInput.Text == CorrectKey then
+        CheckBtn.Text = "SUCCESS!"
+        CheckBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Đổi sang màu xanh khi đúng
+        task.wait(1)
         
-        if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-            btn_Fling.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-            
-            local BV = hrp:FindFirstChild("FlingForce") or Instance.new("BodyAngularVelocity", hrp)
-            BV.Name = "FlingForce"
-            BV.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-            BV.AngularVelocity = Vector3.new(9000, 9000, 9000)
-            
-            task.spawn(function()
-                while Flinging and target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and hrp and hrp.Parent and ScriptRunning do
-                    RunService.Heartbeat:wait()
-                    hrp.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 1, -0.2)
-                    hrp.Velocity = Vector3.new(999, 999, 999)
-                end
-                Flinging = false
-                btn_Fling.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
-                if BV and BV.Parent then BV:Destroy() end
-            end)
-        else 
-            Flinging = false 
-            btn_Fling.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+        -- Xóa GUI Key
+        ScreenGui:Destroy()
+        
+        -- Chạy loadstring MM2 DuyHub của mày
+        local success, err = pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/MM2/Real"))()
+        end)
+        
+        if not success then
+            warn("Lỗi khi load script chính: ", err)
         end
     else
-        Flinging = false
-        btn_Fling.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
-        if hrp and hrp:FindFirstChild("FlingForce") then hrp.FlingForce:Destroy() end
+        -- Xử lý khi sai key
+        CheckBtn.Text = "WRONG KEY!"
+        task.wait(1.5)
+        CheckBtn.Text = "CHECK KEY"
     end
 end)
-
--- --- DỊCH CHUYỂN TELEPORT HÀNG DƯỚI ---
-btn_TPMap.MouseButton1Click:Connect(function()
-    local map = workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("Map")
-    if map and hrp and hrp.Parent then
-        local p = map:FindFirstChildWhichIsA("BasePart", true)
-        if p then hrp.CFrame = p.CFrame + Vector3.new(0, 4, 0) end
-    end
-end)
-btn_TPLobby.MouseButton1Click:Connect(function()
-    local lobby = workspace:FindFirstChild("Lobby")
-    if lobby and hrp and hrp.Parent then hrp.CFrame = lobby:GetPivot() + Vector3.new(0, 4, 0) end
-end)
-btn_TPMur.MouseButton1Click:Connect(function()
-    if not (hrp and hrp.Parent) then return end
-    for _, p in pairs(game.Players:GetPlayers()) do
-        if p.Character and (p.Backpack:FindFirstChild("Knife") or p.Character:FindFirstChild("Knife")) then
-            hrp.CFrame = p.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0) break
-        end
-    end
-end)
-btn_TPSher.MouseButton1Click:Connect(function()
-    if not (hrp and hrp.Parent) then return end
-    for _, p in pairs(game.Players:GetPlayers()) do
-        if p.Character and (p.Backpack:FindFirstChild("Gun") or p.Character:FindFirstChild("Gun")) then
-            hrp.CFrame = p.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0) break
-        end
-    end
-end)
-btn_TPInno.MouseButton1Click:Connect(function()
-    if not (hrp and hrp.Parent) then return end
-    local innos = {}
-    for _, p in pairs(game.Players:GetPlayers()) do
-        if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-            if not (p.Backpack:FindFirstChild("Knife") or p.Character:FindFirstChild("Knife")) and not (p.Backpack:FindFirstChild("Gun") or p.Character:FindFirstChild("Gun")) then
-                table.insert(innos, p)
-            end
-        end
-    end
-    if #innos > 0 then hrp.CFrame = innos[math.random(1, #innos)].Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0) end
-end)
-
--- --- LOGIC REJOIN SERVER & DESTROY HUB ---
-btn_Rejoin.MouseButton1Click:Connect(function()
-    TeleportService:Teleport(game.PlaceId, lp)
-end)
-
-btn_Destroy.MouseButton1Click:Connect(function()
-    ScriptRunning = false
-    CleanESP()
-    
-    -- Gỡ bỏ tất cả các kết nối ngầm để giải phóng bộ nhớ máy hoàn toàn
-    for _, connection in pairs(Connections) do
-        if connection then connection:Disconnect() end
-    end
-    
-    for obj, trans in pairs(OriginalTransparencies) do if obj and obj.Parent then obj.Transparency = trans end end
-    if hrp and hrp:FindFirstChild("FlingForce") then hrp.FlingForce:Destroy() end
-    LMG2L["ScreenGui_1"]:Destroy()
-end)
-
-return LMG2L["ScreenGui_1"];
