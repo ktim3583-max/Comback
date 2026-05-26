@@ -1,1 +1,123 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/MM2/Real"))();
+-- [[ ĐOẠN SCRIPT GUI KEY SYSTEM - ĐÃ UPDATE LINK & FIX BUG ]] --
+
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UICorner_Main = Instance.new("UICorner")
+local UIStroke_Main = Instance.new("UIStroke")
+local Title_GetKey = Instance.new("TextLabel")
+local KeyInput = Instance.new("TextBox")
+local UICorner_Input = Instance.new("UICorner")
+local UIStroke_Input = Instance.new("UIStroke")
+local CheckBtn = Instance.new("TextButton")
+local UICorner_Btn = Instance.new("UICorner")
+local SubTitle_Discord = Instance.new("TextLabel")
+
+-- Thiết lập GUI
+ScreenGui.Name = "DuyXD_KeySystem_Fixed"
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- Main Frame (Nền 35,35,35 | Bo góc | Viền đỏ)
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+MainFrame.Size = UDim2.new(0, 300, 0, 200)
+MainFrame.Active = true
+MainFrame.Draggable = true -- Kéo thả trên Mobile
+
+UICorner_Main.CornerRadius = UDim.new(0, 12)
+UICorner_Main.Parent = MainFrame
+
+UIStroke_Main.Color = Color3.fromRGB(255, 0, 0)
+UIStroke_Main.Thickness = 2
+UIStroke_Main.Parent = MainFrame
+
+-- TextLabel: Get key
+Title_GetKey.Name = "Title_GetKey"
+Title_GetKey.Parent = MainFrame
+Title_GetKey.BackgroundTransparency = 1
+Title_GetKey.Position = UDim2.new(0, 0, 0, 15)
+Title_GetKey.Size = UDim2.new(1, 0, 0, 30)
+Title_GetKey.Font = Enum.Font.GothamBold
+Title_GetKey.Text = "GET KEY"
+Title_GetKey.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title_GetKey.TextSize = 22
+
+-- TextBox: Nhập Key...
+KeyInput.Name = "KeyInput"
+KeyInput.Parent = MainFrame
+KeyInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+KeyInput.Position = UDim2.new(0.05, 0, 0.35, 0)
+KeyInput.Size = UDim2.new(0.9, 0, 0, 35)
+KeyInput.Font = Enum.Font.Gotham
+KeyInput.PlaceholderText = "Key..."
+KeyInput.Text = ""
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.TextSize = 14
+
+UICorner_Input.CornerRadius = UDim.new(0, 6)
+UICorner_Input.Parent = KeyInput
+
+UIStroke_Input.Color = Color3.fromRGB(255, 0, 0)
+UIStroke_Input.Thickness = 1
+UIStroke_Input.Parent = KeyInput
+
+-- TextButton: Check key
+CheckBtn.Name = "CheckBtn"
+CheckBtn.Parent = MainFrame
+CheckBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CheckBtn.Position = UDim2.new(0.25, 0, 0.6, 0)
+CheckBtn.Size = UDim2.new(0.5, 0, 0, 35)
+CheckBtn.Font = Enum.Font.GothamBold
+CheckBtn.Text = "CHECK KEY"
+CheckBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CheckBtn.TextSize = 14
+
+UICorner_Btn.CornerRadius = UDim.new(0, 6)
+UICorner_Btn.Parent = CheckBtn
+
+-- TextLabel: Key in discord
+SubTitle_Discord.Name = "SubTitle_Discord"
+SubTitle_Discord.Parent = MainFrame
+SubTitle_Discord.BackgroundTransparency = 1
+SubTitle_Discord.Position = UDim2.new(0, 0, 0.85, 0)
+SubTitle_Discord.Size = UDim2.new(1, 0, 0, 20)
+SubTitle_Discord.Font = Enum.Font.GothamItalic
+SubTitle_Discord.Text = "Key in discord"
+SubTitle_Discord.TextColor3 = Color3.fromRGB(150, 150, 150)
+SubTitle_Discord.TextSize = 12
+
+-- [[ LOGIC CHECK KEY & CHẠY SCRIPT MỚI ]] --
+
+local CorrectKey = "Vinysoua_key123"
+
+CheckBtn.MouseButton1Click:Connect(function()
+    -- Hàm xóa bỏ khoảng trắng thừa ở đầu/cuối chuỗi để tránh lỗi gõ phím trên điện thoại
+    local userInput = KeyInput.Text:match("^%s*(.-)%s*$")
+    
+    if userInput == CorrectKey then
+        CheckBtn.Text = "SUCCESS!"
+        CheckBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        task.wait(0.5)
+        
+        -- Xóa GUI hoàn toàn trước khi chạy script mới
+        ScreenGui:Destroy()
+        
+        -- Thực thi Link Real mới của mày (Có bọc pcall chống crash và có dấu () kích hoạt)
+        local success, err = pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ktim3583-max/Comback/refs/heads/main/DuyHub/MM2/Real"))()
+        end)
+        
+        if not success then
+            warn("Lỗi loadstring: " .. tostring(err))
+        end
+    else
+        -- Báo sai key
+        CheckBtn.Text = "WRONG KEY!"
+        CheckBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+        task.wait(1)
+        CheckBtn.Text = "CHECK KEY"
+        CheckBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    end
+end)
