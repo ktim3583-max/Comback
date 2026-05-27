@@ -1,5 +1,5 @@
 -- =====================================================================
--- MM2 VINYSOUA - BẢN FULL NÚT (GIỮ LINK NGOÀI + THÊM SHOOT MURDER TP)
+-- MM2 VINYSOUA - BẢN FULL NÚT (GIỮ LINK NGOÀI + THÊM BOMB JUMP CHUẨN)
 -- =====================================================================
 
 local LMG2L = {};
@@ -92,12 +92,16 @@ end
 local btn_ShootMurder = CreateButton("Shoot Murder")
 btn_ShootMurder.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
 
--- NÚT MỚI: Tự động TP ra sau và bắn bụng Murder bằng Remote chuyên dụng
+-- NÚT: Tự động TP ra sau và bắn bụng Murder bằng Remote chuyên dụng
 local btn_ShootMurderTP = CreateButton("Shoot Murder (TP)")
 btn_ShootMurderTP.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
 
 local btn_ThrowKnife = CreateButton("Throw Knife")
 btn_ThrowKnife.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
+
+-- NÚT MỚI THÊM: Bomb Jump chạy link ngoài
+local btn_BombJump = CreateButton("Bomb Jump")
+btn_BombJump.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
 
 local btn_Esp, espInd = CreateToggle("ESP")
 local btn_Xray, xrayInd = CreateToggle("X-Ray")
@@ -229,7 +233,7 @@ btn_ShootMurder.MouseButton1Click:Connect(function()
     if not success then warn("Lỗi loadstring Shoot Murder: ", err) end
 end)
 
--- --- LOGIC NÚT MỚI: SHOOT MURDER (TP + REMOTE BẮN BỤNG) ---
+-- --- LOGIC NÚT: SHOOT MURDER (TP + REMOTE BẮN BỤNG) ---
 btn_ShootMurderTP.MouseButton1Click:Connect(function()
     local murder = nil
     for _, p in pairs(game.Players:GetPlayers()) do
@@ -277,6 +281,14 @@ btn_ThrowKnife.MouseButton1Click:Connect(function()
         loadstring(game:HttpGet("https://pastefy.app/3kN02QYJ/raw"))()
     end)
     if not success then warn("Lỗi loadstring Throw Knife: ", err) end
+end)
+
+-- --- KÍCH HOẠT LOADSTRING BOMB JUMP ---
+btn_BombJump.MouseButton1Click:Connect(function()
+    local success, err = pcall(function()
+        loadstring(game:HttpGet("https://pastefy.app/6NmMQhE4/raw"))()
+    end)
+    if not success then warn("Lỗi loadstring Bomb Jump: ", err) end
 end)
 
 -- --- TỐC ĐỘ (SPEED) CHẠY LIÊN TỤC TRÊN MOBILE ---
