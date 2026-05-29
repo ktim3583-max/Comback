@@ -1,136 +1,220 @@
+--[=[
+ d888b  db    db d888888b      .d888b.      db      db    db  .d8b.  
+88' Y8b 88    88   `88'        VP  `8D      88      88    88 d8' `8b 
+88      88    88    88            odD'      88      88    88 88ooo88 
+88  ooo 88    88    88          .88'        88      88    88 88~~~88 
+88. ~8~ 88b  d88   .88.        j88.         88booo. 88b  d88 88   88    @uniquadev
+ Y888P  ~Y8888P' Y888888P      888888D      Y88888P ~Y8888P' YP   YP  CONVERTER 
+]=]
+
+local LMG2L = {}
 local UIS = game:GetService("UserInputService")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local lp = Players.LocalPlayer
 
-local Gui = Instance.new("ScreenGui", lp:WaitForChild("PlayerGui"))
-Gui.ResetOnSpawn = false
+-- Khởi tạo ScreenGui
+LMG2L["ScreenGui_1"] = Instance.new("ScreenGui", lp:WaitForChild("PlayerGui"))
+LMG2L["ScreenGui_1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling
+LMG2L["ScreenGui_1"]["ResetOnSpawn"] = false 
 
-local Frame = Instance.new("Frame", Gui)
-Frame.Size = UDim2.new(0,134,0,98)
-Frame.Position = UDim2.new(0.5,-67,0.4,0)
-Frame.BackgroundColor3 = Color3.fromRGB(45,45,45)
-Frame.BorderSizePixel = 0
-Frame.ClipsDescendants = true
+-- --- NÚT "JJS v3" ĐỂ ẨN/HIỆN ---
+LMG2L["TextButton_b"] = Instance.new("TextButton", LMG2L["ScreenGui_1"])
+LMG2L["TextButton_b"]["BorderSizePixel"] = 0
+LMG2L["TextButton_b"]["BackgroundColor3"] = Color3.fromRGB(50, 50, 50)
+LMG2L["TextButton_b"]["Size"] = UDim2.new(0, 75, 0, 35)
+LMG2L["TextButton_b"]["Position"] = UDim2.new(0, 15, 0, 15)
+LMG2L["TextButton_b"]["Text"] = "JJS v3"
+LMG2L["TextButton_b"]["Font"] = Enum.Font.GothamBold
+LMG2L["TextButton_b"]["TextSize"] = 14
+LMG2L["TextButton_b"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["TextButton_b"]["ZIndex"] = 10 
 
-Instance.new("UICorner", Frame)
+LMG2L["UICorner_c"] = Instance.new("UICorner", LMG2L["TextButton_b"])
 
-local drag,start,pos
+-- Main Frame (Bảng Menu chính)
+LMG2L["Frame_2"] = Instance.new("Frame", LMG2L["ScreenGui_1"])
+LMG2L["Frame_2"]["BorderSizePixel"] = 0
+LMG2L["Frame_2"]["BackgroundColor3"] = Color3.fromRGB(36, 36, 36)
+LMG2L["Frame_2"]["Size"] = UDim2.new(0, 160, 0, 105)
+LMG2L["Frame_2"]["Position"] = UDim2.new(0.5, -80, 0.4, 0)
+LMG2L["Frame_2"]["ClipsDescendants"] = true
+LMG2L["Frame_2"]["Visible"] = true 
 
-Frame.InputBegan:Connect(function(i)
-    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-        drag = true
-        start = i.Position
-        pos = Frame.Position
-    end
+LMG2L["UICorner_3"] = Instance.new("UICorner", LMG2L["Frame_2"])
+
+-- Title Label
+LMG2L["TextLabel_4"] = Instance.new("TextLabel", LMG2L["Frame_2"])
+LMG2L["TextLabel_4"]["BorderSizePixel"] = 0
+LMG2L["TextLabel_4"]["BackgroundTransparency"] = 1
+LMG2L["TextLabel_4"]["Size"] = UDim2.new(1, 0, 0, 25)
+LMG2L["TextLabel_4"]["Text"] = "DuyXD Kill all - JJS V3"
+LMG2L["TextLabel_4"]["Font"] = Enum.Font.GothamBold
+LMG2L["TextLabel_4"]["TextSize"] = 11
+LMG2L["TextLabel_4"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
+
+-- Nút Toggle ON/OFF (Đã fix lỗi gõ nhầm tên biến)
+LMG2L["TextButton_5"] = Instance.new("TextButton", LMG2L["Frame_2"])
+LMG2L["TextButton_5"]["BorderSizePixel"] = 0
+LMG2L["TextButton_5"]["BackgroundColor3"] = Color3.fromRGB(255, 0, 0)
+LMG2L["TextButton_5"]["Size"] = UDim2.new(0, 140, 0, 30)
+LMG2L["TextButton_5"]["Position"] = UDim2.new(0, 10, 0, 28)
+LMG2L["TextButton_5"]["Text"] = "Off"
+LMG2L["TextButton_5"]["Font"] = Enum.Font.GothamBold
+LMG2L["TextButton_5"]["TextSize"] = 14
+LMG2L["TextButton_5"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
+
+LMG2L["UICorner_6"] = Instance.new("UICorner", LMG2L["TextButton_5"])
+
+-- TextBox Khoảng cách
+LMG2L["TextBox_7"] = Instance.new("TextBox", LMG2L["Frame_2"])
+LMG2L["TextBox_7"]["BorderSizePixel"] = 0
+LMG2L["TextBox_7"]["BackgroundColor3"] = Color3.fromRGB(26, 26, 26)
+LMG2L["TextBox_7"]["Size"] = UDim2.new(0, 65, 0, 30)
+LMG2L["TextBox_7"]["Position"] = UDim2.new(0, 10, 0, 65)
+LMG2L["TextBox_7"]["PlaceholderText"] = "Khoảng cách"
+LMG2L["TextBox_7"]["Text"] = "1"
+LMG2L["TextBox_7"]["Font"] = Enum.Font.GothamBold
+LMG2L["TextBox_7"]["TextSize"] = 12
+LMG2L["TextBox_7"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
+
+LMG2L["UICorner_8"] = Instance.new("UICorner", LMG2L["TextBox_7"])
+
+-- TextBox Delay
+LMG2L["TextBox_9"] = Instance.new("TextBox", LMG2L["Frame_2"])
+LMG2L["TextBox_9"]["BorderSizePixel"] = 0
+LMG2L["TextBox_9"]["BackgroundColor3"] = Color3.fromRGB(26, 26, 26)
+LMG2L["TextBox_9"]["Size"] = UDim2.new(0, 65, 0, 30)
+LMG2L["TextBox_9"]["Position"] = UDim2.new(0, 85, 0, 65)
+LMG2L["TextBox_9"]["PlaceholderText"] = "Delay"
+LMG2L["TextBox_9"]["Text"] = "0.5"
+LMG2L["TextBox_9"]["Font"] = Enum.Font.GothamBold
+LMG2L["TextBox_9"]["TextSize"] = 12
+LMG2L["TextBox_9"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
+
+LMG2L["UICorner_a"] = Instance.new("UICorner", LMG2L["TextBox_9"])
+
+
+-- --- HÀM KÉO THẢ TỐI ƯU CHO MOBILE (TOUCH GESTURE) ---
+local function makeFrameDraggable(frame)
+    local dragging = false
+    local dragInput, dragStart, startPos
+
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UIS.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+makeFrameDraggable(LMG2L["Frame_2"])
+
+
+-- --- SỰ KIỆN ẨN / HIỆN QUA NÚT "JJS v3" ---
+LMG2L["TextButton_b"].MouseButton1Click:Connect(function()
+    LMG2L["Frame_2"].Visible = not LMG2L["Frame_2"].Visible
 end)
 
-UIS.InputChanged:Connect(function(i)
-    if drag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-        local delta = i.Position - start
 
-        Frame.Position = UDim2.new(
-            pos.X.Scale,
-            pos.X.Offset + delta.X,
-            pos.Y.Scale,
-            pos.Y.Offset + delta.Y
-        )
-    end
-end)
-
-UIS.InputEnded:Connect(function()
-    drag = false
-end)
-
-local Title = Instance.new("TextLabel", Frame)
-Title.BackgroundTransparency = 1
-Title.Size = UDim2.new(0,95,0,22)
-Title.Position = UDim2.new(0,10,0,0)
-Title.Text = "DuyXD JJS"
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 12
-Title.TextColor3 = Color3.new(1,1,1)
-Title.TextXAlignment = Enum.TextXAlignment.Left
-
-local Minimize = Instance.new("TextButton", Frame)
-Minimize.BackgroundTransparency = 1
-Minimize.Size = UDim2.new(0,25,0,22)
-Minimize.Position = UDim2.new(1,-25,0,0)
-Minimize.Text = "-"
-Minimize.Font = Enum.Font.GothamBold
-Minimize.TextSize = 16
-Minimize.TextColor3 = Color3.new(1,1,1)
-
-local Toggle = Instance.new("TextButton", Frame)
-Toggle.Size = UDim2.new(0,114,0,30)
-Toggle.Position = UDim2.new(0,10,0,30)
-Toggle.BackgroundColor3 = Color3.fromRGB(255,0,0)
-Toggle.Text = "Off"
-Toggle.Font = Enum.Font.GothamBold
-Toggle.TextSize = 14
-Toggle.TextColor3 = Color3.new(1,1,1)
-
-Instance.new("UICorner", Toggle)
-
-local Help = Instance.new("TextLabel", Frame)
-Help.BackgroundTransparency = 1
-Help.Size = UDim2.new(0,114,0,20)
-Help.Position = UDim2.new(0,10,0,68)
-Help.Text = "Press G+R with Ult"
-Help.Font = Enum.Font.Gotham
-Help.TextSize = 10
-Help.TextColor3 = Color3.fromRGB(200,200,200)
-
+-- --- LOGIC LOOP TELEPORT CHUẨN ---
 local toggled = false
+local loopConnection = nil
+local targetLoopConnection = nil
+local currentTargetChar = nil
 
-Toggle.MouseButton1Click:Connect(function()
+local function stopKillAll()
+    toggled = false
+    if loopConnection then loopConnection:Disconnect(); loopConnection = nil end
+    if targetLoopConnection then task.cancel(targetLoopConnection); targetLoopConnection = nil end
+    currentTargetChar = nil
+    LMG2L["TextButton_5"].Text = "Off"
+    LMG2L["TextButton_5"].BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+end
+
+LMG2L["TextButton_5"].MouseButton1Click:Connect(function()
     toggled = not toggled
-
-    Toggle.Text = toggled and "On" or "Off"
-    Toggle.BackgroundColor3 = toggled and Color3.fromRGB(0,170,0) or Color3.fromRGB(255,0,0)
-
     if toggled then
-        task.spawn(function()
+        LMG2L["TextButton_5"].Text = "On"
+        LMG2L["TextButton_5"].BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+        
+        -- Vòng lặp đổi mục tiêu dựa theo ô Delay
+        targetLoopConnection = task.spawn(function()
             while toggled do
-                local targets = {}
-
-                for _,p in pairs(Players:GetPlayers()) do
-                    if p ~= lp and p.Character and p.Character:FindFirstChild("Humanoid") and p.Character.Humanoid.Health > 0 then
-                        table.insert(targets,p.Character)
+                local all = Players:GetPlayers()
+                local targetFound = false
+                
+                for _, p in pairs(all) do
+                    if p ~= lp and p.Character and p.Character:FindFirstChild("Humanoid") and p.Character:FindFirstChild("HumanoidRootPart") then
+                        if p.Character.Humanoid.Health > 0 then
+                            currentTargetChar = p.Character
+                            targetFound = true
+                            break
+                        end
                     end
                 end
-
-                if #targets > 0 then
-                    local target = targets[math.random(1,#targets)]
-
-                    local hrp = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
-                    local targetHrp = target:FindFirstChild("HumanoidRootPart")
-                    local head = target:FindFirstChild("Head")
-
-                    if hrp and targetHrp and head then
-                        local pos = head.Position + (targetHrp.CFrame.LookVector * 0.5) + Vector3.new(0,1.5,0)
-
-                        hrp.CFrame = CFrame.lookAt(pos, head.Position)
-                    end
-                end
-
-                task.wait(0.1)
+                
+                if not targetFound then currentTargetChar = nil end
+                
+                local delayTime = tonumber(LMG2L["TextBox_9"].Text) or 0.5
+                task.wait(delayTime)
             end
         end)
+        
+        -- Heartbeat Loop: Ép dính cứng tọa độ 60 lần/giây + Tạo độ nghiêng
+        loopConnection = RunService.Heartbeat:Connect(function()
+            if not toggled or not currentTargetChar then return end
+            
+            local myHrp = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+            local targetHrp = currentTargetChar:FindFirstChild("HumanoidRootPart")
+            local targetHead = currentTargetChar:FindFirstChild("Head")
+            
+            if currentTargetChar:FindFirstChild("Humanoid") and currentTargetChar.Humanoid.Health <= 0 then
+                currentTargetChar = nil
+                return
+            end
+            
+            if myHrp and targetHrp and targetHead then
+                local dist = tonumber(LMG2L["TextBox_7"].Text) or 1
+                
+                -- Vị trí xuất hiện: Trên đầu mục tiêu
+                local spawnPos = targetHead.Position + Vector3.new(0, dist + 1.5, 0)
+                
+                -- Ép góc nghiêng: Xoay nhân vật chúi thẳng mắt nhìn vào mục tiêu
+                myHrp.CFrame = CFrame.lookAt(spawnPos, targetHrp.Position)
+                
+                -- Khóa cứng lực vật lý chống giật vị trí cũ
+                myHrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                myHrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+            end
+        end)
+    else
+        stopKillAll()
     end
 end)
 
-local collapsed = false
-
-Minimize.MouseButton1Click:Connect(function()
-    collapsed = not collapsed
-
-    Frame:TweenSize(
-        collapsed and UDim2.new(0,134,0,22) or UDim2.new(0,134,0,98),
-        "Out",
-        "Quad",
-        0.2,
-        true
-    )
-
-    Minimize.Text = collapsed and "+" or "-"
+-- Tắt khi nhân vật của Duy bị chết
+lp.CharacterAdded:Connect(function()
+    stopKillAll()
 end)
+
+return LMG2L["ScreenGui_1"]
