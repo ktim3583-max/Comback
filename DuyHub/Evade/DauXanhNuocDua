@@ -1,18 +1,34 @@
+--[=[
+ d888b  db    db d888888b      .d888b.      db      db    db  .d8b.  
+88' Y8b 88    88   `88'        VP  `8D      88      88    88 d8' `8b 
+88      88    88    88            odD'      88      88    88 88ooo88 
+88  ooo 88    88    88          .88'        88      88    88 88~~~88 
+88. ~8~ 88b  d88   .88.        j88.         88booo. 88b  d88 88   88    @uniquadev
+ Y888P  ~Y8888P' Y888888P      888888D      Y88888P ~Y8888P' YP   YP  CONVERTER 
+
+designed using localmaze gui creator
+]=]
+
 local LMG2L = {};
 
+-- Players.im100Yearold06.PlayerGui.ScreenGui
 LMG2L["ScreenGui_1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"));
 LMG2L["ScreenGui_1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
 LMG2L["ScreenGui_1"].ResetOnSpawn = false;
 
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame (Main Frame)
 LMG2L["Frame_2"] = Instance.new("Frame", LMG2L["ScreenGui_1"]);
 LMG2L["Frame_2"]["BorderSizePixel"] = 0;
 LMG2L["Frame_2"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31);
 LMG2L["Frame_2"]["Size"] = UDim2.new(0, 188, 0, 94);
 LMG2L["Frame_2"]["Position"] = UDim2.new(0, 350, 0, 100);
 LMG2L["Frame_2"].Active = true;
+LMG2L["Frame_2"].ZIndex = 5; -- Đảm bảo nằm trên cùng để nhận kéo thả
 
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame.UICorner
 LMG2L["UICorner_3"] = Instance.new("UICorner", LMG2L["Frame_2"]);
 
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame.TextLabel (evade)
 LMG2L["TextLabel_4"] = Instance.new("TextLabel", LMG2L["Frame_2"]);
 LMG2L["TextLabel_4"]["BorderSizePixel"] = 0;
 LMG2L["TextLabel_4"]["TextSize"] = 14;
@@ -20,9 +36,12 @@ LMG2L["TextLabel_4"]["BackgroundColor3"] = Color3.fromRGB(26, 26, 26);
 LMG2L["TextLabel_4"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
 LMG2L["TextLabel_4"]["Size"] = UDim2.new(0, 188, 0, 18);
 LMG2L["TextLabel_4"]["Text"] = [[evade]];
+LMG2L["TextLabel_4"].ZIndex = 6;
 
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame.TextLabel.UICorner
 LMG2L["UICorner_5"] = Instance.new("UICorner", LMG2L["TextLabel_4"]);
 
+-- Nút bấm 1: Infinite slide
 LMG2L["TextButton_6"] = Instance.new("TextButton", LMG2L["Frame_2"]);
 LMG2L["TextButton_6"]["BorderSizePixel"] = 0;
 LMG2L["TextButton_6"]["TextSize"] = 14;
@@ -31,9 +50,12 @@ LMG2L["TextButton_6"]["BackgroundColor3"] = Color3.fromRGB(255, 0, 0);
 LMG2L["TextButton_6"]["Size"] = UDim2.new(0, 176, 0, 30);
 LMG2L["TextButton_6"]["Text"] = [[Infinite slide : Off]];
 LMG2L["TextButton_6"]["Position"] = UDim2.new(0, 6, 0, 24);
+LMG2L["TextButton_6"].ZIndex = 6;
 
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame.TextButton.UICorner
 LMG2L["UICorner_7"] = Instance.new("UICorner", LMG2L["TextButton_6"]);
 
+-- Nút bấm 2: Bhop
 LMG2L["TextButton_8"] = Instance.new("TextButton", LMG2L["Frame_2"]);
 LMG2L["TextButton_8"]["BorderSizePixel"] = 0;
 LMG2L["TextButton_8"]["TextSize"] = 14;
@@ -42,10 +64,15 @@ LMG2L["TextButton_8"]["BackgroundColor3"] = Color3.fromRGB(255, 0, 0);
 LMG2L["TextButton_8"]["Size"] = UDim2.new(0, 176, 0, 30);
 LMG2L["TextButton_8"]["Text"] = [[Bhop : Off]];
 LMG2L["TextButton_8"]["Position"] = UDim2.new(0, 6, 0, 58);
+LMG2L["TextButton_8"].ZIndex = 6;
 
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame.TextButton2.UICorner
 LMG2L["UICorner_9"] = Instance.new("UICorner", LMG2L["TextButton_8"]);
 
 
+-- =========================================================================
+-- [HỆ THỐNG KÉO THẢ ĐÃ SỬA LỖI - ĐỘ ƯU TIÊN CAO]
+-- =========================================================================
 local UserInputService = game:GetService("UserInputService")
 local Frame = LMG2L["Frame_2"]
 local dragging = false
@@ -83,6 +110,9 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 
+-- =========================================================================
+-- [KHỞI TẠO BIẾN CƠ BẢN]
+-- =========================================================================
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
@@ -149,6 +179,9 @@ local function updatePlayerModel()
 end
 
 
+-- =========================================================================
+-- [LOGIC 1: INFINITE SLIDE CHUẨN VAPE]
+-- =========================================================================
 local function onSlideHeartbeat()
     if not plrModel then
         setFriction(5) 
@@ -175,6 +208,9 @@ local function onSlideHeartbeat()
 end
 
 
+-- =========================================================================
+-- [LOGIC 2: BHOP FIX HOÀN TOÀN - ÉP LỆNH NHẢY TỰ ĐỘNG]
+-- =========================================================================
 local function onBhopHeartbeat()
     if bhopEnabled then
         setBhopState(true)
@@ -185,10 +221,21 @@ local function onBhopHeartbeat()
                 end)
             end
         end
+        -- Vá thêm logic kích hoạt nhảy thực tế của Vape (Ép Humanoid Jump liên tục khi chạm đất)
+        pcall(function()
+            local char = player.Character
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            if hum and hum.FloorMaterial ~= Enum.Material.Air then
+                hum.Jump = true
+            end
+        end)
     end
 end
 
 
+-- =========================================================================
+-- [HỆ THỐNG HOOK NAMECALL NGẦM CỦA VAPE]
+-- =========================================================================
 local oldNamecall
 oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
     local args = {...}
@@ -214,16 +261,21 @@ oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
 end)
 
 
+-- =========================================================================
+-- [TỰ ĐỘNG CẬP NHẬT KHI NHÂN VẬT HỒI SINH]
+-- =========================================================================
 player.CharacterAdded:Connect(function()
-    task.wait(0.5) 
+    task.wait(0.5)
     updatePlayerModel()
-    
     if infiniteSlideEnabled or bhopEnabled then
         refreshVapeTables()
     end
 end)
 
 
+-- =========================================================================
+-- [XỬ LÝ SỰ KIỆN NÚT 1: INFINITE SLIDE]
+-- =========================================================================
 local SlideButton = LMG2L["TextButton_6"]
 
 SlideButton.MouseButton1Click:Connect(function()
@@ -251,6 +303,9 @@ SlideButton.MouseButton1Click:Connect(function()
 end)
 
 
+-- =========================================================================
+-- [XỬ LÝ SỰ KIỆN NÚT 2: BHOP]
+-- =========================================================================
 local BhopButton = LMG2L["TextButton_8"]
 
 BhopButton.MouseButton1Click:Connect(function()
@@ -277,16 +332,19 @@ BhopButton.MouseButton1Click:Connect(function()
 end)
 
 
+-- =========================================================================
+-- [NÚT "THỜI NHÀ TỐNG" - XANH DA TRỜI CỐ ĐỊNH]
+-- =========================================================================
 local ScreenGui = LMG2L["ScreenGui_1"]
 
 local ReviveFrame = Instance.new("Frame", ScreenGui)
 ReviveFrame.Name = "ReviveFrame"
-ReviveFrame.BackgroundColor3 = Color3.fromRGB(0, 170, 255) 
+ReviveFrame.BackgroundColor3 = Color3.fromRGB(0, 170, 255) -- Xanh da trời cực đẹp
 ReviveFrame.BorderSizePixel = 2
-ReviveFrame.BorderColor3 = Color3.fromRGB(0, 0, 0) 
+ReviveFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 ReviveFrame.Size = UDim2.new(0, 100, 0, 40)
 ReviveFrame.Position = UDim2.new(0, 10, 0, 10)
-ReviveFrame.Active = true
+ReviveFrame.ZIndex = 1 -- Đặt độ ưu tiên thấp xuống để không nuốt mất click kéo thả của Main Frame
 
 local ReviveButton = Instance.new("TextButton", ReviveFrame)
 ReviveButton.Size = UDim2.new(1, 0, 1, 0)
