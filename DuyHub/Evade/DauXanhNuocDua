@@ -1,0 +1,310 @@
+local LMG2L = {};
+
+LMG2L["ScreenGui_1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"));
+LMG2L["ScreenGui_1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
+LMG2L["ScreenGui_1"].ResetOnSpawn = false;
+
+LMG2L["Frame_2"] = Instance.new("Frame", LMG2L["ScreenGui_1"]);
+LMG2L["Frame_2"]["BorderSizePixel"] = 0;
+LMG2L["Frame_2"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31);
+LMG2L["Frame_2"]["Size"] = UDim2.new(0, 188, 0, 94);
+LMG2L["Frame_2"]["Position"] = UDim2.new(0, 350, 0, 100);
+LMG2L["Frame_2"].Active = true;
+
+LMG2L["UICorner_3"] = Instance.new("UICorner", LMG2L["Frame_2"]);
+
+LMG2L["TextLabel_4"] = Instance.new("TextLabel", LMG2L["Frame_2"]);
+LMG2L["TextLabel_4"]["BorderSizePixel"] = 0;
+LMG2L["TextLabel_4"]["TextSize"] = 14;
+LMG2L["TextLabel_4"]["BackgroundColor3"] = Color3.fromRGB(26, 26, 26);
+LMG2L["TextLabel_4"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["TextLabel_4"]["Size"] = UDim2.new(0, 188, 0, 18);
+LMG2L["TextLabel_4"]["Text"] = [[evade]];
+
+LMG2L["UICorner_5"] = Instance.new("UICorner", LMG2L["TextLabel_4"]);
+
+LMG2L["TextButton_6"] = Instance.new("TextButton", LMG2L["Frame_2"]);
+LMG2L["TextButton_6"]["BorderSizePixel"] = 0;
+LMG2L["TextButton_6"]["TextSize"] = 14;
+LMG2L["TextButton_6"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["TextButton_6"]["BackgroundColor3"] = Color3.fromRGB(255, 0, 0);
+LMG2L["TextButton_6"]["Size"] = UDim2.new(0, 176, 0, 30);
+LMG2L["TextButton_6"]["Text"] = [[Infinite slide : Off]];
+LMG2L["TextButton_6"]["Position"] = UDim2.new(0, 6, 0, 24);
+
+LMG2L["UICorner_7"] = Instance.new("UICorner", LMG2L["TextButton_6"]);
+
+LMG2L["TextButton_8"] = Instance.new("TextButton", LMG2L["Frame_2"]);
+LMG2L["TextButton_8"]["BorderSizePixel"] = 0;
+LMG2L["TextButton_8"]["TextSize"] = 14;
+LMG2L["TextButton_8"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["TextButton_8"]["BackgroundColor3"] = Color3.fromRGB(255, 0, 0);
+LMG2L["TextButton_8"]["Size"] = UDim2.new(0, 176, 0, 30);
+LMG2L["TextButton_8"]["Text"] = [[Bhop : Off]];
+LMG2L["TextButton_8"]["Position"] = UDim2.new(0, 6, 0, 58);
+
+LMG2L["UICorner_9"] = Instance.new("UICorner", LMG2L["TextButton_8"]);
+
+
+local UserInputService = game:GetService("UserInputService")
+local Frame = LMG2L["Frame_2"]
+local dragging = false
+local dragInput, dragStart, startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+Frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = Frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+Frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local player = Players.LocalPlayer
+
+local infiniteSlideEnabled = false
+local bhopEnabled = false
+local slideFrictionValue = -16
+local cachedTables = nil
+local plrModel = nil
+local slideConnection = nil
+local bhopConnection = nil
+
+local slideKeys = {
+    "Friction","AirStrafeAcceleration","JumpHeight","RunDeaccel",
+    "JumpSpeedMultiplier","JumpCap","SprintCap","WalkSpeedMultiplier",
+    "BhopEnabled","Speed","AirAcceleration","RunAccel","SprintAcceleration"
+}
+
+local function hasAll(tbl)
+    if type(tbl) ~= "table" then return false end
+    for _, k in ipairs(slideKeys) do
+        if rawget(tbl, k) == nil then return false end
+    end
+    return true
+end
+
+local function refreshVapeTables()
+    cachedTables = {}
+    for _, obj in ipairs(getgc(true)) do
+        local success, result = pcall(function()
+            if type(obj) == "table" and hasAll(obj) then 
+                return obj 
+            end
+        end)
+        if success and result then 
+            table.insert(cachedTables, result) 
+        end
+    end
+end
+
+local function setFriction(value)
+    if not cachedTables then return end
+    for _, t in ipairs(cachedTables) do
+        pcall(function() t.Friction = value end)
+    end
+end
+
+local function setBhopState(state)
+    if not cachedTables then return end
+    for _, t in ipairs(cachedTables) do
+        pcall(function() t.BhopEnabled = state end)
+    end
+end
+
+local function updatePlayerModel()
+    local GameFolder = Workspace:FindFirstChild("Game")
+    local PlayersFolder = GameFolder and GameFolder:FindFirstChild("Players")
+    if PlayersFolder then
+        plrModel = PlayersFolder:FindFirstChild(player.Name)
+    else
+        plrModel = nil
+    end
+end
+
+
+local function onSlideHeartbeat()
+    if not plrModel then
+        setFriction(5) 
+        return
+    end
+    
+    local success, currentState = pcall(function()
+        return plrModel:GetAttribute("State")
+    end)
+    
+    if success and currentState then
+        if currentState == "Slide" then
+            pcall(function()
+                plrModel:SetAttribute("State", "EmotingSlide")
+            end)
+        elseif currentState == "EmotingSlide" then
+            setFriction(slideFrictionValue)
+        else
+            setFriction(5) 
+        end
+    else
+        setFriction(5)
+    end
+end
+
+
+local function onBhopHeartbeat()
+    if bhopEnabled then
+        setBhopState(true)
+        if cachedTables then
+            for _, t in ipairs(cachedTables) do
+                pcall(function()
+                    if t.JumpCap then t.JumpCap = 0 end
+                end)
+            end
+        end
+    end
+end
+
+
+local oldNamecall
+oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+    local args = {...}
+    local method = getnamecallmethod()
+    
+    if method == "FireServer" and self.Name == "Emote" then
+        local eName = args[1]
+        if infiniteSlideEnabled and eName then
+            task.spawn(function()
+                task.wait(0.1)
+                local success, emoteModule = pcall(function()
+                    return require(game:GetService("ReplicatedStorage").Items.Emotes[eName])
+                end)
+                if success and emoteModule and emoteModule.EmoteInfo then
+                    if slideFrictionValue then
+                        setFriction(slideFrictionValue)
+                    end
+                end
+            end)
+        end
+    end
+    return oldNamecall(self, ...)
+end)
+
+
+player.CharacterAdded:Connect(function()
+    task.wait(0.5) 
+    updatePlayerModel()
+    
+    if infiniteSlideEnabled or bhopEnabled then
+        refreshVapeTables()
+    end
+end)
+
+
+local SlideButton = LMG2L["TextButton_6"]
+
+SlideButton.MouseButton1Click:Connect(function()
+    infiniteSlideEnabled = not infiniteSlideEnabled
+    
+    if infiniteSlideEnabled then
+        SlideButton.Text = "Infinite slide : On"
+        SlideButton.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+        
+        refreshVapeTables()
+        updatePlayerModel()
+        
+        if slideConnection then slideConnection:Disconnect() end
+        slideConnection = RunService.Heartbeat:Connect(onSlideHeartbeat)
+    else
+        SlideButton.Text = "Infinite slide : Off"
+        SlideButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        
+        if slideConnection then 
+            slideConnection:Disconnect() 
+            slideConnection = nil 
+        end
+        setFriction(5) 
+    end
+end)
+
+
+local BhopButton = LMG2L["TextButton_8"]
+
+BhopButton.MouseButton1Click:Connect(function()
+    bhopEnabled = not bhopEnabled
+    
+    if bhopEnabled then
+        BhopButton.Text = "Bhop : On"
+        BhopButton.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+        
+        refreshVapeTables()
+        
+        if bhopConnection then bhopConnection:Disconnect() end
+        bhopConnection = RunService.Heartbeat:Connect(onBhopHeartbeat)
+    else
+        BhopButton.Text = "Bhop : Off"
+        BhopButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        
+        if bhopConnection then 
+            bhopConnection:Disconnect() 
+            bhopConnection = nil 
+        end
+        setBhopState(false)
+    end
+end)
+
+
+local ScreenGui = LMG2L["ScreenGui_1"]
+
+local ReviveFrame = Instance.new("Frame", ScreenGui)
+ReviveFrame.Name = "ReviveFrame"
+ReviveFrame.BackgroundColor3 = Color3.fromRGB(0, 170, 255) 
+ReviveFrame.BorderSizePixel = 2
+ReviveFrame.BorderColor3 = Color3.fromRGB(0, 0, 0) 
+ReviveFrame.Size = UDim2.new(0, 100, 0, 40)
+ReviveFrame.Position = UDim2.new(0, 10, 0, 10)
+ReviveFrame.Active = true
+
+local ReviveButton = Instance.new("TextButton", ReviveFrame)
+ReviveButton.Size = UDim2.new(1, 0, 1, 0)
+ReviveButton.BackgroundTransparency = 1
+ReviveButton.Text = "Revived"
+ReviveButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ReviveButton.Font = Enum.Font.SourceSansBold
+ReviveButton.TextSize = 18
+
+ReviveButton.MouseButton1Click:Connect(function()
+    local args = { [1] = true }
+    local event = game:GetService("ReplicatedStorage"):FindFirstChild("Events")
+        and game:GetService("ReplicatedStorage").Events:FindFirstChild("Player")
+        and game:GetService("ReplicatedStorage").Events.Player:FindFirstChild("ChangePlayerMode")
+    
+    if event then
+        event:FireServer(unpack(args))
+    end
+end)
+
+return LMG2L["ScreenGui_1"], require;
