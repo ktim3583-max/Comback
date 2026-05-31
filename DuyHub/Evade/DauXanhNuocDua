@@ -3,374 +3,425 @@
 88' Y8b 88    88   `88'        VP  `8D      88      88    88 d8' `8b 
 88      88    88    88            odD'      88      88    88 88ooo88 
 88  ooo 88    88    88          .88'        88      88    88 88~~~88 
-88. ~8~ 88b  d88   .88.        j88.         88booo. 88b  d88 88   88    
- Y888P  ~Y8888P' Y888888P      888888D      Y88888P ~Y8888P' YP   YP  
- 
- PROJECT: EVADE VAPE V4 INTERNAL CLIENT
- VERSION: 9.0.2 - REAL 400+ LINES SYSTEM
+88. ~8~ 88b  d88   .88.        j88.         88booo. 88b  d88 88   88    @uniquadev
+ Y888P  ~Y8888P' Y888888P      888888D      Y88888P ~Y8888P' YP   YP  CONVERTER 
+
+designed using localmaze gui creator (Modified with Mini Song Style & FPS Lag Switch)
 ]=]
 
--- // SECTION 1: GLOBAL SETTINGS & CONFIGURATION
-local GlobalSettings = {
-    Engine = {
-        Friction = -16,
-        LagTime = 1.5,
-        RefreshRate = 5,
-        BhopForce = true
-    },
-    Theme = {
-        MainBackground = Color3.fromRGB(31, 31, 31),
-        MainBorder = Color3.fromRGB(0, 0, 0),
-        ButtonActive = Color3.fromRGB(0, 150, 0),
-        ButtonInactive = Color3.fromRGB(150, 0, 0),
-        LagSwitchStyle = Color3.fromRGB(0, 50, 150),
-        LagActiveStyle = Color3.fromRGB(170, 0, 0),
-        ReviveStyle = Color3.fromRGB(0, 170, 255)
-    },
-    Status = {
-        SlideActive = false,
-        BhopActive = false,
-        LagActive = false
-    }
-}
+local LMG2L = {};
 
--- // SECTION 2: ROBLOX CORE SERVICES
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local TweenService = game:GetService("TweenService")
-local CoreGui = game:GetService("CoreGui")
+local player = Players.LocalPlayer
 
--- // SECTION 3: CORE VARIABLES
-local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-local GarbageCollectorTables = {}
+-- Players.im100Yearold06.PlayerGui.ScreenGui
+LMG2L["ScreenGui_1"] = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"));
+LMG2L["ScreenGui_1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
+LMG2L["ScreenGui_1"].ResetOnSpawn = false;
 
--- // SECTION 4: CLIENT LOGGER SYSTEM
-local Logger = {}
-function Logger.Log(message)
-    print("[VAPE V4 INTERNAL]: " .. tostring(message))
-end
-function Logger.Warn(message)
-    warn("[VAPE V4 WARNING]: " .. tostring(message))
-end
+-- =========================================================================
+-- [HÀM ĐĂNG KÝ KÉO THẢ CHUẨN - KHÔNG LO KẸT]
+-- =========================================================================
+local function RegisterDraggable(GuiObject)
+    local dragging = false
+    local dragInput, dragStart, startPos
 
--- // SECTION 5: SCREEN GUI INITIALIZATION
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = PlayerGui
-ScreenGui.Name = "VapeV4_RealExtended_System"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
--- // SECTION 6: DRAGGABLE ENGINE (DETAILED IMPLEMENTATION)
-local function MakeElementDraggable(TargetFrame)
-    local DraggingEnabled = false
-    local DragInput = nil
-    local DragStart = nil
-    local StartPosition = nil
-
-    local function UpdatePosition(input)
-        local Delta = input.Position - DragStart
-        TargetFrame.Position = UDim2.new(
-            StartPosition.X.Scale, 
-            StartPosition.X.Offset + Delta.X, 
-            StartPosition.Y.Scale, 
-            StartPosition.Y.Offset + Delta.Y
-        )
-    end
-
-    TargetFrame.InputBegan:Connect(function(input)
+    GuiObject.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            DraggingEnabled = true
-            DragStart = input.Position
-            StartPosition = TargetFrame.Position
-
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    DraggingEnabled = false
-                end
-            end)
+            dragging = true
+            dragStart = input.Position
+            startPos = GuiObject.Position
         end
     end)
 
-    TargetFrame.InputChanged:Connect(function(input)
+    GuiObject.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            DragInput = input
+            dragInput = input
         end
     end)
 
     UserInputService.InputChanged:Connect(function(input)
-        if input == DragInput and DraggingEnabled then
-            UpdatePosition(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            GuiObject.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
         end
     end)
 end
 
--- // SECTION 7: UI ELEMENTS CONSTRUCTION (NO SHORTS)
--- 7.1 INFINITE SLIDE FRAME
-local SlideFrame = Instance.new("Frame")
-SlideFrame.Parent = ScreenGui
-SlideFrame.Name = "InfiniteSlide_Container"
-SlideFrame.Size = UDim2.new(0, 160, 0, 45)
-SlideFrame.Position = UDim2.new(0, 300, 0, 50)
-SlideFrame.BackgroundColor3 = GlobalSettings.Theme.ButtonInactive
-SlideFrame.BorderSizePixel = 2
-SlideFrame.BorderColor3 = GlobalSettings.Theme.MainBorder
-SlideFrame.Active = true
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame (Main Frame)
+LMG2L["Frame_2"] = Instance.new("Frame", LMG2L["ScreenGui_1"]);
+LMG2L["Frame_2"]["BorderSizePixel"] = 0;
+LMG2L["Frame_2"]["BackgroundColor3"] = Color3.fromRGB(31, 31, 31);
+LMG2L["Frame_2"]["Size"] = UDim2.new(0, 188, 0, 94);
+LMG2L["Frame_2"]["Position"] = UDim2.new(0, 350, 0, 100);
+LMG2L["Frame_2"].Active = true;
+LMG2L["Frame_2"].ZIndex = 5;
 
-local SlideButton = Instance.new("TextButton")
-SlideButton.Parent = SlideFrame
-SlideButton.Name = "Toggle_Button"
-SlideButton.Size = UDim2.new(1, 0, 1, 0)
-SlideButton.BackgroundTransparency = 1
-SlideButton.Text = "Slide: Off"
-SlideButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-SlideButton.Font = Enum.Font.Code
-SlideButton.TextSize = 14
+-- Kích hoạt kéo thả cho Main Frame
+RegisterDraggable(LMG2L["Frame_2"])
 
--- 7.2 BHOP FRAME
-local BhopFrame = Instance.new("Frame")
-BhopFrame.Parent = ScreenGui
-BhopFrame.Name = "Bhop_Container"
-BhopFrame.Size = UDim2.new(0, 160, 0, 45)
-BhopFrame.Position = UDim2.new(0, 300, 0, 105)
-BhopFrame.BackgroundColor3 = GlobalSettings.Theme.ButtonInactive
-BhopFrame.BorderSizePixel = 2
-BhopFrame.BorderColor3 = GlobalSettings.Theme.MainBorder
-BhopFrame.Active = true
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame.UICorner
+LMG2L["UICorner_3"] = Instance.new("UICorner", LMG2L["Frame_2"]);
 
-local BhopButton = Instance.new("TextButton")
-BhopButton.Parent = BhopFrame
-BhopButton.Name = "Toggle_Button"
-BhopButton.Size = UDim2.new(1, 0, 1, 0)
-BhopButton.BackgroundTransparency = 1
-BhopButton.Text = "Bhop: Off"
-BhopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-BhopButton.Font = Enum.Font.Code
-BhopButton.TextSize = 14
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame.TextLabel (evade)
+LMG2L["TextLabel_4"] = Instance.new("TextLabel", LMG2L["Frame_2"]);
+LMG2L["TextLabel_4"]["BorderSizePixel"] = 0;
+LMG2L["TextLabel_4"]["TextSize"] = 14;
+LMG2L["TextLabel_4"]["BackgroundColor3"] = Color3.fromRGB(26, 26, 26);
+LMG2L["TextLabel_4"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["TextLabel_4"]["Size"] = UDim2.new(0, 188, 0, 18);
+LMG2L["TextLabel_4"]["Text"] = [[evade]];
+LMG2L["TextLabel_4"].ZIndex = 6;
 
--- 7.3 LAG SWITCH FRAME (NHÀ TỐNG PHONG CÁCH)
-local LagFrame = Instance.new("Frame")
-LagFrame.Parent = ScreenGui
-LagFrame.Name = "LagSwitch_Container"
-LagFrame.Size = UDim2.new(0, 160, 0, 45)
-LagFrame.Position = UDim2.new(0, 10, 0, 50)
-LagFrame.BackgroundColor3 = GlobalSettings.Theme.LagSwitchStyle
-LagFrame.BorderSizePixel = 2
-LagFrame.BorderColor3 = GlobalSettings.Theme.MainBorder
-LagFrame.Active = true
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame.TextLabel.UICorner
+LMG2L["UICorner_5"] = Instance.new("UICorner", LMG2L["TextLabel_4"]);
 
-local LagButton = Instance.new("TextButton")
-LagButton.Parent = LagFrame
-LagButton.Name = "Action_Button"
-LagButton.Size = UDim2.new(1, 0, 1, 0)
-LagButton.BackgroundTransparency = 1
-LagButton.Text = "Lag Switch"
-LagButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-LagButton.Font = Enum.Font.Code
-LagButton.TextSize = 14
+-- Nút bấm 1: Infinite slide
+LMG2L["TextButton_6"] = Instance.new("TextButton", LMG2L["Frame_2"]);
+LMG2L["TextButton_6"]["BorderSizePixel"] = 0;
+LMG2L["TextButton_6"]["TextSize"] = 14;
+LMG2L["TextButton_6"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["TextButton_6"]["BackgroundColor3"] = Color3.fromRGB(255, 0, 0);
+LMG2L["TextButton_6"]["Size"] = UDim2.new(0, 176, 0, 30);
+LMG2L["TextButton_6"]["Text"] = [[Infinite slide : Off]];
+LMG2L["TextButton_6"]["Position"] = UDim2.new(0, 6, 0, 24);
+LMG2L["TextButton_6"].ZIndex = 6;
 
--- 7.4 REVIVE FRAME (NHÀ TỐNG PHONG CÁCH)
-local ReviveFrame = Instance.new("Frame")
-ReviveFrame.Parent = ScreenGui
-ReviveFrame.Name = "Revive_Container"
-ReviveFrame.Size = UDim2.new(0, 160, 0, 45)
-ReviveFrame.Position = UDim2.new(0, 10, 0, 105)
-ReviveFrame.BackgroundColor3 = GlobalSettings.Theme.ReviveStyle
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame.TextButton.UICorner
+LMG2L["UICorner_7"] = Instance.new("UICorner", LMG2L["TextButton_6"]);
+
+-- Nút bấm 2: Bhop
+LMG2L["TextButton_8"] = Instance.new("TextButton", LMG2L["Frame_2"]);
+LMG2L["TextButton_8"]["BorderSizePixel"] = 0;
+LMG2L["TextButton_8"]["TextSize"] = 14;
+LMG2L["TextButton_8"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["TextButton_8"]["BackgroundColor3"] = Color3.fromRGB(255, 0, 0);
+LMG2L["TextButton_8"]["Size"] = UDim2.new(0, 176, 0, 30);
+LMG2L["TextButton_8"]["Text"] = [[Bhop : Off]];
+LMG2L["TextButton_8"]["Position"] = UDim2.new(0, 6, 0, 58);
+LMG2L["TextButton_8"].ZIndex = 6;
+
+-- Players.im100Yearold06.PlayerGui.ScreenGui.Frame.TextButton2.UICorner
+LMG2L["UICorner_9"] = Instance.new("UICorner", LMG2L["TextButton_8"]);
+
+
+-- =========================================================================
+-- [KHỞI TẠO BIẾN CƠ BẢN]
+-- =========================================================================
+local infiniteSlideEnabled = false
+local bhopEnabled = false
+local slideFrictionValue = -16
+local cachedTables = nil
+local plrModel = nil
+local slideConnection = nil
+local bhopConnection = nil
+
+local slideKeys = {
+    "Friction","AirStrafeAcceleration","JumpHeight","RunDeaccel",
+    "JumpSpeedMultiplier","JumpCap","SprintCap","WalkSpeedMultiplier",
+    "BhopEnabled","Speed","AirAcceleration","RunAccel","SprintAcceleration"
+}
+
+local function hasAll(tbl)
+    if type(tbl) ~= "table" then return false end
+    for _, k in ipairs(slideKeys) do
+        if rawget(tbl, k) == nil then return false end
+    end
+    return true
+end
+
+local function refreshVapeTables()
+    cachedTables = {}
+    for _, obj in ipairs(getgc(true)) do
+        local success, result = pcall(function()
+            if type(obj) == "table" and hasAll(obj) then 
+                return obj 
+            end
+        end)
+        if success and result then 
+            table.insert(cachedTables, result) 
+        end
+    end
+end
+
+local function setFriction(value)
+    if not cachedTables then return end
+    for _, t in ipairs(cachedTables) do
+        pcall(function() t.Friction = value end)
+    end
+end
+
+local function setBhopState(state)
+    if not cachedTables then return end
+    for _, t in ipairs(cachedTables) do
+        pcall(function() t.BhopEnabled = state end)
+    end
+end
+
+local function updatePlayerModel()
+    local GameFolder = Workspace:FindFirstChild("Game")
+    local PlayersFolder = GameFolder and GameFolder:FindFirstChild("Players")
+    if PlayersFolder then
+        plrModel = PlayersFolder:FindFirstChild(player.Name)
+    else
+        plrModel = nil
+    end
+end
+
+
+-- =========================================================================
+-- [LOGIC 1: INFINITE SLIDE CHUẨN VAPE]
+-- =========================================================================
+local function onSlideHeartbeat()
+    if not plrModel then
+        setFriction(5) 
+        return
+    end
+    
+    local success, currentState = pcall(function()
+        return plrModel:GetAttribute("State")
+    end)
+    
+    if success and currentState then
+        if currentState == "Slide" then
+            pcall(function()
+                plrModel:SetAttribute("State", "EmotingSlide")
+            end)
+        elseif currentState == "EmotingSlide" then
+            setFriction(slideFrictionValue)
+        else
+            setFriction(5) 
+        end
+    else
+        setFriction(5)
+    end
+end
+
+
+-- =========================================================================
+-- [LOGIC 2: BHOP CHỈ NHẢY 1 LẦN KHI CHẠM ĐẤT - FIXED]
+-- =========================================================================
+local hasJumped = false
+
+local function onBhopHeartbeat()
+    if bhopEnabled then
+        setBhopState(true)
+        if cachedTables then
+            for _, t in ipairs(cachedTables) do
+                pcall(function()
+                    if t.JumpCap then t.JumpCap = 0 end
+                end)
+            end
+        end
+
+        pcall(function()
+            local char = player.Character
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            if hum then
+                if hum.FloorMaterial ~= Enum.Material.Air then
+                    if not hasJumped then
+                        hum.Jump = true
+                        hasJumped = true 
+                    end
+                else
+                    hasJumped = false 
+                end
+            end
+        end)
+    end
+end
+
+
+-- =========================================================================
+-- [HỆ THỐNG HOOK NAMECALL NGẦM CỦA VAPE]
+-- =========================================================================
+local oldNamecall
+oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+    local args = {...}
+    local method = getnamecallmethod()
+    
+    if method == "FireServer" and self.Name == "Emote" then
+        local eName = args[1]
+        if infiniteSlideEnabled and eName then
+            task.spawn(function()
+                task.wait(0.1)
+                local success, emoteModule = pcall(function()
+                    return require(ReplicatedStorage.Items.Emotes[eName])
+                end)
+                if success and emoteModule and emoteModule.EmoteInfo then
+                    if slideFrictionValue then
+                        setFriction(slideFrictionValue)
+                    end
+                end
+            end)
+        end
+    end
+    return oldNamecall(self, ...)
+end)
+
+
+-- =========================================================================
+-- [TỰ ĐỘNG CẬP NHẬT KHI NHÂN VẬT HỒI SINH]
+-- =========================================================================
+player.CharacterAdded:Connect(function()
+    task.wait(0.5)
+    updatePlayerModel()
+    if infiniteSlideEnabled or bhopEnabled then
+        refreshVapeTables()
+    end
+end)
+
+
+-- =========================================================================
+-- [XỬ LÝ SỰ KIỆN NÚT 1: INFINITE SLIDE]
+-- =========================================================================
+local SlideButton = LMG2L["TextButton_6"]
+
+SlideButton.MouseButton1Click:Connect(function()
+    infiniteSlideEnabled = not infiniteSlideEnabled
+    
+    if infiniteSlideEnabled then
+        SlideButton.Text = "Infinite slide : On"
+        SlideButton.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+        
+        refreshVapeTables()
+        updatePlayerModel()
+        
+        if slideConnection then slideConnection:Disconnect() end
+        slideConnection = RunService.Heartbeat:Connect(onSlideHeartbeat)
+    else
+        SlideButton.Text = "Infinite slide : Off"
+        SlideButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        
+        if slideConnection then 
+            slideConnection:Disconnect() 
+            slideConnection = nil 
+        end
+        setFriction(5) 
+    end
+end)
+
+
+-- =========================================================================
+-- [XỬ LÝ SỰ KIỆN NÚT 2: BHOP]
+-- =========================================================================
+local BhopButton = LMG2L["TextButton_8"]
+
+BhopButton.MouseButton1Click:Connect(function()
+    bhopEnabled = not bhopEnabled
+    
+    if bhopEnabled then
+        BhopButton.Text = "Bhop : On"
+        BhopButton.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+        
+        refreshVapeTables()
+        hasJumped = false
+        
+        if bhopConnection then bhopConnection:Disconnect() end
+        bhopConnection = RunService.Heartbeat:Connect(onBhopHeartbeat)
+    else
+        BhopButton.Text = "Bhop : Off"
+        BhopButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        
+        if bhopConnection then 
+            bhopConnection:Disconnect() 
+            bhopConnection = nil 
+        end
+        setBhopState(false)
+    end
+end)
+
+
+-- =========================================================================
+-- [NÚT 3: REVIVE MINI NHÀ TỐNG - ĐÃ SỬA KÍCH THƯỚC & KÉO THẢ]
+-- =========================================================================
+local ScreenGui = LMG2L["ScreenGui_1"]
+
+local ReviveFrame = Instance.new("Frame", ScreenGui)
+ReviveFrame.Name = "ReviveFrame"
+ReviveFrame.BackgroundColor3 = Color3.fromRGB(0, 170, 255) 
 ReviveFrame.BorderSizePixel = 2
-ReviveFrame.BorderColor3 = GlobalSettings.Theme.MainBorder
+ReviveFrame.BorderColor3 = Color3.fromRGB(0, 0, 0) 
+ReviveFrame.Size = UDim2.new(0, 90, 0, 30) -- Thu nhỏ lại nhìn cho đẹp
+ReviveFrame.Position = UDim2.new(0, 10, 0, 10)
+ReviveFrame.ZIndex = 7
 ReviveFrame.Active = true
 
-local ReviveButton = Instance.new("TextButton")
-ReviveButton.Parent = ReviveFrame
-ReviveButton.Name = "Action_Button"
+local ReviveButton = Instance.new("TextButton", ReviveFrame)
 ReviveButton.Size = UDim2.new(1, 0, 1, 0)
 ReviveButton.BackgroundTransparency = 1
 ReviveButton.Text = "Revive"
 ReviveButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ReviveButton.Font = Enum.Font.Code
-ReviveButton.TextSize = 14
+ReviveButton.TextSize = 13
 
--- // SECTION 8: ATTACH DRAG TO FRAME ELEMENTS
-MakeElementDraggable(SlideFrame)
-MakeElementDraggable(BhopFrame)
-MakeElementDraggable(LagFrame)
-MakeElementDraggable(ReviveFrame)
+RegisterDraggable(ReviveFrame) 
 
--- // SECTION 9: MEMORY SCANNER FUNCTION (VAPE CORE ENGINE)
-local function PerformMemoryScan()
-    GarbageCollectorTables = {}
-    local ExecutionSuccess, RawGC = pcall(function()
-        return getgc(true)
-    end)
-    
-    if not ExecutionSuccess or not RawGC then
-        Logger.Warn("Failed to execute getgc invocation.")
-        return
-    end
-    
-    for Index = 1, #RawGC do
-        local ScannedObject = RawGC[Index]
-        if type(ScannedObject) == "table" then
-            local HasFriction = rawget(ScannedObject, "Friction") ~= nil
-            local HasAirAccel = rawget(ScannedObject, "AirStrafeAcceleration") ~= nil
-            
-            if HasFriction and HasAirAccel then
-                table.insert(GarbageCollectorTables, ScannedObject)
-            end
-        end
-    end
-    Logger.Log("Scan complete. Elements cached: " .. tostring(#GarbageCollectorTables))
-end
-
--- // SECTION 10: CONTROLLER EVENT BINDINGS
--- 10.1 Slide Interaction Handler
-SlideButton.MouseButton1Click:Connect(function()
-    GlobalSettings.Status.SlideActive = not GlobalSettings.Status.SlideActive
-    if GlobalSettings.Status.SlideActive then
-        SlideFrame.BackgroundColor3 = GlobalSettings.Theme.ButtonActive
-        SlideButton.Text = "Slide: On"
-        Logger.Log("Infinite Slide status altered to: ENABLED")
-    else
-        SlideFrame.BackgroundColor3 = GlobalSettings.Theme.ButtonInactive
-        SlideButton.Text = "Slide: Off"
-        Logger.Log("Infinite Slide status altered to: DISABLED")
-        
-        for TableIndex = 1, #GarbageCollectorTables do
-            local TargetTable = GarbageCollectorTables[TableIndex]
-            pcall(function()
-                TargetTable.Friction = 5
-            end)
-        end
-    end
-end)
-
--- 10.2 Bhop Interaction Handler
-BhopButton.MouseButton1Click:Connect(function()
-    GlobalSettings.Status.BhopActive = not GlobalSettings.Status.BhopActive
-    if GlobalSettings.Status.BhopActive then
-        BhopFrame.BackgroundColor3 = GlobalSettings.Theme.ButtonActive
-        BhopButton.Text = "Bhop: On"
-        Logger.Log("Bhop engine status altered to: ENABLED")
-    else
-        BhopFrame.BackgroundColor3 = GlobalSettings.Theme.ButtonInactive
-        BhopButton.Text = "Bhop: Off"
-        Logger.Log("Bhop engine status altered to: DISABLED")
-        
-        for TableIndex = 1, #GarbageCollectorTables do
-            local TargetTable = GarbageCollectorTables[TableIndex]
-            pcall(function()
-                TargetTable.BhopEnabled = false
-            end)
-        end
-    end
-end)
-
--- 10.3 Lag Switch Interaction Handler (TAP-TO-LAG REALITY)
-LagButton.MouseButton1Click:Connect(function()
-    if GlobalSettings.Status.LagActive then
-        Logger.Warn("Lag operation currently in execution. Request denied.")
-        return
-    end
-    
-    GlobalSettings.Status.LagActive = true
-    LagFrame.BackgroundColor3 = GlobalSettings.Theme.LagActiveStyle
-    LagButton.Text = "Lagging..."
-    Logger.Log("Network replication lag initiated.")
-    
-    local NetworkSettings = settings():GetService("NetworkSettings")
-    pcall(function()
-        NetworkSettings.IncomingReplicationLag = 999999
-    end)
-    
-    task.wait(GlobalSettings.Engine.LagTime)
-    
-    pcall(function()
-        NetworkSettings.IncomingReplicationLag = 0
-    end)
-    
-    LagFrame.BackgroundColor3 = GlobalSettings.Theme.LagSwitchStyle
-    LagButton.Text = "Lag Switch"
-    GlobalSettings.Status.LagActive = false
-    Logger.Log("Network replication lag restored to normal.")
-end)
-
--- 10.4 Revive Interaction Handler
 ReviveButton.MouseButton1Click:Connect(function()
-    Logger.Log("Attempting character revival protocol...")
-    local TargetEvent = ReplicatedStorage:FindFirstChild("Events")
-    if TargetEvent then
-        local PlayerEventFolder = TargetEvent:FindFirstChild("Player")
-        if PlayerEventFolder then
-            local ChangeModeRemote = PlayerEventFolder:FindFirstChild("ChangePlayerMode")
-            if ChangeModeRemote then
-                local FireSuccess, FireError = pcall(function()
-                    ChangeModeRemote:FireServer(true)
-                end)
-                if FireSuccess then
-                    Logger.Log("Revival remote invoked successfully.")
-                else
-                    Logger.Warn("Remote invocation faulted: " .. tostring(FireError))
-                end
-            else
-                Logger.Warn("ChangePlayerMode instance missing.")
-            end
-        else
-            Logger.Warn("Player folder within Events missing.")
-        end
-    else
-        Logger.Warn("Events directory not found in ReplicatedStorage.")
-    end
-end)
-
--- // SECTION 11: RUNTIME HEARTBEAT LOOP ENGINE
-RunService.Heartbeat:Connect(function()
-    local SlideCondition = GlobalSettings.Status.SlideActive
-    local BhopCondition = GlobalSettings.Status.BhopActive
+    local event = ReplicatedStorage:FindFirstChild("Events")
+        and ReplicatedStorage.Events:FindFirstChild("Player")
+        and ReplicatedStorage.Events.Player:FindFirstChild("ChangePlayerMode")
     
-    if SlideCondition or BhopCondition then
-        for TableIndex = 1, #GarbageCollectorTables do
-            local CurrentTargetTable = GarbageCollectorTables[TableIndex]
-            
-            if SlideCondition then
-                pcall(function()
-                    CurrentTargetTable.Friction = GlobalSettings.Engine.Friction
-                end)
-            end
-            
-            if BhopCondition then
-                pcall(function()
-                    CurrentTargetTable.BhopEnabled = true
-                end)
-            end
-        end
+    if event then
+        pcall(function() event:FireServer(true) end)
+    end
+end)
+
+
+-- =========================================================================
+-- [NÚT 4: LAG SWITCH MINI CHUẨN VAPE (FPS FREEZE) - ĐÃ SỬA KÍCH THƯỚC & KÉO THẢ]
+-- =========================================================================
+local LagFrame = Instance.new("Frame", ScreenGui)
+LagFrame.Name = "LagFrame"
+LagFrame.BackgroundColor3 = Color3.fromRGB(0, 50, 150) 
+LagFrame.BorderSizePixel = 2
+LagFrame.BorderColor3 = Color3.fromRGB(0, 0, 0) 
+LagFrame.Size = UDim2.new(0, 90, 0, 30) -- Thu nhỏ lại nhìn cho đẹp
+LagFrame.Position = UDim2.new(0, 10, 0, 45)
+LagFrame.ZIndex = 7
+LagFrame.Active = true
+
+local LagButton = Instance.new("TextButton", LagFrame)
+LagButton.Size = UDim2.new(1, 0, 1, 0)
+LagButton.BackgroundTransparency = 1
+LagButton.Text = "Lag Switch"
+LagButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+LagButton.Font = Enum.Font.Code
+LagButton.TextSize = 13
+
+RegisterDraggable(LagFrame)
+
+local isLagging = false
+LagButton.MouseButton1Click:Connect(function()
+    if isLagging then return end
+    isLagging = true
+    
+    LagFrame.BackgroundColor3 = Color3.fromRGB(170, 0, 0) 
+    LagButton.Text = "Lagging..."
+    
+    -- LOGIC VAPE CHUẨN: Đóng băng luồng xử lý render game trong 1.5 giây
+    local startTime = os.clock()
+    while os.clock() - startTime < 1.5 do
+        pcall(function()
+            for i = 1, 5000000 do end 
+        end)
+        RunService.RenderStepped:Wait() 
     end
     
-    if BhopCondition then
-        local CurrentCharacter = LocalPlayer.Character
-        if CurrentCharacter then
-            local TargetHumanoid = CurrentCharacter:FindFirstChildOfClass("Humanoid")
-            if TargetHumanoid then
-                if TargetHumanoid.FloorMaterial ~= Enum.Material.Air then
-                    pcall(function()
-                        TargetHumanoid.Jump = true
-                    end)
-                end
-            end
-        end
-    end
+    LagFrame.BackgroundColor3 = Color3.fromRGB(0, 50, 150) 
+    LagButton.Text = "Lag Switch"
+    isLagging = false
 end)
 
--- // SECTION 12: GARBAGE COLLECTOR AUTO REFRESH LOOP
-PerformMemoryScan()
-task.spawn(function()
-    while true do
-        task.wait(GlobalSettings.Engine.RefreshRate)
-        PerformMemoryScan()
-    end
-end)
 
--- // SECTION 13: INITIALIZATION CONFIRMATION SYSTEM
-Logger.Log("All systems successfully loaded.")
-Logger.Log("Ready for client interaction.")
+return LMG2L["ScreenGui_1"], require;
