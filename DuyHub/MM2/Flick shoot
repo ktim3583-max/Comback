@@ -1,0 +1,182 @@
+-- [[ DUYXD - FLICK SHOOT HIGHLIGHT COMBO ]]
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local lp = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+local isCooldown = false
+local cooldownTime = 15
+local doubleJumpPower = 55 -- Lực nhảy lần 2 (Hơi cao tí để dễ flick súng)
+
+-- Hàm tìm thằng Murderer để ngắm vào Đầu (Head)
+local function GetMurder()
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= lp and p.Character then
+            if p.Character:FindFirstChild("Knife") or (p:FindFirstChild("Backpack") and p.Backpack:FindFirstChild("Knife")) then
+                local head = p.Character:FindFirstChild("Head")
+                local humanoid = p.Character:FindFirstChildOfClass("Humanoid")
+                if head and humanoid and humanoid.Health > 0 then
+                    return p.Character
+                end
+            end
+        end
+    end
+    return nil
+end
+
+-- --- [ HÀM KÉO THẢ AN TOÀN CHỐNG VĂNG ] ---
+local function MakeDraggable(obj)
+    local dragging = false
+    local dragInput, dragStart, startPos
+
+    obj.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = obj.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    obj.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UIS.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            obj.Position = UDim2.new(
+                startPos.X.Scale, 
+                startPos.X.Offset + delta.X, 
+                startPos.Y.Scale, 
+                startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+end
+
+-- --- [ KHỞI TẠO GUI NÚT FLICK SHOOT ] ---
+local ScreenGui = Instance.new("ScreenGui", (game:GetService("CoreGui") or lp.PlayerGui))
+ScreenGui.ResetOnSpawn = false
+
+local FlickBtn = Instance.new("TextButton", ScreenGui)
+FlickBtn.Size = UDim2.new(0, 65, 0, 65)
+-- Đặt vị trí xích lên trên để tạo thành bộ tứ nút bấm bá đạo của Duy
+FlickBtn.Position = UDim2.new(0.75, 0, 0.06, 0) 
+FlickBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+FlickBtn.BackgroundTransparency = 0.3
+FlickBtn.Text = "Flick\nShoot"
+FlickBtn.TextColor3 = Color3.fromRGB(0, 255, 150) -- Màu xanh neon/vàng chanh cực chiến
+FlickBtn.Font = "GothamBold"
+FlickBtn.TextSize = 14
+FlickBtn.LineHeight = 1.1
+
+local uiCorner = Instance.new("UICorner", FlickBtn)
+uiCorner.CornerRadius = UDim.new(1, 0)
+
+MakeDraggable(FlickBtn)
+
+-- --- [ LOGIC COMBO FLICK SHOOT ] ---
+FlickBtn.MouseButton1Click:Connect(function()
+    if isCooldown then return end
+
+    local char = lp.Character
+    local hum = char and char:FindFirstChildOfClass("Humanoid")
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    if not hum or not hrp or hum.Health <= 0 then return end
+
+    -- 👉 ĐIỀU KIỆN 1: Kiểm tra túi (Backpack + Character) xem CÓ FAKE BOMB KHÔNG
+    local bomb = char:FindFirstChild("FakeBomb") or (lp:FindFirstChild("Backpack") and lp.Backpack:FindFirstChild("FakeBomb"))
+    if not bomb then 
+        -- Nếu không có bom trong người, nút nháy đỏ cảnh báo và hủy lệnh luôn
+        FlickBtn.TextColor3 = Color3.fromRGB(255, 0, 0)
+        task.wait(0.3)
+        FlickBtn.TextColor3 = Color3.fromRGB(0, 255, 150)
+        return 
+    end
+
+    -- 👉 ĐIỀU KIỆN 2: Kiểm tra xem trong người CÓ SÚNG (Gun) để tí nữa flick bắn không
+    local gun = char:FindFirstChild("Gun") or (lp:FindFirstChild("Backpack") and lp.Backpack:FindFirstChild("Gun"))
+    if not gun then return end -- Không có súng thì bomb jump làm gì mất công
+
+    -- BẮT ĐẦU VÀO COMBO CHUỖI
+    isCooldown = true
+
+    -- Bước 1: Lôi bom lên tay & Nhảy phát đầu
+    if bomb.Parent ~= char then
+        hum:EquipTool(bomb)
+        task.wait(0.02)
+    end
+    hum:ChangeState(Enum.HumanoidStateType.Jumping)
+
+    -- Bước 2: Đợi 0.15s nổ bom tại chỗ
+    task.wait(0.15)
+    if bomb and bomb:FindFirstChild("Remote") and bomb.Parent == char then
+        bomb.Remote:FireServer(hrp.CFrame, 50)
+    end
+
+    -- Bước 3: Đợi tiếp 0.2s rồi ép Double Jump trên không
+    task.wait(0.2)
+    if hum and hrp and hum.Health > 0 then
+        hum:ChangeState(Enum.HumanoidStateType.Freefall)
+        task.wait(0.01)
+        hrp.AssemblyLinearVelocity = Vector3.new(hrp.AssemblyLinearVelocity.X, doubleJumpPower, hrp.AssemblyLinearVelocity.Z)
+        hum:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+
+    -- Bước 4: ĐỔI SÚNG + XOAY 1 VÒNG 360 ĐỘ (0.05s) + BẮN VÀO ĐẦU MURDERER
+    task.wait(0.05) -- Chờ lấy đà rơi tự do một tí
+    if hum and hum.Health > 0 then
+        -- Lôi súng ra thần tốc
+        local currentGun = char:FindFirstChild("Gun") or (lp:FindFirstChild("Backpack") and lp.Backpack:FindFirstChild("Gun"))
+        if currentGun and hum then
+            hum:EquipTool(currentGun)
+        end
+
+        -- Kỹ thuật Xoay Camera 1 vòng tròn trong đúng 0.05 giây (Hiệu ứng Flick)
+        task.spawn(function()
+            local startCFrame = Camera.CFrame
+            local tweenInfo = TweenInfo.new(0.05, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+            -- Tạo góc xoay quanh trục Y
+            local targetCFrame = startCFrame * CFrame.Angles(0, math.rad(360), 0)
+            local tween = TweenService:Create(Camera, tweenInfo, {CFrame = targetCFrame})
+            tween:Play()
+        end)
+
+        -- Thực hiện lệnh Bắn ngay lập tức (Bắn vào đầu Murderer)
+        task.wait(0.02) -- Đợi camera bắt đầu xoay nửa vòng là nã đạn
+        local murderChar = GetMurder()
+        local realGun = char:FindFirstChild("Gun")
+        if murderChar and realGun and realGun:FindFirstChild("Shoot") then
+            local headPart = murderChar:FindFirstChild("Head")
+            if headPart then
+                local targetCFrame = headPart.CFrame
+                local originCFrame = hrp.CFrame
+                
+                -- Khai hỏa bằng Remote súng của Duy
+                realGun.Shoot:FireServer(originCFrame, targetCFrame)
+            end
+        end
+    end
+
+    -- --- [ ĐẾM NGƯỢC 15 GIÂY HỒI CHIÊU ] ---
+    task.spawn(function()
+        for i = cooldownTime, 1, -1 do
+            FlickBtn.Text = tostring(i).."s"
+            FlickBtn.TextColor3 = Color3.fromRGB(150, 150, 150)
+            task.wait(1)
+        end
+        FlickBtn.Text = "Flick\nShoot"
+        FlickBtn.TextColor3 = Color3.fromRGB(0, 255, 150)
+        isCooldown = false
+    end)
+end)
